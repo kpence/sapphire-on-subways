@@ -1,11 +1,12 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is our class project for CSCE 431 503. We are _Sapphire on Subways_, and we
+are creating this app as a means for the DAS (Dance Art Society) to easily
+generate a schedule for their shows after auditions.
 
-Things you may want to cover:
+Some configurations:
 
-* Ruby version
+* Ruby version: Created with ruby 2.6.3p62
 
 * System dependencies
 
