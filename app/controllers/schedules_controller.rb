@@ -1,7 +1,7 @@
 class SchedulesController < ApplicationController
 
     def index
-        @schedules = Schedule.all
+        @schedules = []#Schedule.all
     end
 
 end
