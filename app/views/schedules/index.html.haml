@@ -5,4 +5,8 @@
 - else
   %h2= "Schedules" 
 
-= link_to 'Upload a new Schedule CSV File', new_schedule_path, class: "btn btn-primary"
+-# = link_to 'Upload a new Schedule CSV File', import_schedule_path, class: "btn btn-primary"
+
+= form_tag import_schedules_path, multipart: true do
+  = file_field_tag :file
+  = submit_tag "Import from file"
