@@ -1,4 +1,4 @@
-# require 'CSV'
+require 'CSV'
 
 class CsvTestController < ApplicationController
   def index
