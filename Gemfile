@@ -22,6 +22,9 @@ gem 'rspec'
 
 gem 'haml'
 
+# This is for importing the data from the CSV efficiently
+gem 'activerecord-import'
+
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
