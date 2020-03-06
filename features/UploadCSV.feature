@@ -4,4 +4,4 @@ Scenario: Upload a CSV
   Given I am on the DAS home page
   Then I should see "Looks like you don't have any schedules yet! Click the button to upload your first one!"
   When I attach the file "test.csv" to "csv"
-  Then the "csv" field within the page should contain "test.csv"
+  Then the "csv" field within the DAS home page should contain "test.csv"
