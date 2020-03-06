@@ -17,6 +17,7 @@ Some configurations:
 * Database initialization
 
 * How to run the test suite
+    -To Run Cucumber: In the command line, type "cucumber".
 
 * Services (job queues, cache servers, search engines, etc.)
 
