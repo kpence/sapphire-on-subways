@@ -9,10 +9,13 @@ class Schedule < ActiveRecord::Base
         dances = []
         csv = CSV.read(file.path, headers: true)
         rows = csv[0].drop(2).select {|e| e[0] != "TOTAL" }.map {|e| e[0]}
+        schedule = Schedule.create!(filename: file.path)
+        act = Act.create!(number: 1, schedule_id: schedule.id)
         rows.each do |row|
-            dances << Dance.new(name: row)
+            Performance.create!(name: row, act_id: act.id)
+            dances << Performance.new(name: row)
         end
-        Dance.import dances, recursive: true
+        Performance.import dances, recursive: true
 
         # -- Below will import dancers
         #rows.drop(1).each do |row|

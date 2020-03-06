@@ -16,6 +16,7 @@ class CreateDances < ActiveRecord::Migration[5.0]
 
     create_table :acts do |t|
       t.integer :number
+      t.references :schedule
     end
 
     create_table :schedules do |t|

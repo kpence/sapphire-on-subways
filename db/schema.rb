@@ -14,6 +14,8 @@ ActiveRecord::Schema.define(version: 20200306210930) do
 
   create_table "acts", force: :cascade do |t|
     t.integer "number"
+    t.integer "schedule_id"
+    t.index ["schedule_id"], name: "index_acts_on_schedule_id"
   end
 
   create_table "dancers", force: :cascade do |t|
