@@ -3,7 +3,7 @@ class Schedule < ActiveRecord::Base
     require 'activerecord-import'
 
     # Nothing for now, other than a has_many relationship with dances
-    has_many :dances
+    has_many :acts
 
     def self.upload_a_csv(file)
         dances = []
