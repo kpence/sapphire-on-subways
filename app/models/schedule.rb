@@ -22,8 +22,10 @@ class Schedule < ActiveRecord::Base
         dances = []
         csv.drop(1).each do |row|
           hash = row.to_h.select {|entry| entry != "TOTAL" && entry != nil}
-          dancer = Dancer.create!(name: hash["Active Members"])
-          hash.drop(1).each { |key,value| dances << Dance.new(performance_id: Performance.find_by_name(key).id, dancer_id: dancer.id) }
+          unless hash["Active Members"] == nil
+            dancer = Dancer.create!(name: hash["Active Members"])
+            hash.drop(1).each { |key,value| dances << Dance.new(performance_id: Performance.find_by_name(key).id, dancer_id: dancer.id) }
+          end
         end
         Dance.import dances, recursive: true
 
