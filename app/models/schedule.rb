@@ -6,20 +6,26 @@ class Schedule < ActiveRecord::Base
     has_many :acts
 
     def self.upload_a_csv(file)
-        dances = []
-        csv = CSV.read(file.path, headers: true)
-        rows = csv[0].drop(2).select {|e| e[0] != "TOTAL" }.map {|e| e[0]}
         schedule = Schedule.create!(filename: file.path)
         act = Act.create!(number: 1, schedule_id: schedule.id)
-        rows.each do |row|
-            dances << Performance.new(name: row, act_id: act.id)
-        end
-        Performance.import dances, recursive: true
+        Act.create!(number: 2, schedule_id: schedule.id)
 
-        # -- Below will import dancers
-        #rows.drop(1).each do |row|
-          #dancers << row.to_h.select {|entry| entry != "TOTAL" && entry != nil}
-        #end
+        csv = CSV.read(file.path, headers: true)
+        rows = csv[0].drop(2).select {|e| e[0] != "TOTAL" }.map {|e| e[0]}
+        performances = []
+        rows.each do |row|
+            performances << Performance.new(name: row, act_id: act.id)
+        end
+        Performance.import performances, recursive: true
+
+        # -- Below will import dances and dancers
+        dances = []
+        csv.drop(1).each do |row|
+          hash = row.to_h.select {|entry| entry != "TOTAL" && entry != nil}
+          dancer = Dancer.create!(name: hash["Active Members"])
+          hash.drop(1).each { |key,value| dances << Dance.new(performance_id: Performance.find_by_name(key).id, dancer_id: dancer.id) }
+        end
+        Dance.import dances, recursive: true
 
     end
 
