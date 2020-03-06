@@ -12,8 +12,7 @@ class Schedule < ActiveRecord::Base
         schedule = Schedule.create!(filename: file.path)
         act = Act.create!(number: 1, schedule_id: schedule.id)
         rows.each do |row|
-            Performance.create!(name: row, act_id: act.id)
-            dances << Performance.new(name: row)
+            dances << Performance.new(name: row, act_id: act.id)
         end
         Performance.import dances, recursive: true
 
