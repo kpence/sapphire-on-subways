@@ -21,10 +21,16 @@ ActiveRecord::Schema.define(version: 20200306210930) do
   end
 
   create_table "dances", force: :cascade do |t|
+    t.integer "performance_id"
+    t.integer "dancer_id"
+    t.index ["dancer_id"], name: "index_dances_on_dancer_id"
+    t.index ["performance_id"], name: "index_dances_on_performance_id"
   end
 
   create_table "performances", force: :cascade do |t|
-    t.string "name"
+    t.string  "name"
+    t.integer "act_id"
+    t.index ["act_id"], name: "index_performances_on_act_id"
   end
 
   create_table "schedules", force: :cascade do |t|
