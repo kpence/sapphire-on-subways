@@ -24,7 +24,6 @@ gem 'haml'
 
 # This is for importing the data from the CSV efficiently
 gem 'activerecord-import'
-gem 'pg', '~> 0.21'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -43,6 +42,7 @@ gem 'jbuilder', '~> 2.5'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
+  gem "sqlite3", "~> 1.3.6"
 end
 
 group :development do
@@ -67,5 +67,7 @@ group :test, :development do
  gem 'launchy' # a useful debugging aid for user stories
 end
 
-
+group :production do
+  gem 'pg', '~> 0.21'
+end
 
