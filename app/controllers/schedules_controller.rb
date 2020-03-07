@@ -1,7 +1,7 @@
 class SchedulesController < ApplicationController
 
     def index
-      @schedules = Schedule.select(:filename) #Schedule.all
+      @schedules = Schedule.all #Schedule.select(:filename)
     end
 
     def import
