@@ -1,19 +1,16 @@
-default: &default
-  adapter: postgresql
-  encoding: unicode
-  pool: 5
- 
 development:
-  <<: *default
-  adapter: sqlite3
-  database: db/development.sqlite3
- 
+  adapter: postgresql
+  database: my_database_development
+  pool: 5
+  timeout: 5000
 test:
-  <<: *default
-  database: myapp_test
- 
+  adapter: postgresql
+  database: my_database_test
+  pool: 5
+  timeout: 5000
+
 production:
-  <<: *default
-  database: myapp_production
-  username: myapp
-  password: <%= ENV['MYAPP_DATABASE_PASSWORD'] %>
+  adapter: postgresql
+  database: my_database_production
+  pool: 5
+  timeout: 5000
