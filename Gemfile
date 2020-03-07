@@ -19,7 +19,8 @@ gem 'coffee-rails', '~> 4.2'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 gem 'rspec'
-
+gem 'shoulda'
+gem 'rspec-rails'
 gem 'haml'
 
 # This is for importing the data from the CSV efficiently
@@ -56,3 +57,12 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+group :test, :development do
+
+ gem 'cucumber-rails', require: false
+ gem 'cucumber-rails-training-wheels' # some pre-fabbed step definitions
+ gem 'database_cleaner' # to clear Cucumber’s test database between runs
+ gem 'capybara' # lets Cucumber pretend to be a web browser
+ gem 'launchy' # a useful debugging aid for user stories
+end
