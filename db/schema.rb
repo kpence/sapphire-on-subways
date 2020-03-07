@@ -10,6 +10,33 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 20200306210930) do
+
+  create_table "acts", force: :cascade do |t|
+    t.integer "number"
+    t.integer "schedule_id"
+    t.index ["schedule_id"], name: "index_acts_on_schedule_id"
+  end
+
+  create_table "dancers", force: :cascade do |t|
+    t.string "name"
+  end
+
+  create_table "dances", force: :cascade do |t|
+    t.integer "performance_id"
+    t.integer "dancer_id"
+    t.index ["dancer_id"], name: "index_dances_on_dancer_id"
+    t.index ["performance_id"], name: "index_dances_on_performance_id"
+  end
+
+  create_table "performances", force: :cascade do |t|
+    t.string  "name"
+    t.integer "act_id"
+    t.index ["act_id"], name: "index_performances_on_act_id"
+  end
+
+  create_table "schedules", force: :cascade do |t|
+    t.string "filename"
+  end
 
 end
