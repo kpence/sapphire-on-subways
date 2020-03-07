@@ -12,10 +12,13 @@
 
 ActiveRecord::Schema.define(version: 20200306210930) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "acts", force: :cascade do |t|
     t.integer "number"
     t.integer "schedule_id"
-    t.index ["schedule_id"], name: "index_acts_on_schedule_id"
+    t.index ["schedule_id"], name: "index_acts_on_schedule_id", using: :btree
   end
 
   create_table "dancers", force: :cascade do |t|
@@ -25,14 +28,14 @@ ActiveRecord::Schema.define(version: 20200306210930) do
   create_table "dances", force: :cascade do |t|
     t.integer "performance_id"
     t.integer "dancer_id"
-    t.index ["dancer_id"], name: "index_dances_on_dancer_id"
-    t.index ["performance_id"], name: "index_dances_on_performance_id"
+    t.index ["dancer_id"], name: "index_dances_on_dancer_id", using: :btree
+    t.index ["performance_id"], name: "index_dances_on_performance_id", using: :btree
   end
 
   create_table "performances", force: :cascade do |t|
     t.string  "name"
     t.integer "act_id"
-    t.index ["act_id"], name: "index_performances_on_act_id"
+    t.index ["act_id"], name: "index_performances_on_act_id", using: :btree
   end
 
   create_table "schedules", force: :cascade do |t|

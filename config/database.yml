@@ -11,6 +11,7 @@ default: &default
 
 development:
   <<: *default
+  adapter: sqlite3
   database: db/development.sqlite3
 
 # Warning: The database defined as "test" will be erased and
@@ -19,7 +20,9 @@ development:
 test:
   <<: *default
   database: db/test.sqlite3
-
+ 
 production:
   <<: *default
-  database: db/production.sqlite3
+  database: myapp_production
+  username: myapp
+  password: <%= ENV['MYAPP_DATABASE_PASSWORD'] %>
