@@ -74,11 +74,11 @@ class Schedule < ActiveRecord::Base
         act = Act.create!(number: 1, schedule_id: schedule.id)
         Act.create!(number: 2, schedule_id: schedule.id)
 
-        self.import(self.read_csv(file), 1)
+        schedule.import(self.read_csv(file), 1)
     end
 
     # This will override ActiveRecord::import
-    def self.import(schedule_params, act_number)
+    def import(schedule_params, act_number)
         performances = []
         schedule_params[:performance_names].each do |name|
           performances << Performance.new(name: name,
