@@ -4,20 +4,21 @@ class Schedule < ActiveRecord::Base
 
     has_many :acts
 
+    # Loads a file and returns status about whether it is a validly formatted csv file
     def self.check_csv(file)
       if file == nil
-        return false
+        return :no_file
       end
 
       begin
         csv = CSV.read(file.path, headers: false)
       rescue CSV::MalformedCSVError
-        return false
+        return :failed
       end
 
       # If the csv file is empty
       if csv == nil || csv.first == nil
-        return false
+        return :failed
       end
 
       minimum_dances = 1
@@ -27,33 +28,35 @@ class Schedule < ActiveRecord::Base
 
       # CSV must have (Minimum # of Performers) + 2 or more rows
       if csv.length < minimum_dancers + 2
-        return false
+        return :failed
 
       # CSV must have (Minimum # of Dances) + 2 or more columns
       elsif num_cols < minimum_dances + 2
-        return false
+        return :failed
 
       # First column must be "Active Members"
       elsif csv[0][0] != "Active Members"
-        return false
+        return :failed
       end
 
       # Cells after the second column and after the second row must be either Blank or x
       csv.drop(2).each do |row|
         if row.length != num_cols
-          return false
+          return :failed
         end
         boolmap = row.first(row.size-1).drop(2).map { |e| e != nil && e != 'x' }
         if boolmap.any?
           puts row.drop(2)
-          return false
+          return :failed
         end
       end
 
       # Valid csv format
-      return true
+      return :success
     end
 
+
+    # Read csv: loads a csv file and returns an object that will get passed to the import method
     def self.read_csv(file)
         csv = CSV.read(file.path, headers: true)
         performance_names = csv[0].drop(2).select {|e| e[0] != "TOTAL" }.map {|e| e[0]}
@@ -69,6 +72,8 @@ class Schedule < ActiveRecord::Base
         return { performance_names: performance_names, dancer_hashes: filtered_hashes }
     end
 
+
+    # Creates new schedule and imports data from CSV into it
     def self.upload_csv(file)
         schedule = Schedule.create!(filename: file.path)
         act = Act.create!(number: 1, schedule_id: schedule.id)
@@ -77,7 +82,8 @@ class Schedule < ActiveRecord::Base
         schedule.import(self.read_csv(file), 1)
     end
 
-    # This will override ActiveRecord::import
+
+    # Imports schedule parameters in bulk from schedule params object ( performance_names, dancer_hashes )
     def import(schedule_params, act_number)
         performances = []
         schedule_params[:performance_names].each do |name|
@@ -86,7 +92,7 @@ class Schedule < ActiveRecord::Base
         end
         Performance.import performances, recursive: true
 
-        # -- Below will import dances and dancers
+        # Below imports dances and dancers
         dances = []
         schedule_params[:dancer_hashes].each do |hash|
           dancer = Dancer.create!(name: hash["Active Members"])
