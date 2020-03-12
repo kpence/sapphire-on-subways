@@ -6,7 +6,9 @@ class SchedulesController < ApplicationController
     end
 
     def import
-        if Schedule.check_csv(params[:file])
+        if params[:file] == nil
+          redirect_to root_url, notice: "No file selected"
+        elsif Schedule.check_csv(params[:file])
           Schedule.upload_csv(params[:file])
           redirect_to root_url, notice: "Successfully Imported Data!!!"
         else

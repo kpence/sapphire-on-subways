@@ -31,6 +31,6 @@ Scenario: First CSV File Upload with Some Bad Data in File
   
 Scenario: Click Import with No File Selected
   Then I should see "Looks like you don't have any schedules yet! Click the button to upload your first one!"
-  When I click "Import from file"
+  When I press "Import from file"
   Then I should be on the DAS home page
   And I should see "No file selected"

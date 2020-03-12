@@ -5,6 +5,10 @@ class Schedule < ActiveRecord::Base
     has_many :acts
 
     def self.check_csv(file)
+      if file == nil
+        return false
+      end
+
       csv = CSV.read(file.path, headers: false)
 
       # If the csv file is empty
