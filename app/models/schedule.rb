@@ -9,7 +9,11 @@ class Schedule < ActiveRecord::Base
         return false
       end
 
-      csv = CSV.read(file.path, headers: false)
+      begin
+        csv = CSV.read(file.path, headers: false)
+      rescue CSV::MalformedCSVError
+        return false
+      end
 
       # If the csv file is empty
       if csv == nil || csv.first == nil
