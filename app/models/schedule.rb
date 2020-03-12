@@ -52,7 +52,7 @@ class Schedule < ActiveRecord::Base
 
     def self.read_csv(file)
         csv = CSV.read(file.path, headers: true)
-        headers = csv[0].drop(2).select {|e| e[0] != "TOTAL" }.map {|e| e[0]}
+        performance_names = csv[0].drop(2).select {|e| e[0] != "TOTAL" }.map {|e| e[0]}
 
         hashes = csv.drop(1).map do |row|
           row.to_h.select do |entry|
@@ -62,7 +62,7 @@ class Schedule < ActiveRecord::Base
 
         filtered_hashes = hashes.select {|hash| hash["Active Members"] != nil }
 
-        return { headers: headers, dancer_hashes: filtered_hashes }
+        return { performance_names: performance_names, dancer_hashes: filtered_hashes }
     end
 
     def self.upload_csv(file)
@@ -76,7 +76,7 @@ class Schedule < ActiveRecord::Base
     # This will override ActiveRecord::import
     def self.import(schedule_params, act_number)
         performances = []
-        schedule_params[:headers].each do |name|
+        schedule_params[:performance_names].each do |name|
           performances << Performance.new(name: name,
                                   act_id: Act.find_by_number(act_number).id)
         end
