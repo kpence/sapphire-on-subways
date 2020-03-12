@@ -1,108 +1,138 @@
 class Schedule < ActiveRecord::Base
-    require 'csv'
-    require 'activerecord-import'
+  require 'csv'
+  require 'activerecord-import'
 
-    has_many :acts
+  has_many :acts
 
-    # Loads a file and returns status about whether it is a validly formatted csv file
-    def self.check_csv(file)
-      if file == nil
-        return :no_file
-      end
+  # Some static properties of the csv file, like how many headers there are
+  @@min_dances = 1
+  @@min_dancers = 1
+  @@min_header_cols = 2 # for "name" and "email"
+  @@min_header_rows = 2 # for Performance Titles and Total dancers in each performance
+  @@possible_symbols = ['x', 'X', nil]
+  @@dancer_name_col_header = "Active Members"
 
-      begin
-        csv = CSV.read(file.path, headers: false)
-      rescue CSV::MalformedCSVError
-        return :failed
-      end
-
-      # If the csv file is empty
-      if csv == nil || csv.first == nil
-        return :failed
-      end
-
-      minimum_dances = 1
-      minimum_dancers = 1
-
-      num_cols = csv.first.length
-
-      # CSV must have (Minimum # of Performers) + 2 or more rows
-      if csv.length < minimum_dancers + 2
-        return :failed
-
-      # CSV must have (Minimum # of Dances) + 2 or more columns
-      elsif num_cols < minimum_dances + 2
-        return :failed
-
-      # First column must be "Active Members"
-      elsif csv[0][0] != "Active Members"
-        return :failed
-      end
-
-      # Cells after the second column and after the second row must be either Blank or x
-      csv.drop(2).each do |row|
-        if row.length != num_cols
-          return :failed
-        end
-        boolmap = row.first(row.size-1).drop(2).map { |e| e != nil && e != 'x' }
-        if boolmap.any?
-          puts row.drop(2)
-          return :failed
-        end
-      end
-
-      # Valid csv format
-      return :success
+  # Loads a file and returns status about whether it is a validly formatted csv file
+  # Returns a status code as a symbol in:
+  # [:no_file, :success, :failure]
+  def self.check_csv(file)
+    if file == nil
+      return :no_file
     end
 
+    begin
+      csv = CSV.read(file.path, headers: false)
+    rescue CSV::MalformedCSVError
+      return :failed
+    end
+    
+    if !self.min_csv_size?(csv) || 
+       !self.correct_csv_format?(csv)
+      return :failed
+    end
+    
+    return :success
+  end
+    
+  def self.min_csv_size?(csv)
+    if csv == nil || csv.first == nil
+      return false
+    end
+    
+    num_cols = csv.first.length
+    num_rows = csv.length
+    
+    # CSV must have these dimensions at a minimum
+    if num_rows < @@min_header_rows + @@min_dancers
+      return false
+    elsif num_cols < @@min_header_cols + @@min_dances
+      return false
+    end
+    
+    return true
+  end
 
-    # Read csv: loads a csv file and returns an object that will get passed to the import method
-    def self.read_csv(file)
-        csv = CSV.read(file.path, headers: true)
-        performance_names = csv[0].drop(2).select {|e| e[0] != "TOTAL" }.map {|e| e[0]}
-
-        hashes = csv.drop(1).map do |row|
-          row.to_h.select do |entry|
-            entry != "TOTAL" && entry != nil
-          end
-        end
-
-        filtered_hashes = hashes.select {|hash| hash["Active Members"] != nil }
-
-        return { performance_names: performance_names, dancer_hashes: filtered_hashes }
+  # Check simple features in csv, such as use of 'x' and '' and "Active Members"
+  def self.correct_csv_format?(csv)
+    if csv[0][0] != @@dancer_name_col_header
+      return false
     end
 
+    num_cols = csv.first.length
+    
+    # Cells after the second column and after the second row (except the last row) 
+    # Must be one of the predefined symbols
+    csv.drop(2).each do |row|
+      if row.length != num_cols
+        return false
+      end
+      cells_of_interest = row.first(row.size-1).drop(@@min_header_cols)
+      boolmap = cells_of_interest.map { |e| !@@possible_symbols.include? e }
+      if boolmap.any?
+        puts "Erroneous row: " + row
+        return false
+      end
+    end
+    
+    return true
+  end
 
-    # Creates new schedule and imports data from CSV into it
-    def self.upload_csv(file)
-        schedule = Schedule.create!(filename: file.path)
-        act = Act.create!(number: 1, schedule_id: schedule.id)
-        Act.create!(number: 2, schedule_id: schedule.id)
+  # Loads a csv file and returns an object that will get passed to the import method
+  # Returns a hash with 2 keys:
+  # :performance_names => list of names
+  # :dancer_hashes => list of hashes for dancers with the following keys:
+  #                   :name => name of dancer
+  #                   :dances => list of performances dancer appears in
+  def self.read_csv(file)
+    csv = CSV.read(file.path, headers: true)
+    
+    # Performance names are in row 1, all columns except the first 2 and last
+    cells_of_interest = csv[0].first(csv[0].size-1).drop(@@min_header_cols)
+    # Since csv[0] includes the first two rows, isolate the name:
+    performance_names = cells_of_interest.map {|e| e[0]}
 
-        schedule.import(self.read_csv(file), 1)
+    # Drop the second header row and choose all the dances the dances has an "x" under
+    dancer_hashes = csv.drop(1).map do |row|
+      clean_row = row.to_h.select do |entry|
+        entry != "TOTAL" && entry != nil && row[entry] != nil
+      end
+      clean_row unless clean_row.empty?
+    end.compact
+    
+    # Now, dancer_hashes is a list of hashes like:
+    # {"Active Members"=>"Joe Smith", "Lost Without You"=>"x",...}
+    
+    # Convert the format of the hash to something more readable:
+    # {"name": "Joe Smith", "dances": ["Lost Without You",...] }
+    # With just these two predictable keys
+    dancer_hashes = dancer_hashes.map do |dancer_hash|
+      new_dancer_hash = {}
+      new_dancer_hash["name"] = dancer_hash[@@dancer_name_col_header]
+      new_dancer_hash["dances"] = dancer_hash.select do |entry|
+        performance_names.include? entry
+      end.keys
+      
+      new_dancer_hash
     end
 
+    return { performance_names: performance_names, dancer_hashes: dancer_hashes }
+  end
 
-    # Imports schedule parameters in bulk from schedule params object ( performance_names, dancer_hashes )
-    def import(schedule_params, act_number)
-        performances = []
-        schedule_params[:performance_names].each do |name|
-          performances << Performance.new(name: name,
-                                  act_id: Act.find_by_number(act_number).id)
-        end
-        Performance.import performances, recursive: true
-
-        # Below imports dances and dancers
-        dances = []
-        schedule_params[:dancer_hashes].each do |hash|
-          dancer = Dancer.create!(name: hash["Active Members"])
-          hash.drop(1).each do |key,value|
-            dances << Dance.new(performance_id: Performance.find_by_name(key).id,
-                                dancer_id: dancer.id)
-          end
-        end
-        Dance.import dances, recursive: true
-
+  # Imports schedule parameters in bulk from schedule object returned by read_csv
+  # by default, entire schedule is put into act 1
+  def import(schedule_params)
+    act1_id = Act.find_by_number(1).id
+    schedule_params[:performance_names].each do |name|
+      Performance.create!(name: name, act_id: act1_id)
     end
 
+    # Create each dancer by name and insert each of their dances by name
+    schedule_params[:dancer_hashes].each do |dancer_hash|
+      dancer = Dancer.create!(name: dancer_hash["name"])
+      dancer_hash["dances"].each do |dance_name|
+        Dance.create!(performance_id: Performance.find_by_name(dance_name).id,
+                      dancer_id: dancer.id)
+      end
+    end
+  end
 end
