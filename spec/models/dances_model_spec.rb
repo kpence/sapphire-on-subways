@@ -1,11 +1,14 @@
-require_relative './rails_helper.rb'
-require_relative '../app/models/dance.rb'
+require 'rails_helper'
 
-describe Dance, type: :model do 
+describe Dance do
     it 'has a performance it belongs to' do
         should belong_to(:performance)
     end
     it 'has a dancer it belongs to' do
         should belong_to(:dancer)
+    end
+    
+    describe "#method" do
+       it 'should do something'
     end
 end

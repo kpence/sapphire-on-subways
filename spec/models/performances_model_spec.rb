@@ -1,7 +1,6 @@
-require_relative './rails_helper.rb'
-require_relative '../app/models/performance.rb'
+require 'rails_helper'
 
-describe Performance, type: :model do 
+describe Performance do
     it 'has a act it belongs to' do
         should belong_to(:act)
     end
@@ -10,5 +9,9 @@ describe Performance, type: :model do
     end
     it 'has many dancers it belongs to' do
         should have_many(:dancers)
+    end
+    
+    describe "#method" do
+       it 'should do something'
     end
 end
