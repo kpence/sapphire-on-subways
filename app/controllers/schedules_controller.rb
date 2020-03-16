@@ -1,15 +1,15 @@
 class SchedulesController < ApplicationController
   def index
-    @schedules = Schedule.all #Schedule.select(:filename)
+    @schedules = Schedule.all
   end
 
   # For importing a schedule from a CSV file in params
   def import
     case Schedule.check_csv(params[:file])
     when :no_file
-      redirect_to root_url, notice: "No file selected"
+      notice_msg = "No file selected"
     when :failed
-      redirect_to root_url, notice: "Failed to Import Data!!!"
+      notice_msg = "Failed to Import Data!!!"
 
     when :success
       # On success, materialize the schedule with 2 acts, and send the data read
@@ -19,7 +19,8 @@ class SchedulesController < ApplicationController
       Act.create!(number: 1, schedule_id: schedule.id)
       Act.create!(number: 2, schedule_id: schedule.id)
       schedule.import(csv_data)
-      redirect_to root_url, notice: "Successfully Imported Data!!!"
+      notice_msg = "Successfully Imported Data!!!"
     end
+    redirect_to schedules_path, notice: notice_msg
   end
 end
