@@ -17,10 +17,9 @@ gem 'coffee-rails', '~> 4.2'
 
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
-gem 'rspec'
-gem 'shoulda'
-gem 'rspec-rails'
 gem 'haml'
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # This is for importing the data from the CSV efficiently
 gem 'activerecord-import'
@@ -41,12 +40,20 @@ gem 'jbuilder', '~> 2.5'
 
 group :test do
   gem 'simplecov', require: false
+  gem 'rspec'
+  gem 'shoulda'
+  gem 'rspec-rails'
 end
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
   gem "sqlite3", "~> 1.3.6"
+  gem 'cucumber-rails', require: false
+  gem 'cucumber-rails-training-wheels' # some pre-fabbed step definitions
+  gem 'database_cleaner' # to clear Cucumber’s test database between runs
+  gem 'capybara' # lets Cucumber pretend to be a web browser
+  gem 'launchy' # a useful debugging aid for user stories
 end
 
 group :development do
@@ -57,17 +64,6 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
 # Use SCSS for stylesheets
-end
-
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
-
-group :test, :development do
- gem 'cucumber-rails', require: false
- gem 'cucumber-rails-training-wheels' # some pre-fabbed step definitions
- gem 'database_cleaner' # to clear Cucumber’s test database between runs
- gem 'capybara' # lets Cucumber pretend to be a web browser
- gem 'launchy' # a useful debugging aid for user stories
 end
 
 group :production do
