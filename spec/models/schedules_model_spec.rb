@@ -112,7 +112,7 @@ describe Schedule do
                                                    :dancer_id => @fake_dancer.id)
                                                    
            @fake_schedule_params = {:performance_names => ["Perf 1", "Perf 2"],
-                                    :dancer_hashes => [{:name => @fake_dancer.name, :dances => ["Dance 1", "Dance 2"] }]
+                                    :dancer_hashes => [{"name" => @fake_dancer.name, "dances" => ["Dance 1", "Dance 2"] }]
            }
         end
         

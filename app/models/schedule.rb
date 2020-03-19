@@ -134,8 +134,8 @@ class Schedule < ActiveRecord::Base
 
     # Create each dancer by name and insert each of their dances by name
     schedule_params[:dancer_hashes].each do |dancer_hash|
-      dancer = Dancer.create!(name: dancer_hash[:name])
-      dancer_hash[:dances].each do |dance_name|
+      dancer = Dancer.create!(name: dancer_hash["name"])
+      dancer_hash["dances"].each do |dance_name|
         Dance.create!(performance_id: Performance.find_by_name(dance_name).id,
                       dancer_id: dancer.id)
       end
