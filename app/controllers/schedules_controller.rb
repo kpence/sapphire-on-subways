@@ -1,13 +1,26 @@
 class SchedulesController < ApplicationController
+  def index
+    @schedules = Schedule.all
+  end
 
-    def index
-      @schedules = Schedule.all #Schedule.select(:filename)
+  # For importing a schedule from a CSV file in params
+  def import
+    case Schedule.check_csv(params[:file])
+    when :no_file
+      notice_msg = "No file selected"
+    when :failed
+      notice_msg = "Failed to Import Data!!!"
+
+    when :success
+      # On success, materialize the schedule with 2 acts, and send the data read
+      # from the CSV file (by default, all performances in act 1)
+      csv_data = Schedule.read_csv(params[:file])
+      schedule = Schedule.create!(filename: params[:file].path)
+      Act.create!(number: 1, schedule_id: schedule.id)
+      Act.create!(number: 2, schedule_id: schedule.id)
+      schedule.import(csv_data)
+      notice_msg = "Successfully Imported Data!!!"
     end
-
-    def import
-        Schedule.upload_a_csv(params[:file])
-        redirect_to root_url, notice: "Successfully Imported Data!!!"
-    end
-
-
+    redirect_to schedules_path, notice: notice_msg
+  end
 end

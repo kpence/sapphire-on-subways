@@ -1,7 +1,6 @@
-require_relative './rails_helper.rb'
-require_relative '../app/models/performance.rb'
+require 'rails_helper'
 
-describe Performance, type: :model do 
+describe Performance do
     it 'has a act it belongs to' do
         should belong_to(:act)
     end
