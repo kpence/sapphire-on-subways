@@ -10,8 +10,4 @@ describe Performance do
     it 'has many dancers it belongs to' do
         should have_many(:dancers)
     end
-    
-    describe "#method" do
-       it 'should do something'
-    end
 end

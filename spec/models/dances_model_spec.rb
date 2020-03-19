@@ -7,8 +7,4 @@ describe Dance do
     it 'has a dancer it belongs to' do
         should belong_to(:dancer)
     end
-    
-    describe "#method" do
-       it 'should do something'
-    end
 end

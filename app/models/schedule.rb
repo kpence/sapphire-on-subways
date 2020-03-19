@@ -42,6 +42,7 @@ class Schedule < ActiveRecord::Base
     num_cols = csv.first.length
     num_rows = csv.length
     
+    
     # CSV must have these dimensions at a minimum
     if num_rows < @@min_header_rows + @@min_dancers
       return false
@@ -54,22 +55,25 @@ class Schedule < ActiveRecord::Base
 
   # Check simple features in csv, such as use of 'x' and '' and "Active Members"
   def self.correct_csv_format?(csv)
-    if csv[0][0] != @@dancer_name_col_header
-      return false
-    end
+    #if csv[0][0] != @@dancer_name_col_header
+    #  return false
+    #end
 
+    # Check that each row has the same number of columns
     num_cols = csv.first.length
-    
-    # Cells after the second column and after the second row (except the last row) 
-    # Must be one of the predefined symbols
     csv.drop(2).each do |row|
       if row.length != num_cols
         return false
       end
+    end
+    
+    # Cells after the second column and after the second row (except the last row) 
+    # Must be one of the predefined symbols
+    csv.drop(2).each do |row|
       cells_of_interest = row.first(row.size-1).drop(@@min_header_cols)
       boolmap = cells_of_interest.map { |e| !@@possible_symbols.include? e }
       if boolmap.any?
-        puts "Erroneous row: " + row
+        puts "Erroneous row: " + row.to_s
         return false
       end
     end
@@ -93,8 +97,10 @@ class Schedule < ActiveRecord::Base
 
     # Drop the second header row and choose all the dances the dances has an "x" under
     dancer_hashes = csv.drop(1).map do |row|
-      clean_row = row.to_h.select do |entry|
-        entry != "TOTAL" && entry != nil && row[entry] != nil
+      clean_row = row.to_h.select do |key|
+        key != "TOTAL" && 
+        key != nil && 
+        row.to_h[key] != nil
       end
       clean_row unless clean_row.empty?
     end.compact
@@ -128,8 +134,8 @@ class Schedule < ActiveRecord::Base
 
     # Create each dancer by name and insert each of their dances by name
     schedule_params[:dancer_hashes].each do |dancer_hash|
-      dancer = Dancer.create!(name: dancer_hash["name"])
-      dancer_hash["dances"].each do |dance_name|
+      dancer = Dancer.create!(name: dancer_hash[:name])
+      dancer_hash[:dances].each do |dance_name|
         Dance.create!(performance_id: Performance.find_by_name(dance_name).id,
                       dancer_id: dancer.id)
       end
