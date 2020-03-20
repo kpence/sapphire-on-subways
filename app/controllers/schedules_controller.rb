@@ -19,7 +19,6 @@ class SchedulesController < ApplicationController
       Act.create!(number: 1, schedule_id: schedule.id)
       Act.create!(number: 2, schedule_id: schedule.id)
       schedule.import(csv_data)
-      flash[:schedule_id] = schedule.id
       notice_msg = "Successfully Imported Data!!!"
       redirect_to edit_schedule_path(id: schedule.id), notice: notice_msg
       return
@@ -28,12 +27,9 @@ class SchedulesController < ApplicationController
   end
   
   def edit
-    if flash[:schedule_id] == nil
-      redirect_to schedules_path, notice: "No schedule id was given to edit."
-    end
-    @schedule = Schedule.find(flash[:schedule_id])
+    @schedule = Schedule.find(params[:id])
     if @schedule == nil
-      redirect_to schedules_path, notice: "Schedule with id #{flash[:schedule_id]} could not be found."
+      redirect_to schedules_path, notice: "Schedule with id #{params[:id]} could not be found."
     end
   end
 end

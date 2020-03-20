@@ -4,8 +4,8 @@ describe SchedulesController do
   
   describe '#index' do
     it 'should call Schedule#all to get all schedules in the DB' do
-    expect(Schedule).to receive(:all)
-    get :index
+      expect(Schedule).to receive(:all)
+      get :index
     end
   end
     
@@ -38,7 +38,6 @@ describe SchedulesController do
                                          :id => @fake_schedule.id)
           subject
           expect(flash[:notice]).to eq "Successfully Imported Data!!!"
-          expect(flash[:schedule_id]).to eq @fake_schedule.id
         end
         
         it 'should create the schedule/acts 1 and 2 and import the data' do
@@ -106,7 +105,24 @@ describe SchedulesController do
   end
     
   describe "#edit" do
+    fixtures :schedules
+    before :each do
+      @fake_schedule = schedules(:MySchedule)
+    end
     
+    it 'should look up the schedule by id' do
+      expect(Schedule).to receive(:find).and_return(@fake_schedule)
+      get :edit, params: {id: @fake_schedule.id}
+    end
+    
+    it 'should redirect back to the upload page if it cannot find that schedule' do
+      allow(Schedule).to receive(:find).and_return(nil)
+      get :edit, params: {id: @fake_schedule.id}
+      
+      expect(subject).to redirect_to(schedules_path)
+      expect(controller).to set_flash[:notice]
+      expect(flash[:notice]).to eq "Schedule with id " + @fake_schedule.id.to_s + " could not be found."
+    end
   end
 end
 
