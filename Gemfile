@@ -43,6 +43,7 @@ group :test do
   gem 'rspec'
   gem 'shoulda'
   gem 'rspec-rails'
+  gem 'ZenTest' # Automatic rspec results
 end
 
 group :development, :test do
