@@ -73,7 +73,6 @@ class Schedule < ActiveRecord::Base
       cells_of_interest = row.first(row.size-1).drop(@@min_header_cols)
       boolmap = cells_of_interest.map { |e| !@@possible_symbols.include? e }
       if boolmap.any?
-        puts "Erroneous row: " + row.to_s
         return false
       end
     end
