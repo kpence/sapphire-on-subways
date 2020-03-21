@@ -30,6 +30,14 @@ class SchedulesController < ApplicationController
     @schedule = Schedule.find(params[:id])
     if @schedule == nil
       redirect_to schedules_path, notice: "Schedule with id #{params[:id]} could not be found."
+      return
+    end
+    
+    @ordered_performances = {}
+    @schedule.acts.each do |act|
+      @ordered_performances[act.number] = act.performances.sort_by do |perf|
+        perf.schedule_index
+      end
     end
   end
 end

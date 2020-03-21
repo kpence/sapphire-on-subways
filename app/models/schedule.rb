@@ -128,8 +128,11 @@ class Schedule < ActiveRecord::Base
   # by default, entire schedule is put into act 1
   def import(schedule_params)
     act1_id = Act.find_by_number(1).id
-    schedule_params[:performance_names].each do |name|
-      Performance.create!(name: name, act_id: act1_id)
+    total_performances = schedule_params[:performance_names].length()
+    schedule_params[:performance_names].each_with_index do |name, index|
+      Performance.create!(name: name, act_id: act1_id,
+                          scheduled: true, schedule_index: index+1,
+                          locked: (index+1 == 1) || (index+1 == total_performances))
     end
 
     # Create each dancer by name and insert each of their dances by name

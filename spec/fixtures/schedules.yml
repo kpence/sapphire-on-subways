@@ -1,3 +1,6 @@
 MySchedule:
-    id: 1000
-    filename: schedule1.csv
+  id: 1
+  filename: schedule1.csv
+MyOtherSchedule:
+  id: 2
+  filename: schedule2.csv

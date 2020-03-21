@@ -102,9 +102,9 @@ describe Schedule do
            # In order to clear the database after testing
 
            # Fake act
-           @fake_act_1 = acts(:Act1)
-           @fake_performance = performances(:MyDance)
-           @fake_dancer = dancers(:Joe)
+           @fake_act_1 = acts(:MyAct1)
+           @fake_performance = performances(:MyPerf1)
+           @fake_dancer = dancers(:MyDancer1)
            @fake_schedule = schedules(:MySchedule)
            
            # Fake dancer

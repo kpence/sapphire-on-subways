@@ -1,0 +1,101 @@
+MyDance1:
+  id: 1
+  performance_id: 1
+  dancer_id: 1
+MyDance2:
+  id: 2
+  performance_id: 2
+  dancer_id: 1
+MyDance3:
+  id: 3
+  performance_id: 3
+  dancer_id: 1
+MyDance4:
+  id: 4
+  performance_id: 4
+  dancer_id: 1
+MyDance5:
+  id: 5
+  performance_id: 2
+  dancer_id: 2
+MyDance6:
+  id: 6
+  performance_id: 4
+  dancer_id: 2
+MyDance7:
+  id: 7
+  performance_id: 6
+  dancer_id: 2
+MyDance8:
+  id: 8
+  performance_id: 3
+  dancer_id: 3
+MyDance9:
+  id: 9
+  performance_id: 5
+  dancer_id: 3
+MyDance10:
+  id: 10
+  performance_id: 4
+  dancer_id: 4
+MyDance11:
+  id: 11
+  performance_id: 5
+  dancer_id: 4
+MyDance12:
+  id: 12
+  performance_id: 6
+  dancer_id: 4
+MyDance13:
+  id: 13
+  performance_id: 1
+  dancer_id: 5
+MyDance14:
+  id: 14
+  performance_id: 6
+  dancer_id: 5
+MyDance15:
+  id: 15
+  performance_id: 2
+  dancer_id: 6
+MyDance16:
+  id: 16
+  performance_id: 3
+  dancer_id: 6
+MyDance17:
+  id: 17
+  performance_id: 4
+  dancer_id: 6
+
+MyOtherDance1:
+  id: 18
+  performance_id: 4
+  dancer_id: 1
+MyOtherDance2:
+  id: 19
+  performance_id: 2
+  dancer_id: 2
+MyOtherDance3:
+  id: 20
+  performance_id: 6
+  dancer_id: 2
+MyOtherDance4:
+  id: 21
+  performance_id: 5
+  dancer_id: 3
+MyOtherDance5:
+  id: 22
+  performance_id: 5
+  dancer_id: 4
+MyOtherDance6:
+  id: 23
+  performance_id: 1
+  dancer_id: 5
+MyOtherDance7:
+  id: 24
+  performance_id: 6
+  dancer_id: 5
+MyOtherDance8:
+  id: 25
+  performance_id: 3
+  dancer_id: 6

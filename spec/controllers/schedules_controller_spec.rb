@@ -105,7 +105,7 @@ describe SchedulesController do
   end
     
   describe "#edit" do
-    fixtures :schedules
+    fixtures :schedules, :acts, :performances
     before :each do
       @fake_schedule = schedules(:MySchedule)
     end
@@ -122,6 +122,34 @@ describe SchedulesController do
       expect(subject).to redirect_to(schedules_path)
       expect(controller).to set_flash[:notice]
       expect(flash[:notice]).to eq "Schedule with id " + @fake_schedule.id.to_s + " could not be found."
+    end
+    
+    context "It has my schedule" do
+      before :each do
+        allow(Schedule).to receive(:find).and_return(@fake_schedule)
+        get :edit, params: {id: @fake_schedule.id}
+        @ordered_performances = controller.instance_variable_get(:@ordered_performances)
+      end
+      
+      it "should assign a dictionary that holds all the acts' performances" do
+        expect(@ordered_performances).not_to eq(nil)
+        
+        # Good enough if it has the same number of acts and performances
+        expect(@ordered_performances.length()).to eq(@fake_schedule.acts.length())
+        @fake_acts = @fake_schedule.acts
+        @ordered_performances.each do |act_number, perf_list|
+          @fake_performances = @fake_acts.find_by_number(act_number).performances
+          expect(perf_list.length()).to eq(@fake_performances.length())
+        end
+      end
+      it 'should order the performances in each act by their schedule_index field' do
+        @ordered_performances.each do |act_number, perf_list|
+          correct_order = perf_list.sort_by {|d| d.schedule_index }
+          given_order = perf_list
+          expect(given_order).to eq(correct_order)
+        end
+      end
+      # will need to add more here...
     end
   end
 end
