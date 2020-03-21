@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200306210930) do
+ActiveRecord::Schema.define(version: 20200320224656) do
 
   create_table "acts", force: :cascade do |t|
     t.integer "number"
@@ -32,6 +32,9 @@ ActiveRecord::Schema.define(version: 20200306210930) do
   create_table "performances", force: :cascade do |t|
     t.string  "name"
     t.integer "act_id"
+    t.integer "schedule_index"
+    t.boolean "scheduled"
+    t.boolean "locked"
     t.index ["act_id"], name: "index_performances_on_act_id"
   end
 

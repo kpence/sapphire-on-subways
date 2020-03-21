@@ -15,6 +15,9 @@ module NavigationHelpers
 
     when /^the DAS home\s?page$/
       '/schedules'
+    
+    when /^(the)?\s?Edit Schedule(s)?\s?page$/
+      edit_schedule_path(id: Schedule.first.id)
 
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
