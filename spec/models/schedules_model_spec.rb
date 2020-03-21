@@ -1,4 +1,6 @@
 require 'rails_helper'
+require 'database_cleaner/active_record'
+
 
 describe Schedule do
     it 'should have many acts' do
@@ -93,9 +95,12 @@ describe Schedule do
     end
     
     describe "#import" do
+        # Clean the database after testing
         fixtures :dancers, :acts, :performances, :schedules
         
         before :each do
+           # In order to clear the database after testing
+
            # Fake act
            @fake_act_1 = acts(:Act1)
            @fake_performance = performances(:MyDance)
@@ -109,13 +114,13 @@ describe Schedule do
            allow(Performance).to receive(:find_by_name).and_return(@fake_performance)
            
            allow(Dance).to receive(:create!).with(:performance_id => @fake_performance.id,
-                                                   :dancer_id => @fake_dancer.id)
+                                                  :dancer_id => @fake_dancer.id)
                                                    
            @fake_schedule_params = {:performance_names => ["Perf 1", "Perf 2"],
                                     :dancer_hashes => [{"name" => @fake_dancer.name, "dances" => ["Dance 1", "Dance 2"] }]
            }
         end
-        
+
         it 'should look for act 1 and put all the performances in act 1' do
            expect(Act).to receive(:find_by_number).and_return(@fake_act_1)
            expect(Performance).to receive(:create!).with(hash_including :act_id => @fake_act_1.id).exactly(2).times
@@ -124,5 +129,6 @@ describe Schedule do
         end
         #it 'should create each dancer and associate dancers with their dances'
         #it 'should associate dances with the appropriate performance'
-    end
+      end
+
 end
