@@ -95,40 +95,51 @@ describe Schedule do
     end
     
     describe "#import" do
-        # Clean the database after testing
         fixtures :dancers, :acts, :performances, :schedules
-        
+        after :each do
+           @fake_schedule.import(@fake_schedule_params)
+        end
         before :each do
-           # In order to clear the database after testing
-
            # Fake act
            @fake_act_1 = acts(:MyAct1)
-           @fake_performance = performances(:MyPerf1)
+           @fake_performance_1 = performances(:MyPerf1)
+           @fake_performance_2 = performances(:MyPerf2)
            @fake_dancer = dancers(:MyDancer1)
            @fake_schedule = schedules(:MySchedule)
+        
            
            # Fake dancer
            allow(Dancer).to receive(:create!).and_return(@fake_dancer)
            
            # Fake performance
-           allow(Performance).to receive(:find_by_name).and_return(@fake_performance)
+           allow(Performance).to receive(:find_by_name).and_return(@fake_performance_1)
            
-           allow(Dance).to receive(:create!).with(:performance_id => @fake_performance.id,
+           allow(Dance).to receive(:create!).with(:performance_id => @fake_performance_1.id,
                                                   :dancer_id => @fake_dancer.id)
                                                    
-           @fake_schedule_params = {:performance_names => ["Perf 1", "Perf 2"],
-                                    :dancer_hashes => [{"name" => @fake_dancer.name, "dances" => ["Dance 1", "Dance 2"] }]
+           @fake_schedule_params = {:performance_names => ["MyPerf1", "MyPerf2"],
+                                    :dancer_hashes => [{"name" => @fake_dancer.name, "dances" => ["MyPerf1", "MyPerf2"] }]
            }
         end
 
         it 'should look for act 1 and put all the performances in act 1' do
            expect(Act).to receive(:find_by_number).and_return(@fake_act_1)
            expect(Performance).to receive(:create!).with(hash_including :act_id => @fake_act_1.id).exactly(2).times
-           
-           @fake_schedule.import(@fake_schedule_params)
         end
-        #it 'should create each dancer and associate dancers with their dances'
-        #it 'should associate dances with the appropriate performance'
+        it 'should create each dancer and associate dancers with their dances' do
+           expect(Dancer).to receive(:create!).with(hash_including :name => @fake_dancer.name)
+                                               .exactly(1).times.and_return(@fake_dancer)
+           expect(Dance).to receive(:create!).with(hash_including :dancer_id=> @fake_dancer.id).exactly(2).times
+
+        end
+        it 'should associate dances with the appropriate performance' do
+           expect(Performance).to receive(:find_by_name).and_return(@fake_performance_1)
+           expect(Performance).to receive(:find_by_name).and_return(@fake_performance_2)
+           expect(Dance).to receive(:create!).with(hash_including :performance_id=>@fake_performance_1.id,
+                                                :dancer_id=> @fake_dancer.id)
+           expect(Dance).to receive(:create!).with(hash_including :performance_id=>@fake_performance_2.id,
+                                                :dancer_id=> @fake_dancer.id)
+        end
       end
 
 end
