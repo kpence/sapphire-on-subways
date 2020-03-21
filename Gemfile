@@ -44,7 +44,6 @@ group :test do
   gem 'shoulda'
   gem 'rspec-rails'
   gem 'database_cleaner-active_record'
-  gem 'ZenTest' # Automatic rspec results
 end
 
 group :development, :test do
