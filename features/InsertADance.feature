@@ -38,7 +38,7 @@ Scenario: Insert a Dance to the end of Act 1
   When: I press the + at the bottom of Act 1
   Then: Type in the name "InsertPerformance1" for the new performance
   And: I should see the following performances in a table
-    | Act 1                     |
+  | Act 1                     |
   | I Don’t Think About You   |
   | Sugar                     |
   | Sorrow                    |

@@ -149,12 +149,9 @@ describe SchedulesController do
           expect(given_order).to eq(correct_order)
         end
       end
-      # will need to add more here...
     end
   end
-end
-
-
+  
   describe '#insert' do
     fixtures :schedules, :acts, :performances
     
@@ -181,4 +178,4 @@ end
       end
     end
   end
-
+end
