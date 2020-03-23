@@ -46,3 +46,7 @@ MyOtherPerf6:
   id: 12
   act_id: 4
   name: MyOtherPerf6
+InsertPerformance1:
+  id: 999
+  act_id: 1
+  name: InsertPerformance1
