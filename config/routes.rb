@@ -5,6 +5,12 @@ Rails.application.routes.draw do
       post :import
     }
   end
+  
+  resources :performances do
+    collection {
+      put :sort
+    }
+  end
 
   root :to => redirect('/schedules')
 

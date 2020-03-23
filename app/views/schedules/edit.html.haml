@@ -7,7 +7,8 @@
     %thead
       %tr
         %th= "Act #{act.number}"
-    %tbody{:class => "draggable"}
+    %tbody{:class => "sortable", "data-url" => sort_performances_path}
       - @ordered_performances[act.number].each do |perf|
-        %tr
-          %td= "Index: " + perf.schedule_index.to_s + " " + perf.name + " scheduled: " + perf.scheduled.to_s + " locked: " + perf.locked.to_s
+        %tr{:id => dom_id(perf)}
+          %td
+            = perf.name + " scheduled: " + perf.scheduled.to_s + " locked: " + perf.locked.to_s

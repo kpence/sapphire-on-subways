@@ -36,7 +36,7 @@ class SchedulesController < ApplicationController
     @ordered_performances = {}
     @schedule.acts.each do |act|
       @ordered_performances[act.number] = act.performances.sort_by do |perf|
-        perf.schedule_index
+        perf.position
       end
     end
   end

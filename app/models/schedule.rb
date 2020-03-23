@@ -130,7 +130,7 @@ class Schedule < ActiveRecord::Base
     total_performances = schedule_params[:performance_names].length()
     schedule_params[:performance_names].each_with_index do |name, index|
       Performance.create!(name: name, act_id: act1_id,
-                          scheduled: true, schedule_index: index+1,
+                          scheduled: true, position: index+1,
                           locked: (index+1 == 1) || (index+1 == total_performances))
     end
 
