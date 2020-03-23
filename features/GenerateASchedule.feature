@@ -8,7 +8,7 @@ Background: Start on the homepage
   When I press "Import from file"
   Then I should be on the Edit Schedule page
   And I should see "Successfully Imported Data!!!"
-  
+  """
 Scenario: See a Schedule after uploading first data
   Then I should see the following performances in a table
   | Act 1                     |
@@ -35,3 +35,4 @@ Scenario: See a Schedule after uploading first data
   | "Nails, Hair, Hips, Heels"|
   And I should see the following table
   | Act 2                     |
+  """
