@@ -7,7 +7,7 @@
     %thead
       %tr
         %th= "Act #{act.number}"
-    %tbody
+    %tbody{:class => "draggable"}
       - @ordered_performances[act.number].each do |perf|
         %tr
           %td= "Index: " + perf.schedule_index.to_s + " " + perf.name + " scheduled: " + perf.scheduled.to_s + " locked: " + perf.locked.to_s
