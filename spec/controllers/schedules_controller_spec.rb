@@ -144,7 +144,7 @@ describe SchedulesController do
       end
       it 'should order the performances in each act by their schedule_index field' do
         @ordered_performances.each do |act_number, perf_list|
-          correct_order = perf_list.sort_by {|d| d.schedule_index }
+          correct_order = perf_list.sort_by {|d| d.position }
           given_order = perf_list
           expect(given_order).to eq(correct_order)
         end

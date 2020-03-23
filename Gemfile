@@ -24,6 +24,11 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 # This is for importing the data from the CSV efficiently
 gem 'activerecord-import'
 
+# for click-and-drag functionality
+gem 'rails-ujs', '~> 5.1.0.beta1'
+gem 'jquery-ui-rails', '~> 5.0', '>= 5.0.5'
+gem 'acts_as_list'
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks

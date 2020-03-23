@@ -2,59 +2,59 @@ MyPerf1:
   id: 1
   act_id: 1
   name: MyPerf1
-  schedule_index: 1
+  position: 1
 MyPerf2:
   id: 2
   act_id: 1
   name: MyPerf2
-  schedule_index: 2
+  position: 2
 MyPerf3:
   id: 3
   act_id: 1
   name: MyPerf3
-  schedule_index: 6
+  position: 6
 MyPerf4:
   id: 4
   act_id: 2
   name: MyPerf4
-  schedule_index: 3
+  position: 3
 MyPerf5:
   id: 5
   act_id: 2
   name: MyPerf5
-  schedule_index: 4
+  position: 4
 MyPerf6:
   id: 6
   act_id: 2
   name: MyPerf6
-  schedule_index: 5
+  position: 5
 MyOtherPerf1:
   id: 7
   act_id: 3
   name: MyOtherPerf1
-  schedule_index: 6
+  position: 6
 MyOtherPerf2:
   id: 8
   act_id: 3
   name: MyOtherPerf2
-  schedule_index: 5
+  position: 5
 MyOtherPerf3:
   id: 9
   act_id: 3
   name: MyOtherPerf3
-  schedule_index: 4
+  position: 4
 MyOtherPerf4:
   id: 10
   act_id: 4
   name: MyOtherPerf4
-  schedule_index: 3
+  position: 3
 MyOtherPerf5:
   id: 11
   act_id: 4
   name: MyOtherPerf5
-  schedule_index: 2
+  position: 2
 MyOtherPerf6:
   id: 12
   act_id: 4
   name: MyOtherPerf6
-  schedule_index: 1
+  position: 1
