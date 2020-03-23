@@ -16,7 +16,10 @@
 
 # For test coverage:
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start do
+  add_filter "spec/spec_helper.rb"
+  add_filter "spec/rails_helper.rb"
+end
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
