@@ -2,6 +2,8 @@
 
 %h3= "Use this page to edit your schedule!"
 
+  
+
 - @schedule.acts.each do |act|
   %table{:id => "act"+act.number.to_s}
     %thead
@@ -10,4 +12,14 @@
     %tbody
       - @ordered_performances[act.number].each do |perf|
         %tr
-          %td= "Index: " + perf.schedule_index.to_s + " " + perf.name + " scheduled: " + perf.scheduled.to_s + " locked: " + perf.locked.to_s
+          %td= "Index: " + perf.schedule_index.to_s + " " + perf.name + " scheduled: " + perf.scheduled.to_s + " locked: " + perf.locked.to_s + " id: " + perf.id.to_s
+          %td 
+            = form_tag insert_schedules_path do
+              = text_field_tag :new_performance_name
+              = hidden_field_tag :act_id, act.number
+              = hidden_field_tag :schedule_index, perf.schedule_index
+              = hidden_field_tag :schedule, false
+              = hidden_field_tag :locked, false
+              = hidden_field_tag :schedule_id, act.schedule_id
+              = submit_tag "Insert new Dance"
+              

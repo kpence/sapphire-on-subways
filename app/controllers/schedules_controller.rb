@@ -40,4 +40,9 @@ class SchedulesController < ApplicationController
       end
     end
   end
+  
+  def insert
+    
+    redirect_to edit_schedule_path(id: params[:schedule_id])
+  end
 end
