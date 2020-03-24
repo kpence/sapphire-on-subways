@@ -89,26 +89,19 @@ module ScheduleHelper
     return perms
   end
   
-  
-  # Takes a list of performances (AR object references) and attempts
-  # to minimize the conflicts between them (changes the position field
-  # of each performance- no need to return)
-  def minimize_conflicts(performances)
-    @performances = performances
-    form_graph
-    puts "Graph: " + @graph.to_s
-    original_order = (0..@performances.length() - 1).to_a
-    puts "Original order: " + original_order.to_s
+  def get_perms(performances)
+    original_order = (0..performances.length() - 1).to_a
     
-    if factorial(@performances.length()) > 10000
+    if factorial(performances.length()) > 10000
       num_perms = 9999
     else
-      num_perms = factorial(@performances.length())
+      num_perms = factorial(performances.length())
     end
-    puts "Generating " + num_perms.to_s + " permutations..."
-    perms = permute(original_order, num_perms)
-    puts "Number of Permutations: " + perms.length().to_s + "..."
     
+    return permute(original_order, num_perms)
+  end
+  
+  def find_min_perm(perms)
     min_score = score_perm(perms[0])
     min_idx = 0
     perms.each_with_index do |perm, i|
@@ -116,12 +109,13 @@ module ScheduleHelper
       if score < min_score
         min_score = score
         min_idx = i
-      #else
-        #puts "Score " + score.to_s + " for order " + perm.to_s
       end
     end
-    winner_permutation = perms[min_idx]
-    puts "Winner order: " + winner_permutation.to_s + " with score " + min_score.to_s
+    
+    return perms[min_idx]
+  end
+  
+  def reorder_performances(winner_permutation)
     curr_pos = 1
     winner_permutation.each do |winner_index|
       @performances[winner_index].position = curr_pos
@@ -130,6 +124,19 @@ module ScheduleHelper
     @performances.each_with_index do |perf, i|
       perf.position = winner_permutation[i]
     end
+  end
+  
+  # Takes a list of performances (AR object references) and attempts
+  # to minimize the conflicts between them (changes the position field
+  # of each performance- no need to return)
+  def minimize_conflicts(performances)
+    @performances = performances
+    
+    form_graph
+    perms = get_perms(@performances)
+    winner_permutation = find_min_perm(perms)
+    
+    reorder_performances(winner_permutation)
   end
   
 end
