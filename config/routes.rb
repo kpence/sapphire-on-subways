@@ -6,6 +6,12 @@ Rails.application.routes.draw do
       post :insert, :to => 'schedules#insert'
     }
   end
+  
+  resources :performances do
+    collection {
+      put :sort
+    }
+  end
 
   root :to => redirect('/schedules')
 

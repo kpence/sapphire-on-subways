@@ -9,8 +9,9 @@
     %thead
       %tr
         %th= "Act #{act.number}"
-    %tbody
+    %tbody{:class => "sortable", "data-url" => sort_performances_path}
       - @ordered_performances[act.number].each do |perf|
+<<<<<<< HEAD
         %tr
           %td= "Index: " + perf.schedule_index.to_s + " " + perf.name + " scheduled: " + perf.scheduled.to_s + " locked: " + perf.locked.to_s + " id: " + perf.id.to_s
           %td 
@@ -23,3 +24,8 @@
               = hidden_field_tag :schedule_id, act.schedule_id
               = submit_tag "Insert new Dance"
               
+=======
+        %tr{:id => dom_id(perf)}
+          %td
+            = perf.name + " scheduled: " + perf.scheduled.to_s + " locked: " + perf.locked.to_s
+>>>>>>> origin/master
