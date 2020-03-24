@@ -2,29 +2,17 @@ MyPerf1:
   id: 1
   act_id: 1
   name: MyPerf1
-<<<<<<< HEAD
-  schedule_index: 1
-=======
   position: 1
->>>>>>> origin/master
 MyPerf2:
   id: 2
   act_id: 1
   name: MyPerf2
-<<<<<<< HEAD
-  schedule_index: 2
-=======
   position: 2
->>>>>>> origin/master
 MyPerf3:
   id: 3
   act_id: 1
   name: MyPerf3
-<<<<<<< HEAD
-  schedule_index: 3
-=======
   position: 6
->>>>>>> origin/master
 MyPerf4:
   id: 4
   act_id: 2
@@ -69,7 +57,7 @@ MyOtherPerf6:
   id: 12
   act_id: 4
   name: MyOtherPerf6
-<<<<<<< HEAD
+  position: 1
 InsertPerformance1:
   id: 13
   act_id: 1
@@ -77,6 +65,3 @@ InsertPerformance1:
   schedule_index: 1
   locked: false
   scheduled: false
-=======
-  position: 1
->>>>>>> origin/master
