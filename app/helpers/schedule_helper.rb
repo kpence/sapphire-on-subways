@@ -1,5 +1,7 @@
 module ScheduleHelper
   
+  @@MAX_PERMS = 10000
+  
   # Thank you https://medium.com/@daweiner16/factorial-using-ruby-app-academy-practice-problem-c1a179ac445f
   def factorial(n)
     if n == 0
@@ -92,8 +94,8 @@ module ScheduleHelper
   def get_perms(performances)
     original_order = (0..performances.length() - 1).to_a
     
-    if factorial(performances.length()) > 10000
-      num_perms = 9999
+    if factorial(performances.length()) > @@MAX_PERMS
+      num_perms = @@MAX_PERMS - 1
     else
       num_perms = factorial(performances.length())
     end
