@@ -62,6 +62,6 @@ InsertPerformance1:
   id: 13
   act_id: 1
   name: InsertPerformance1
-  schedule_index: 1
+  position: 1
   locked: false
   scheduled: false

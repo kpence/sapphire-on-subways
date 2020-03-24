@@ -18,7 +18,7 @@
             = form_tag insert_schedules_path do
               = text_field_tag :new_performance_name
               = hidden_field_tag :act_id, act.number
-              = hidden_field_tag :schedule_index, perf.schedule_index
+              = hidden_field_tag :position, perf.position
               = hidden_field_tag :schedule, false
               = hidden_field_tag :locked, false
               = hidden_field_tag :schedule_id, act.schedule_id

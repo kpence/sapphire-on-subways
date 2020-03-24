@@ -150,8 +150,8 @@ class Schedule < ActiveRecord::Base
     
     #Go through the performances and update the index so the dances have different schedule indexs
     act_performance_in.performances.each do |performance|
-      if performance.schedule_index >= new_performance.schedule_index && performance != new_performance
-        performance.update_attribute(:schedule_index, performance.schedule_index+1)
+      if performance.position >= new_performance.position && performance != new_performance
+        performance.update_attribute(:position, performance.position+1)
       end
     end
   end
