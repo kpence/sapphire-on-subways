@@ -1,9 +1,11 @@
 -#  This file is app/views/movies/index.html.haml
 
 - if @schedules.empty?
-  %h3= "Looks like you don't have any schedules yet! Click the button to upload your first one!"
+  %h3 
+  %h3= "Looks like you don't have any schedules yet!"
+  %h3= "Click the button to upload your first one!"
 - else
-  %h2= "Schedules" 
+  %h3= "Schedules" 
 
 = form_tag import_schedules_path, multipart: true do
   = file_field_tag :file

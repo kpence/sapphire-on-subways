@@ -13,3 +13,17 @@
  *= require_tree .
  *= require_self
  */
+ 
+ .bg {
+  background-color: #D7DEF1;
+}
+.nav {
+    font-family:'Avenir LT W01 65 Medium';
+    background-color: #1D3558;
+    text-align: center;
+    color: white;
+}
+.center {
+  margin: auto;
+  padding: 10px;
+}
