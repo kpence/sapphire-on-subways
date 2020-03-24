@@ -42,7 +42,12 @@ class SchedulesController < ApplicationController
   end
   
   def insert
+    new_performance = Performance.create!(name: params[:new_performance_name], act_id: params[:act_id].to_i,
+                        scheduled: false, schedule_index: params[:schedule_index].to_i,
+                        locked: false)
+                        
+    Schedule.insert_dance_into_act(new_performance)
     
-    redirect_to edit_schedule_path(id: params[:schedule_id])
+    redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
   end
 end
