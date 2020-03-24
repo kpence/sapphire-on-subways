@@ -155,27 +155,32 @@ describe SchedulesController do
   describe '#insert' do
     fixtures :schedules, :acts, :performances
     
-    @fake_new_performance = performances(:InsertPerformance1)
-    @fake_schedule = schedules(:MySchedule)
+    before :each do
+      @new_fake_performance = performances(:InsertPerformance1)
+      @fake_schedule_inserted_into = schedules(:MySchedule)
+      get :edit, params: {id: @fake_schedule_inserted_into.id}
+      @ordered_performances = controller.instance_variable_get(:@ordered_performances)
+     end
     
     #Insert should only be available if a schedule has been loaded in, so we can assume a schedule has been loaded already
     
     it 'should create a new performance' do
-      expect(Performance).to receive(:create!).and_return(@fake_new_performance)
+      expect(Performance).to receive(:create!).and_return(@new_fake_performance)
+      get :insert, params: {act_id: 1, name: "InsertPerformance1", schedule_index: 1, scheduled: false, locked: false}
     end
-
-    it 'should update the order of the performances in each act by their schedule_index field with the new performance' do
-      #get schedule and see if the ordered performance is correct
-      allow(Schedule).to receive(:find).and_return(@fake_schedule)
-      get :edit, params: {id: @fake_schedule.id}
-      @ordered_performances = controller.instance_variable_get(:@ordered_performances)
-      
-      #Make sure the performance is in the correct order, same as the test above
+    
+    it 'should have all the performances in the correct order based on schedule_index' do
       @ordered_performances.each do |act_number, perf_list|
         correct_order = perf_list.sort_by {|d| d.schedule_index }
         given_order = perf_list
         expect(given_order).to eq(correct_order)
       end
     end
+    
+    it 'should redirect to edit successfully' do
+        get :edit, params: {id: @fake_schedule_inserted_into.id}
+        expect(response).to be_successful
+    end
+    
   end
 end

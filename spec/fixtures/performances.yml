@@ -2,14 +2,17 @@ MyPerf1:
   id: 1
   act_id: 1
   name: MyPerf1
+  schedule_index: 1
 MyPerf2:
   id: 2
   act_id: 1
   name: MyPerf2
+  schedule_index: 2
 MyPerf3:
   id: 3
   act_id: 1
   name: MyPerf3
+  schedule_index: 3
 MyPerf4:
   id: 4
   act_id: 2
@@ -47,6 +50,9 @@ MyOtherPerf6:
   act_id: 4
   name: MyOtherPerf6
 InsertPerformance1:
-  id: 999
+  id: 13
   act_id: 1
   name: InsertPerformance1
+  schedule_index: 1
+  locked: false
+  scheduled: false
