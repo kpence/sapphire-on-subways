@@ -42,12 +42,15 @@ class SchedulesController < ApplicationController
   end
   
   def insert
+    #Create new performance
     new_performance = Performance.create!(name: params[:new_performance_name], act_id: params[:act_id].to_i,
                         scheduled: false, schedule_index: params[:schedule_index].to_i,
                         locked: false)
                         
+    #Insert the new performance into the correct act, updating the index of all the other performances
     Schedule.insert_dance_into_act(new_performance)
     
+    #Redirect back to the edit_schedule_path so the user see the updated schedule
     redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
   end
 end

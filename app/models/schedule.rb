@@ -145,8 +145,10 @@ class Schedule < ActiveRecord::Base
   end
   
   def self.insert_dance_into_act(new_performance)
+    #Find the act our new dance is in
     act_performance_in = Act.find_by_number(new_performance.act_id)
     
+    #Go through the performances and update the index so the dances have different schedule indexs
     act_performance_in.performances.each do |performance|
       if performance.schedule_index >= new_performance.schedule_index && performance != new_performance
         performance.update_attribute(:schedule_index, performance.schedule_index+1)
