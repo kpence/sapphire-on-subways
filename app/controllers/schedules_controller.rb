@@ -1,5 +1,5 @@
 class SchedulesController < ApplicationController
-  include Scheduler
+  helper ScheduleHelper
   
   def index
     @schedules = Schedule.all
@@ -35,9 +35,7 @@ class SchedulesController < ApplicationController
       return
     end
     
-    @ordered_performances = minimize_conflicts(@schedule)
-    puts "Schedule with minimized conflicts:"
-    puts @ordered_performances.to_s
+    helpers.minimize_conflicts(@schedule.acts[0].performances)
     
     @ordered_performances = {}
     @schedule.acts.each do |act|

@@ -1,5 +1,13 @@
-module Scheduler
-  extend ActiveSupport::Concern
+module ScheduleHelper
+  
+  # Thank you https://medium.com/@daweiner16/factorial-using-ruby-app-academy-practice-problem-c1a179ac445f
+  def factorial(n)
+    if n == 0
+      return 1
+    else
+      return n * factorial(n-1)
+    end
+  end
   
   def intersect_by_dancer_id(list_a, list_b)
     if list_a.length() > list_b.length()
@@ -25,10 +33,10 @@ module Scheduler
   def form_graph
     @graph = {}
     @performances.each do |perf|
-      this_performance_dances = Dance.where(performance_id: perf.id)
+      this_performance_dances = perf.dances
       @performances.each do |other_perf|
         if perf.id < other_perf.id
-          other_performance_dances = Dance.where(performance_id: other_perf.id)
+          other_performance_dances = other_perf.dances
           num_conflicting_dances = count_conflicts(this_performance_dances, 
                                                   other_performance_dances)
           if !@graph.keys.include? perf.id
@@ -66,27 +74,38 @@ module Scheduler
   
   def permute(original_order, num_perms)
     perms = [original_order]
-    (1..num_perms).to_a.each do
-      # Find a new ordering
-      new_order = original_order.shuffle
-      while perms.include? new_order
+    if num_perms == factorial(original_order.length())
+      perms = original_order.permutation.to_a
+    else
+      (1..num_perms).to_a.each do
+        # Find a new ordering
         new_order = original_order.shuffle
+        while perms.include? new_order
+          new_order = original_order.shuffle
+        end
+        perms.append(new_order)
       end
-      perms.append(new_order)
     end
     return perms
   end
   
-  def minimize_conflicts(schedule)
-    @schedule = schedule
-    @performances = @schedule.acts[0].performances
+  
+  # Takes a list of performances (AR object references) and attempts
+  # to minimize the conflicts between them (changes the position field
+  # of each performance- no need to return)
+  def minimize_conflicts(performances)
+    @performances = performances
     form_graph
     puts "Graph: " + @graph.to_s
     original_order = (0..@performances.length() - 1).to_a
     puts "Original order: " + original_order.to_s
     
-    puts "Generating permutations..."
-    num_perms = 9999
+    if factorial(@performances.length()) > 10000
+      num_perms = 9999
+    else
+      num_perms = factorial(@performances.length())
+    end
+    puts "Generating " + num_perms.to_s + " permutations..."
     perms = permute(original_order, num_perms)
     puts "Number of Permutations: " + perms.length().to_s + "..."
     
@@ -111,7 +130,6 @@ module Scheduler
     @performances.each_with_index do |perf, i|
       perf.position = winner_permutation[i]
     end
-    return @schedule
   end
   
 end
