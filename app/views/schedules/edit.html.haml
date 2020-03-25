@@ -14,9 +14,9 @@
         %tr{:id => dom_id(perf)}
           %td
             = perf.name + " scheduled: " + perf.scheduled.to_s + " locked: " + perf.locked.to_s
-          %td 
+          %td{:id => "performance_" + act.number.to_s + "_" + perf.position.to_s}
             = form_tag insert_schedules_path do
-              = text_field_tag :new_performance_name
+              = text_field_tag :new_performance_name, nil
               = hidden_field_tag :act_id, act.number
               = hidden_field_tag :position, perf.position
               = hidden_field_tag :schedule, false
