@@ -22,6 +22,7 @@ class SchedulesController < ApplicationController
       Act.create!(number: 2, schedule_id: schedule.id)
       schedule.import(csv_data)
       notice_msg = "Successfully Imported Data!!!"
+      flash[:minimze] = true
       redirect_to edit_schedule_path(id: schedule.id), notice: notice_msg
       return
     end
@@ -35,7 +36,9 @@ class SchedulesController < ApplicationController
       return
     end
     
-    helpers.minimize_conflicts(@schedule.acts[0].performances)
+    if(flash[:minimize])
+      helpers.minimize_conflicts(@schedule.acts[0].performances)
+    end
     
     @ordered_performances = {}
     @schedule.acts.each do |act|
@@ -52,8 +55,7 @@ class SchedulesController < ApplicationController
                         locked: false)
                         
     #Insert the new performance into the correct act, updating the index of all the other performances
-    Schedule.insert_performance_into_act(@new_performance)
-    
+
     #Redirect back to the edit_schedule_path so the user see the updated schedule
     redirect_to edit_schedule_path(id: params[:schedule_id].to_i), notice: "#{params[:new_performance_name]} inserted into Act #{params[:act_id]}"
   end

@@ -6,4 +6,13 @@ class PerformancesController < ApplicationController
     
     head :ok
   end
+  
+  def create
+    @new_performance = Performance.create!(name: params[:new_performance_name], act_id: params[:act_id].to_i,
+                        scheduled: true, position: params[:position].to_i,
+                        locked: false)
+                        
+    redirect_to edit_schedule_path(id: params[:schedule_id].to_i), notice: "#{params[:new_performance_name]} inserted into Act #{params[:act_id]}"
+
+  end
 end
