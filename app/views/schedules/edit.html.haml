@@ -10,5 +10,5 @@
     %tbody{:class => "sortable", "data-url" => sort_performances_path}
       - @ordered_performances[act.number].each do |perf|
         %tr{:id => dom_id(perf)}
-          %td
+          %td.actformat
             = perf.name + " scheduled: " + perf.scheduled.to_s + " locked: " + perf.locked.to_s
