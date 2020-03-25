@@ -20,7 +20,7 @@ module ScheduleHelper
     list_a.each do |a|
       list_b.each do |b|
         if a.dancer_id == b.dancer_id
-          intersection.append(a)
+          intersection.append(a.dancer_id)
         end
       end
     end
@@ -82,7 +82,7 @@ module ScheduleHelper
     if num_perms == factorial(original_order.length())
       perms = original_order.permutation.to_a
     else
-      (1..num_perms).to_a.each do
+      (1..num_perms-1).to_a.each do
         # Find a new ordering
         new_order = original_order.shuffle
         while perms.include? new_order
