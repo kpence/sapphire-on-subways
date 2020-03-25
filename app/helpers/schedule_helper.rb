@@ -88,6 +88,15 @@ module ScheduleHelper
     return curr_score
   end
   
+  # To avoid adding the same order twice
+  def add_order(perms, original_order, new_order)
+    while perms.include? new_order
+      new_order = original_order.shuffle
+    end
+    perms.append(new_order)
+    return perms
+  end
+  
   def permute(original_order, num_perms)
     perms = [original_order]
     if num_perms == factorial(original_order.length())
@@ -96,10 +105,7 @@ module ScheduleHelper
       (1..num_perms-1).to_a.each do
         # Find a new ordering
         new_order = original_order.shuffle
-        while perms.include? new_order
-          new_order = original_order.shuffle
-        end
-        perms.append(new_order)
+        perms = add_order(perms, original_order, new_order)
       end
     end
     return perms

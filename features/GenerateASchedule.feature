@@ -2,7 +2,7 @@ Feature: User can be given a preliminary, conflict-minimized schedule upon uploa
 
 Background: Start on the homepage
   Given I am on the DAS home page
-  Then I should see "Looks like you don't have any schedules yet! Click the button to upload your first one!"
+  Then I should see "Looks like you don't have any schedules yet!"
   When I attach the file "test_files/good_data_test.csv" to "file"
   Then the "file" field within the DAS home page should contain "good_data_test.csv"
   When I press "Import from file"

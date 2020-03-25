@@ -164,16 +164,34 @@ describe ScheduleHelper do
       @perf3 = performances(:MyPerf3)
       @perf4 = performances(:MyPerf4)
       @performances = [@perf1, @perf2, @perf3, @perf4]
-      @simple_graph = {1=>{2=>[], 3=>[1,2], 4=>[]},2=>{3=>[1], 4=>[]}, 3=>{4=>[]}}
-      @perm_1_conflict = (0..@performances.length() - 1).to_a
-      @perm_0_conflict = [0, 1, 3, 2]
+      
+      # Test where dancer with id 1 is in all performances so their 
+      # Contributions to the score all (except the first) count double
+      @simple_graph = {1=>{2=>[1], 3=>[1,2], 4=>[1]},2=>{3=>[1], 4=>[1]}, 3=>{4=>[1]}}
+      @perm_5_conflicts = (0..@performances.length() - 1).to_a
     end
     it 'should correctly score a permutation for a simple graph' do
       helper.instance_variable_set(:@graph, @simple_graph)
-      expect(helper.score_perm(@perm_1_conflict)).to eq(1)
-      expect(helper.score_perm(@perm_0_conflict)).to eq(0)
+      expect(helper.score_perm(@perm_5_conflicts)).to eq(5)
     end
-
+  end
+  
+  describe "#add_order(perms, original_order, new_order)" do
+    it 'should add a new permutation to the collection' do
+      perms = (1..3).to_a.permutation.to_a
+      original_order = [1,2,3]
+      new_order = [3,1,2]
+      expect(original_order).to receive(:shuffle)
+      helper.add_order(perms, original_order, new_order)
+    end
+    
+    it 'should retry until it gets a new permutation if that order already exists' do
+      original_order = [1,2,3]
+      new_order = [3,1,2]
+      perms = [[1,2,3],[3,2,1]]
+      expect(original_order).not_to receive(:shuffle)
+      helper.add_order(perms, original_order, new_order)
+    end
   end
   
   describe "#permute" do
