@@ -28,6 +28,7 @@ module ScheduleHelper
     return intersection
   end
   
+  # Returns the number of intersected dancers in two sets of dances
   def count_conflicts(dances_a, dances_b)
     return intersect_by_dancer_id(dances_a, dances_b).length()
   end
@@ -51,6 +52,8 @@ module ScheduleHelper
     end
   end
   
+  # Returns the total cost (related to number of conflicts) in given schedule
+  # order permutation)
   def score_perm(permutation)
     # First form the schedule
     temp_schedule = []
@@ -94,10 +97,12 @@ module ScheduleHelper
   def get_perms(performances)
     original_order = (0..performances.length() - 1).to_a
     
-    if factorial(performances.length()) > @@MAX_PERMS
+    factorial_value = factorial(performances.length())
+
+    if factorial_value > @@MAX_PERMS
       num_perms = @@MAX_PERMS - 1
     else
-      num_perms = factorial(performances.length())
+      num_perms = factorial_value
     end
     
     return permute(original_order, num_perms)
@@ -122,9 +127,6 @@ module ScheduleHelper
     winner_permutation.each do |winner_index|
       @performances[winner_index].position = curr_pos
       curr_pos += 1
-    end
-    @performances.each_with_index do |perf, i|
-      perf.position = winner_permutation[i]
     end
   end
   
