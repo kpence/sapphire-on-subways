@@ -7,10 +7,17 @@
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = csrf_meta_tags
 
-    %body
-      %div.container
-        %div.navbar.navbar-expand-lg.bg-primary.text-white
-          %h1.title DAS Scheduler!
+    %body.bg
+      %div.nav.center
+        %div.center
+          %table
+            %tr
+              %td 
+                %img{:src => "/images/DAS_logo.png", :width => "98", :height => "71"}
+              %td
+              %td
+                %h1.title Scheduler
+      %div.container.center.body
         #main
           - if flash[:notice]
             %div.alert.alert-danger

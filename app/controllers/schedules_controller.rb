@@ -1,4 +1,6 @@
 class SchedulesController < ApplicationController
+  helper ScheduleHelper
+  
   def index
     @schedules = Schedule.all
   end
@@ -32,6 +34,8 @@ class SchedulesController < ApplicationController
       redirect_to schedules_path, notice: "Schedule with id #{params[:id]} could not be found."
       return
     end
+    
+    helpers.minimize_conflicts(@schedule.acts[0].performances)
     
     @ordered_performances = {}
     @schedule.acts.each do |act|

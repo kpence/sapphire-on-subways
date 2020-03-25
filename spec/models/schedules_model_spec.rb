@@ -129,13 +129,13 @@ describe Schedule do
       # First, stub out all the uninteresting functions for this test:
       allow(Dance).to receive(:create!)
       allow(Dancer).to receive(:create!).and_return(@fake_dancer_1, @fake_dancer_2)
-      allow(Performance).to receive(:find_by_name).and_return(@fake_performance_1, 
+      allow(Performance).to receive(:find_by).and_return(@fake_performance_1, 
                                                               @fake_performance_2,
                                                               @fake_performance_1,
                                                               @fake_performance_3)
       
       # Then, actually test this part:
-      expect(Act).to receive(:find_by_number).and_return(@fake_act_1)
+      expect(Act).to receive(:find_by).and_return(@fake_act_1)
       num_perfs_act_1 = @fake_schedule_params[:performance_names].length()
       expect(Performance).to receive(:create!).with(hash_including :act_id => @fake_act_1.id)
                          .exactly(num_perfs_act_1).times
@@ -143,10 +143,10 @@ describe Schedule do
     
     context "Act 1 is found and Performances are created" do
       before :each do
-        allow(Act).to receive(:find_by_number).and_return(@fake_act_1)
+        allow(Act).to receive(:find_by).and_return(@fake_act_1)
         allow(Performance).to receive(:create!)
         allow(Dancer).to receive(:create!).and_return(@fake_dancer_1, @fake_dancer_2)
-        allow(Performance).to receive(:find_by_name).and_return(@fake_performance_1, 
+        allow(Performance).to receive(:find_by).and_return(@fake_performance_1, 
                                                                 @fake_performance_2,
                                                                 @fake_performance_1,
                                                                 @fake_performance_3)
