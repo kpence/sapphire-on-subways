@@ -77,6 +77,10 @@ end
 # based on naming conventions.
 #
 When /^(?:|I )fill in the following:$/ do |fields|
+  pending
+end
+
+When /^(?:|I )fill in the following:$/ do |fields|
   fields.rows_hash.each do |name, value|
     When %{I fill in "#{name}" with "#{value}"}
   end
@@ -107,6 +111,17 @@ Then /^(?:|I )should see "([^"]*)"$/ do |text|
     page.should have_content(text)
   else
     assert page.has_content?(text)
+  end
+end
+
+Then /^(?:|I )should see the following (?:|performances in a )table$/ do |values|
+  list = values.raw.map {|e| e[0]}
+  list.each do |text|
+    if page.respond_to? :should
+      page.should have_content(text)
+    else
+      assert page.has_content?(text)
+    end
   end
 end
 
