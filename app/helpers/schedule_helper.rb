@@ -40,13 +40,13 @@ module ScheduleHelper
       @performances.each do |other_perf|
         if perf.id < other_perf.id
           other_performance_dances = other_perf.dances
-          num_conflicting_dances = count_conflicts(this_performance_dances, 
+          intersection = intersect_by_dancer_id(this_performance_dances, 
                                                   other_performance_dances)
           if !@graph.keys.include? perf.id
             @graph[perf.id] = {}
           end
           
-          @graph[perf.id][other_perf.id] = num_conflicting_dances
+          @graph[perf.id][other_perf.id] = intersection
         end
       end
     end
@@ -65,14 +65,25 @@ module ScheduleHelper
     first_index = 0
     second_index = 1
     curr_score = 0
+    last_conflicts = []
     while second_index < temp_schedule.length()
       first_id = temp_schedule[first_index].id
       second_id = temp_schedule[second_index].id
       min_id = [first_id, second_id].min
       max_id = [first_id, second_id].max
-      curr_score += @graph[min_id][max_id]
+      curr_conflicts = @graph[min_id][max_id]
+      
+      curr_conflicts.each do |curr_conflict|
+        if last_conflicts.include? curr_conflict
+          curr_score += 2
+        else
+          curr_score += 1
+        end
+      end
+      
       first_index += 1
       second_index += 1
+      last_conflicts = curr_conflicts
     end
     return curr_score
   end

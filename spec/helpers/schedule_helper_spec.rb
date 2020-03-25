@@ -83,7 +83,11 @@ describe ScheduleHelper do
         end
       end
       
-      values = [1, 1, 1, 0, 1, 1, 1, 0, 0, 2, 1, 0, 1, 2, 1]
+      values = [[1], [1], [1], [], [5],
+                [1,6], [1,2,6], [], [2],
+                [1,6], [3], [],
+                [4], [2,4],
+                [4]]
       @sample_graph = {
         @fake_perfs[0].id => {
           @fake_perfs[1].id => values[0], @fake_perfs[2].id => values[1], 
@@ -133,10 +137,19 @@ describe ScheduleHelper do
           end
         end
       end
-      it 'should have only nonnegative values for conflicts' do
+      it 'should have only nonnegative values for number of conflicts' do
         @graph_result.each do |id, matching_hash|
           matching_hash.each do |paired_id, conflicts|
-            expect(conflicts).to be > 0
+            expect(conflicts.length()).to be >= 0
+          end
+        end
+      end
+      it 'should have only nonnegative values conflicts' do
+        @graph_result.each do |id, matching_hash|
+          matching_hash.each do |paired_id, conflicts|
+            conflicts.each do |conflict|
+              expect(conflict).to be >= 0
+            end
           end
         end
       end
@@ -151,7 +164,7 @@ describe ScheduleHelper do
       @perf3 = performances(:MyPerf3)
       @perf4 = performances(:MyPerf4)
       @performances = [@perf1, @perf2, @perf3, @perf4]
-      @simple_graph = {1=>{2=>0, 3=>1, 4=>0},2=>{3=>1, 4=>0}, 3=>{4=>0}}
+      @simple_graph = {1=>{2=>[], 3=>[1,2], 4=>[]},2=>{3=>[1], 4=>[]}, 3=>{4=>[]}}
       @perm_1_conflict = (0..@performances.length() - 1).to_a
       @perm_0_conflict = [0, 1, 3, 2]
     end
