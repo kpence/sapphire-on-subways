@@ -65,3 +65,34 @@ Scenario: Insert "InsertPerformance1" into Act 1 Position 1
   | Nails, Hair, Hips, Heels  |
   And I should see the following table
   | Act 2                     |
+
+
+Scenario: Insert "InsertPerformance1" into Act 1 Position 10
+  When I fill in "performance_1_10" with "InsertPerformance1"
+  Then I press insert new dance for "performance_1_10"
+  Then I should see the following performances in a table
+  | Act 1                     |
+  | I Don’t Think About You   |
+  | Sugar                     |
+  | Sorrow                    |
+  | All I Ask                 |
+  | Life is Good              |
+  | Fall                      |
+  | Rivers & Roads            |
+  | Shallow                   |
+  | Let me think about it     |
+  | InsertPerformance1        |
+  | Lost                      |
+  | This Gift                 |
+  | I Will Wait               |
+  | Falling                   |
+  | Show Me How You Burlesque |
+  | Lost Without You          |
+  | Move Your Feet            |
+  | Crazy in Love             |
+  | Old Money                 |
+  | Flesh & Bone              |
+  | Cringe- Stripped          |
+  | Nails, Hair, Hips, Heels  |
+  And I should see the following table
+  | Act 2                     |
