@@ -9,7 +9,7 @@
     %thead
       %tr
         %th= "Act #{act.number}"
-        %td 
+        %td{:id =>"Insert Dance into Act#{act.number}"}  
           = form_tag insert_performances_path do
             = text_field_tag :new_performance_name, nil
             = hidden_field_tag :act_id, act.number
@@ -17,7 +17,7 @@
             = hidden_field_tag :schedule, false
             = hidden_field_tag :locked, false
             = hidden_field_tag :schedule_id, act.schedule_id
-            = submit_tag "Insert Dance into Act #{act.number}"
+            = submit_tag "Insert Dance into Act#{act.number}"
     %tbody{:class => "sortable", "data-url" => sort_performances_path}
       - @ordered_performances[act.number].each do |perf|
         %tr{:id => dom_id(perf)}
