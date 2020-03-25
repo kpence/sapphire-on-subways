@@ -58,7 +58,11 @@ When /^(?:|I )follow "([^"]*)"$/ do |link|
 end
 
 When /^(?:|I )fill in "([^"]*)" with "([^"]*)"$/ do |field, value|
-  fill_in(field, :with => value)
+  within("#" + field){fill_in("new_performance_name", :with => value)}
+end
+
+Then("I press insert new dance for {string}") do |string|
+  within("#"+string){click_button("Insert new Dance")}
 end
 
 When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
@@ -107,6 +111,17 @@ Then /^(?:|I )should see "([^"]*)"$/ do |text|
     page.should have_content(text)
   else
     assert page.has_content?(text)
+  end
+end
+
+Then /^(?:|I )should see the following (?:|performances in a )table$/ do |values|
+  list = values.raw.map {|e| e[0]}
+  list.each do |text|
+    if page.respond_to? :should
+      page.should have_content(text)
+    else
+      assert page.has_content?(text)
+    end
   end
 end
 
