@@ -36,6 +36,7 @@ class SchedulesController < ApplicationController
       return
     end
     
+    #Only minimize conflicts if we are redirected from inserted the schedule
     if(flash[:minimize])
       helpers.minimize_conflicts(@schedule.acts[0].performances)
     end
@@ -46,17 +47,5 @@ class SchedulesController < ApplicationController
         perf.position
       end
     end
-  end
-  
-  def insert
-    #Create new performance
-    @new_performance = Performance.create!(name: params[:new_performance_name], act_id: params[:act_id].to_i,
-                        scheduled: false, position: params[:position].to_i,
-                        locked: false)
-                        
-    #Insert the new performance into the correct act, updating the index of all the other performances
-
-    #Redirect back to the edit_schedule_path so the user see the updated schedule
-    redirect_to edit_schedule_path(id: params[:schedule_id].to_i), notice: "#{params[:new_performance_name]} inserted into Act #{params[:act_id]}"
   end
 end

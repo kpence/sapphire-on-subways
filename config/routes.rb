@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   resources :performances do
     collection {
       put :sort
+      post :insert, :to => 'performances#create'
     }
   end
 
