@@ -36,7 +36,6 @@ class SchedulesController < ApplicationController
       return
     end
     
-    #Only minimize conflicts if we are redirected from inserted the schedule
     if(flash[:minimize])
       helpers.minimize_conflicts(@schedule.acts[0].performances)
     end
