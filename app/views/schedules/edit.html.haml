@@ -10,7 +10,7 @@
       %tr
         %th= "Act #{act.number}"
         %td{:id =>"Insert Dance into Act#{act.number}"}  
-          = form_tag insert_performances_path do
+          = form_tag performances_path do
             = text_field_tag :new_performance_name, nil
             = hidden_field_tag :act_id, act.number
             = hidden_field_tag :position, @ordered_performances[act.number].length
