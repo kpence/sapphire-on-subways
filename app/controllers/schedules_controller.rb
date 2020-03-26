@@ -17,7 +17,7 @@ class SchedulesController < ApplicationController
       # On success, materialize the schedule with 2 acts, and send the data read
       # from the CSV file (by default, all performances in act 1)
       csv_data = Schedule.read_csv(params[:file])
-      schedule = Schedule.create!(filename: params[:file].path)
+      schedule = Schedule.create!(filename: params[:file].path, name: params[:schedule_name])
       Act.create!(number: 1, schedule_id: schedule.id)
       Act.create!(number: 2, schedule_id: schedule.id)
       schedule.import(csv_data)
