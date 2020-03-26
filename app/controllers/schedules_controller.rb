@@ -36,7 +36,7 @@ class SchedulesController < ApplicationController
       return
     end
     
-    if(flash[:minimize])
+    if flash[:minimize]
       helpers.minimize_conflicts(@schedule.acts[0].performances)
     end
     
