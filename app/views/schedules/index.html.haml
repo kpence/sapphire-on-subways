@@ -7,7 +7,7 @@
 - else
   %h3= "Schedules"
   - @schedules.each do |schedule|
-    %p= schedule.name
+    = link_to schedule.name, edit_schedule_path(id: schedule.id)
 
 = form_tag import_schedules_path, multipart: true do
   %h5= "Choose a file: "
