@@ -22,7 +22,7 @@ class SchedulesController < ApplicationController
       Act.create!(number: 2, schedule_id: schedule.id)
       schedule.import(csv_data)
       notice_msg = "Successfully Imported Data!!!"
-      flash[:minimze] = true
+      flash[:minimize] = true
       redirect_to edit_schedule_path(id: schedule.id), notice: notice_msg
       return
     end

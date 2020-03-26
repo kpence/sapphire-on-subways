@@ -13,6 +13,5 @@ class PerformancesController < ApplicationController
                         locked: false)
                         
     redirect_to edit_schedule_path(id: params[:schedule_id].to_i), notice: "#{params[:new_performance_name]} inserted into Act #{params[:act_id]}"
-
   end
 end

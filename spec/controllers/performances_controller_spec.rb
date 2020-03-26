@@ -26,23 +26,22 @@ describe PerformancesController do
     before :each do
       @new_fake_performance = performances(:InsertPerformance1)
       @fake_schedule_inserted_into = schedules(:MySchedule)
-      edit_schedule_path(@fake_schedule_inserted_into.id)     
+      @fake_act = @new_fake_performance.act
     end
     
-    subject {edit_schedule_path(id: @fake_schedule_inserted_into.id)}
+    subject { post :create, params: {act_id: @fake_act.id, 
+                                    new_performance_name: "InsertPerformance1", 
+                                    position: 4,
+                                    schedule_id: @fake_schedule_inserted_into.id
+    } }
     after:each do
-      expect(subject).to redirect_to(:controller => "schedules", 
-                                     :action => "edit", 
-                                     :id => @fake_schedule_inserted_into.id)
+      expect(subject).to redirect_to(edit_schedule_path(id: @fake_schedule_inserted_into.id))
       subject
     end
-    
 
     #Insert should only be available if a schedule has been loaded in, so we can assume a schedule has been loaded already
-    
     it 'should create a new performance' do
       expect(Performance).to receive(:create!).and_return(@new_fake_performance)
-      post :create, params: {act_id: 1, name: "InsertPerformance1", position: 4, scheduled: false, locked: false}
     end
 
   end

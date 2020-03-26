@@ -26,8 +26,6 @@ describe SchedulesController do
           # Need fake data here to pretend to read from csv
           @fake_data= {:first => "Active Members"}
           @fake_schedule= schedules(:MySchedule)
-          allow(@fake_schedule).to receive(:id).and_return(1234)
-                    
           expect(Schedule).to receive(:check_csv).and_return(:success)
         end
         
