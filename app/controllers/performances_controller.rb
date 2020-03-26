@@ -6,4 +6,12 @@ class PerformancesController < ApplicationController
     
     head :ok
   end
+  
+  def remove (cancelled_performance)
+    #Unschedules a performance
+    cancelled_performance.update_attribute(:scheduled, false)
+    
+    #Updates schedule view for user
+    redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
+  end
 end
