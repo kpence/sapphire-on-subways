@@ -1,6 +1,6 @@
 module ScheduleHelper
   
-  @@MAX_PERMS = 10000
+  @@MAX_PERMS = 1000
   
   # Thank you https://medium.com/@daweiner16/factorial-using-ruby-app-academy-practice-problem-c1a179ac445f
   def factorial(n)

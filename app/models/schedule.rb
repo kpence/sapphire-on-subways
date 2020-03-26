@@ -143,4 +143,5 @@ class Schedule < ActiveRecord::Base
       end
     end
   end
+  
 end

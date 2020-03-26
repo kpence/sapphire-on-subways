@@ -12,7 +12,7 @@ MyPerf3:
   id: 3
   act_id: 1
   name: MyPerf3
-  position: 6
+  position: 3
 MyPerf4:
   id: 4
   act_id: 2
@@ -58,3 +58,10 @@ MyOtherPerf6:
   act_id: 4
   name: MyOtherPerf6
   position: 1
+InsertPerformance1:
+  id: 13
+  act_id: 1
+  name: InsertPerformance1
+  position: 4
+  locked: false
+  scheduled: false

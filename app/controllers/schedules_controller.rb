@@ -22,6 +22,7 @@ class SchedulesController < ApplicationController
       Act.create!(number: 2, schedule_id: schedule.id)
       schedule.import(csv_data)
       notice_msg = "Successfully Imported Data!!!"
+      flash[:minimize] = true
       redirect_to edit_schedule_path(id: schedule.id), notice: notice_msg
       return
     end
@@ -35,7 +36,9 @@ class SchedulesController < ApplicationController
       return
     end
     
-    helpers.minimize_conflicts(@schedule.acts[0].performances)
+    if flash[:minimize]
+      helpers.minimize_conflicts(@schedule.acts[0].performances)
+    end
     
     @ordered_performances = {}
     @schedule.acts.each do |act|

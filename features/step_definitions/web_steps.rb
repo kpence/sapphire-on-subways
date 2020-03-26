@@ -57,8 +57,12 @@ When /^(?:|I )follow "([^"]*)"$/ do |link|
   click_link(link)
 end
 
-When /^(?:|I )fill in "([^"]*)" with "([^"]*)"$/ do |field, value|
-  fill_in(field, :with => value)
+When("I fill insert dance into {string} with {string}") do |string, string2|
+  within("#" + string){fill_in("new_performance_name", :with => string2)}
+end
+
+Then("I press insert new dance for {string}") do |string|
+  click_button(string)
 end
 
 When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|

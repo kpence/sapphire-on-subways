@@ -227,12 +227,11 @@ describe ScheduleHelper do
       @perf8 = performances(:MyOtherPerf2)
       @perf_under_10k = [@perf1, @perf2, @perf3, @perf4]
       @perf_exceed_10k = [@perf1, @perf2, @perf3, @perf4, @perf5, @perf6, @perf7, @perf8]
-      #helper.instance_variable_set(:@@MAX_PERMS, 10000)
     end
     it 'should should not exceed 10k permutations' do
       original_order = (0..7).to_a
       expect(helper).to receive(:factorial).with(8).and_return(40320)
-      expect(helper).to receive(:permute).with(original_order, 9999)
+      expect(helper).to receive(:permute).with(original_order, 999)
       helper.get_perms(@perf_exceed_10k)
     end
     it 'should should return the correct factorial number' do

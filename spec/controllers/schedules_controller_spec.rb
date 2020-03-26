@@ -26,8 +26,6 @@ describe SchedulesController do
           # Need fake data here to pretend to read from csv
           @fake_data= {:first => "Active Members"}
           @fake_schedule= schedules(:MySchedule)
-          allow(@fake_schedule).to receive(:id).and_return(1234)
-                    
           expect(Schedule).to receive(:check_csv).and_return(:success)
         end
         
@@ -149,9 +147,15 @@ describe SchedulesController do
           expect(given_order).to eq(correct_order)
         end
       end
-      # will need to add more here...
+    end
+    
+    context "We came from the upload page" do
+      it 'should generate a random schedule using the helper' do
+        allow(Schedule).to receive(:find).and_return(@fake_schedule)
+        expect(controller.helpers).to receive(:minimize_conflicts)
+        get :edit, params: {id: @fake_schedule.id}, flash: {minimize: true}
+      end
     end
   end
+  
 end
-
-
