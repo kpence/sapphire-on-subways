@@ -1,6 +1,6 @@
 module ScheduleHelper
   
-  @@MAX_PERMS = 1000
+  @@MAX_PERMS = 10000
   
   # Thank you https://medium.com/@daweiner16/factorial-using-ruby-app-academy-practice-problem-c1a179ac445f
   def factorial(n)
@@ -11,16 +11,16 @@ module ScheduleHelper
     end
   end
   
-  def intersect_by_dancer_id(list_a, list_b)
-    if list_a.length() > list_b.length()
-      return intersect_by_dancer_id(list_b, list_a)
+  def intersect_by_dancer_id(dances_a, dances_b)
+    if dances_a.length() > dances_b.length()
+      return intersect_by_dancer_id(dances_b, dances_a)
     end
     
     intersection = []
-    list_a.each do |a|
-      list_b.each do |b|
+    dances_a.each do |a|
+      dances_b.each do |b|
         if a.dancer_id == b.dancer_id
-          intersection.append(a.dancer_id)
+          intersection.append(Dancer.find(a.dancer_id).name)
         end
       end
     end
@@ -135,6 +135,8 @@ module ScheduleHelper
         min_idx = i
       end
     end
+    
+    puts "Min score is " + min_score.to_s
     
     return perms[min_idx]
   end

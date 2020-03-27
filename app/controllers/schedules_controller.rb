@@ -1,5 +1,39 @@
 class SchedulesController < ApplicationController
   helper ScheduleHelper
+
+  def conflicts(act_number)
+    # Go linearly through the schedule and mark conflicts
+    conflict_list = []
+    
+    performances = @ordered_performances[act_number]
+    
+    performances.each_with_index do |perf, i|
+      if i + 1 < performances.length()
+        first_dance_list = perf.dances
+        next_dance_list = performances[i + 1].dances
+        
+        intersect = helpers.intersect_by_dancer_id(first_dance_list, next_dance_list)
+        
+        if intersect.length() > 0
+          conflict = {:first_performance => perf.name,
+                      :second_performance => performances[i+1].name,
+                      :dancers => []
+          }
+          
+          intersect.each do |dancer_name|
+            conflict[:dancers].append(dancer_name)
+          end
+          
+          conflict_list.append(conflict)
+          
+          # Mark the first one to be the "conflicting" on for the view to catch
+          @conflicting_performances.append(perf.id)
+        end
+      end
+    end
+    
+    return conflict_list
+  end
   
   def index
     @schedules = Schedule.all
@@ -41,10 +75,13 @@ class SchedulesController < ApplicationController
     end
     
     @ordered_performances = {}
+    @conflicts = {}
+    @conflicting_performances = []
     @schedule.acts.each do |act|
       @ordered_performances[act.number] = act.performances.sort_by do |perf|
         perf.position
       end
+      @conflicts[act.number] = self.conflicts(act.number)
     end
   end
 end
