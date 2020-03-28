@@ -33,3 +33,7 @@
 .actformat {
     border: 1px solid black;
 }
+
+.droppable-hover {
+  background: #1D3558;
+}
