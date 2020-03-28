@@ -26,6 +26,6 @@
               = perf.name
     - else
       %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
-        %td.actformat
+        %td.actformat{:class => "unmoveable"}
           %em [ This act is empty. Dragging a performance here will move it into this act. ]
 
