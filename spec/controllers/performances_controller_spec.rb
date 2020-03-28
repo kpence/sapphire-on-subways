@@ -13,9 +13,6 @@ describe PerformancesController do
       allow(Act).to receive(:find).and_return(@fake_act)
     end
 
-    after :each do
-    end
-    
     it 'should update all the performances positions by id' do
       @fake_performances.each_with_index do |perf, index|
         expect(Performance).to receive(:where).with({id: perf.id.to_i}).at_least(:once).and_return(perf)

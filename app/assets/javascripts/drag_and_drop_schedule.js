@@ -14,5 +14,18 @@ document.addEventListener("turbolinks:load", function () {
     },
     connectWith: $('.sortable')
   });
+
+  $(".droppable").droppable({
+    accept: ".sortable tr",
+    hoverClass: "droppable-hover",
+    drop: function(e, ui) {
+      console.log($(this).data("url")+"&move_perf="+e.toElement.id.substr(12))
+      Rails.ajax({
+        url: $(this).data("url")+"&move_perf="+e.toElement.id.substr(12),
+        type: "PUT",
+        data: $(".sortable").sortable('serialize')
+      });
+    }
+  });
   
 });
