@@ -2,14 +2,17 @@
 document.addEventListener("turbolinks:load", function () {
   
   $(".sortable").sortable({
+    items: "tr:not(.locked)",
     update: function(e, ui) {
-      //console.log($(this).sortable('serialize'));
-      Rails.ajax({
-        url: $(this).data("url"),
-        type: "PUT",
-        data: $(this).sortable('serialize')
-      });
-    }
+      if (this === ui.item.parent()[0]) { // This prevents the method from being called twice when moving between acts
+        Rails.ajax({
+          url: $(this).data("url")+"&move_perf="+e.toElement.id.substr(12),
+          type: "PUT",
+          data: $(this).sortable('serialize')
+        });
+      }
+    },
+    connectWith: $('.sortable')
   });
   
 });
