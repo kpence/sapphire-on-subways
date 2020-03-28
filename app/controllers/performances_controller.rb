@@ -1,7 +1,6 @@
 class PerformancesController < ApplicationController
   def sort
     schedule_id = nil
-    act_hash = {} # maps the act_id to the last position index assigned to a performance in the :performance list
 
     params[:performance].each_with_index do |id, index|
       Performance.where(id: id.to_i).update(position: index + 1)
