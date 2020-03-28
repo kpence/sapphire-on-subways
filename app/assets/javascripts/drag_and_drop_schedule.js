@@ -2,7 +2,7 @@
 document.addEventListener("turbolinks:load", function () {
   
   $(".sortable").sortable({
-    items: "tr:not(.locked)",
+    items: "tr:not(.unmoveable)",
     update: function(e, ui) {
       if (this === ui.item.parent()[0]) { // This prevents the method from being called twice when moving between acts
         Rails.ajax({
