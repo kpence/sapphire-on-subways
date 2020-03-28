@@ -14,7 +14,7 @@
  *= require_self
  */
  
- .bg {
+.bg {
   background-color: #D7DEF1;
 }
 .body {
@@ -32,6 +32,7 @@
 }
 .actformat {
     border: 1px solid black;
+    padding: 5px;
 }
 
 .droppable-hover {
