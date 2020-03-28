@@ -1,10 +1,26 @@
 // Thanks to https://www.youtube.com/watch?time_continue=172&v=Aru-XvzzGjU&feature=emb_logo
 document.addEventListener("turbolinks:load", function () {
+  var awaitingDroppable = false;
   
+  $(".droppable").droppable({
+    accept: ".sortable tr",
+    hoverClass: "droppable-hover",
+    drop: function(e, ui) {
+      //console.log("DROPPABLE", $(".sortable").sortable('serialize'))
+      awaitingDroppable = true;
+      Rails.ajax({
+        url: $(this).data("url")+"&move_perf="+e.toElement.id.substr(12),
+        type: "PUT",
+        data: $(".sortable").sortable('serialize')
+      })
+    }
+  });
+
   $(".sortable").sortable({
-    items: "tr:not(.unmoveable .droppable)",
+    items: "tr:not(.unmoveable)",
     update: function(e, ui) {
-      if (this === ui.item.parent()[0]) { // This prevents the method from being called twice when moving between acts
+      //console.log(ui, $(this).sortable('serialize'))
+      if (!awaitingDroppable && this === ui.item.parent()[0]) { // This prevents the method from being called twice when moving between acts
         Rails.ajax({
           url: $(this).data("url")+"&move_perf="+e.toElement.id.substr(12),
           type: "PUT",
@@ -13,19 +29,6 @@ document.addEventListener("turbolinks:load", function () {
       }
     },
     connectWith: $('.sortable')
-  });
-
-  $(".droppable").droppable({
-    accept: ".sortable tr",
-    hoverClass: "droppable-hover",
-    drop: function(e, ui) {
-      //console.log($(this).data("url")+"&move_perf="+e.toElement.id.substr(12), "e", e, "ui", ui, "this")
-      Rails.ajax({
-        url: $(this).data("url")+"&move_perf="+e.toElement.id.substr(12),
-        type: "PUT",
-        data: $(".sortable").sortable('serialize')
-      });
-    }
   });
   
 });
