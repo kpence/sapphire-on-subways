@@ -23,6 +23,7 @@
         - @ordered_performances[act.number].each do |perf|
           %tr{:id => dom_id(perf)}
             %td.actformat{:id => dom_id(perf)}
+              = button_tag :X
               = perf.name
     - else
       %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
