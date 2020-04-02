@@ -19,6 +19,14 @@ Some configurations:
 
 * How to run the test suite
   - Run __Cucumber__ from the root folder: `cucumber --guess`
+		- If you get the following message
+      ```
+      Unable to find chromedriver. Please download the server from                                                                                                                                            https://chromedriver.storage.googleapis.com/index.html and place it somewhere on your PATH.
+      More info at https://github.com/SeleniumHQ/selenium/wiki/ChromeDriver.
+       (Selenium::WebDriver::Error::WebDriverError)
+      ```
+	      Follow the instructions here to install ChromeDriver
+        https://github.com/SeleniumHQ/selenium/wiki/ChromeDriver#quick-installation
   - Run __RSpec__ from the root folder: `rspec spec/<spec name>` for any spec. To run all specs, simply run `rspec spec/*`
 
 * Deployment instructions: Credit to Dr. Michael Nowak, as these come from his tutorial
