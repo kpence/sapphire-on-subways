@@ -1,4 +1,4 @@
-Feature: User can insert a dance into an Act.
+Feature: User can move performances in the schedule.
 
 @selenium_chrome_headless
 Scenario: Click and drag to swap "Fall" with "Sugar"
