@@ -6,6 +6,7 @@
 
 require 'cucumber/rails'
 
+
 # frozen_string_literal: true
 
 # Capybara defaults to CSS3 selectors rather than XPath.
@@ -33,21 +34,29 @@ ActionController::Base.allow_rescue = false
 # Remove/comment out the lines below if your app doesn't have a database.
 # For some databases (like MongoDB and CouchDB) you may need to use :truncation instead.
 begin
-  DatabaseCleaner.strategy = :transaction
+	DatabaseCleaner.strategy = :transaction
 rescue NameError
   raise "You need to add database_cleaner to your Gemfile (in the :test group) if you wish to use it."
 end
 
 # You may also want to configure DatabaseCleaner to use different strategies for certain features and scenarios.
 # See the DatabaseCleaner documentation for details. Example:
-#
-#   Before('@no-txn,@selenium,@culerity,@celerity,@javascript') do
-#     # { except: [:widgets] } may not do what you expect here
-#     # as Cucumber::Rails::Database.javascript_strategy overrides
-#     # this setting.
-#     DatabaseCleaner.strategy = :truncation
-#   end
-#
+
+Before("@selenium_chrome_headless") do
+  DatabaseCleaner.clean
+  DatabaseCleaner.strategy = :truncation
+  DatabaseCleaner.clean_with :truncation
+end
+
+After("@selenium_chrome_headless") do
+  DatabaseCleaner.clean
+end
+
+# This is for debugging purposes
+#Around('@selenium_chrome_headless') do |scenario, block|
+#    block.call
+#end
+
 #   Before('not @no-txn', 'not @selenium', 'not @culerity', 'not @celerity', 'not @javascript') do
 #     DatabaseCleaner.strategy = :transaction
 #   end
