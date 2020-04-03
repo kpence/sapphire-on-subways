@@ -65,6 +65,9 @@ Then("I press insert new dance for {string}") do |string|
   click_button(string)
 end
 
+Then("I go back to schedule {string}") do |string|
+  visit "/schedules/" + string + "/edit"
+end
 When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
   fill_in(field, :with => value)
 end
