@@ -65,6 +65,9 @@ Then("I press insert new dance for {string}") do |string|
   click_button(string)
 end
 
+Then("I go back to schedule {string}") do |string|
+  visit "/schedules/" + string + "/edit"
+end
 When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
   fill_in(field, :with => value)
 end
@@ -148,6 +151,10 @@ When /^(?:|I )fill in the following:$/ do |fields|
   fields.rows_hash.each do |name, value|
     When %{I fill in "#{name}" with "#{value}"}
   end
+end
+
+Then(/^I go back to the homepage$/) do
+  visit root_path
 end
 
 When /^(?:|I )select "([^"]*)" from "([^"]*)"$/ do |value, field|
