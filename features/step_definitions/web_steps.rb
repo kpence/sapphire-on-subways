@@ -90,6 +90,10 @@ When /^(?:|I )fill in the following:$/ do |fields|
   end
 end
 
+Then(/^I go back to the homepage$/) do
+  visit root_path
+end
+
 When /^(?:|I )select "([^"]*)" from "([^"]*)"$/ do |value, field|
   select(value, :from => field)
 end
