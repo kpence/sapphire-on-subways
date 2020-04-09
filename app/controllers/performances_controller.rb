@@ -1,9 +1,8 @@
 class PerformancesController < ApplicationController
   def sort
     schedule_id = nil
-    
+
     params[:performance].each_with_index do |id, index|
-      puts id.to_i.to_s
       Performance.where(id: id.to_i).update(position: index + 1)
       if schedule_id == nil
         p = Performance.find(id.to_i)
@@ -11,8 +10,9 @@ class PerformancesController < ApplicationController
         schedule_id = act.schedule_id
       end
     end
-    
-    redirect_to edit_schedule_path(id: schedule_id)
+    Performance.where(id: params[:move_perf].to_i).update(act_id: params[:act_id].to_i)
+
+    redirect_to edit_schedule_path(id: schedule_id, post_id: "performance_"+params[:move_perf])
   end
   
   def create

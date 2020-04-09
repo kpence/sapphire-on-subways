@@ -144,7 +144,8 @@ module ScheduleHelper
   def reorder_performances(winner_permutation)
     curr_pos = 1
     winner_permutation.each do |winner_index|
-      @performances[winner_index].position = curr_pos
+      perf = @performances[winner_index]
+      perf.update!(position: curr_pos)
       curr_pos += 1
     end
   end

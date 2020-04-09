@@ -2,47 +2,36 @@
 
 %h3= "Use this page to edit your schedule!"
 
-  
-
 - @schedule.acts.each do |act|
   %table{:id => "act"+act.number.to_s}
     %thead
       %tr
-        %th{:id =>"Insert Dance into Act#{act.number}"}= "Act #{act.number}"
-    %tbody{:class => "sortable", "data-url" => sort_performances_path}
-      - @ordered_performances[act.number].each do |perf|
-        %tr{:id => dom_id(perf)}
-          %td.actformat
-            = perf.name
-        %tr
-          %td
-          %td= "Conflict!!!"
+        %th= "Act #{act.number}"
+        %td{:id =>"Insert Dance into Act#{act.number}"}  
+          = form_tag performances_path do
+            = text_field_tag :new_performance_name, nil
+            = hidden_field_tag :act_id, act.id
+            = hidden_field_tag :position, @ordered_performances[act.number].length
+            = hidden_field_tag :schedule, false
+            = hidden_field_tag :locked, false
+            = hidden_field_tag :schedule_id, act.schedule_id
+            = submit_tag "Insert Dance into Act#{act.number}"
+    - unless @ordered_performances[act.number].empty?
+      %tbody{:class => "sortable", "data-url" => sort_performances_path(:act_id => act.id)}
+        - @ordered_performances[act.number].each do |perf|
+          %tr{:id => dom_id(perf)}
+            %td.actformat{:id => dom_id(perf)}
+              = perf.name
           - if @conflicting_performances.include? perf.id
-            - @conflicts[act.number].each do |conflict|
-              - if conflict[:first_performance] == perf.name
-                - conflict[:dancers].each do |dancer_name|
-                  %td= dancer_name
-  %p
-  = form_tag performances_path do
-    = text_field_tag :new_performance_name, nil
-    %br
-    = hidden_field_tag :act_id, act.id
-    = hidden_field_tag :position, @ordered_performances[act.number].length
-    = hidden_field_tag :schedule, false
-    = hidden_field_tag :locked, false
-    = hidden_field_tag :schedule_id, act.schedule_id
-    = submit_tag "Insert Dance into Act#{act.number}"
-
-- @schedule.acts.each do |act|
-  %table{:id => "act "+act.number.to_s+" conflicts"}
-    %thead
-      %tr
-        %th= "Act #{act.number}: #{@conflicts[act.number].length()} Conflicts"
-    %tbody
-      - @conflicts[act.number].each do |conflict|
-        %tr
-          %td.actformat= "#{conflict[:first_performance]} & #{conflict[:second_performance]}"
-          - conflict[:dancers].each do |dancer_name|
-            %td.actformat=dancer_name
-
-= link_to "Refresh", edit_schedule_path(id: @schedule.id)
+            %tr
+              %td
+              - @conflicts[act.number].each do |conflict|
+                - if conflict[:first_performance] == perf.name
+                  %td{:class => "alert alert-danger"}
+                    - conflict[:dancers].each do |dancer_name|
+                      %div= dancer_name
+                    
+    - else
+      %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
+        %td.actformat{:class => "unmoveable"}
+          %em [ This act is empty. Dragging a performance here will move it into this act. ]
