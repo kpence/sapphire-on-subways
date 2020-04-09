@@ -22,10 +22,10 @@
           %tr{:id => dom_id(perf)}
             %td.actformat{:id => dom_id(perf)}
               = perf.name
-          %tr
-            %td
-            %td= "Conflict!!!"
-            - if @conflicting_performances.include? perf.id
+          - if @conflicting_performances.include? perf.id
+            %tr
+              %td
+              %td= "Conflict!!!"
               - @conflicts[act.number].each do |conflict|
                 - if conflict[:first_performance] == perf.name
                   - conflict[:dancers].each do |dancer_name|
@@ -34,5 +34,3 @@
       %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
         %td.actformat{:class => "unmoveable"}
           %em [ This act is empty. Dragging a performance here will move it into this act. ]
-
-= link_to "Refresh", edit_schedule_path(id: @schedule.id)
