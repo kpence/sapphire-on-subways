@@ -135,7 +135,7 @@ describe Schedule do
                                                               @fake_performance_3)
       
       # Then, actually test this part:
-      expect(Act).to receive(:find_by).and_return(@fake_act_1)
+      expect(Act).to receive(:find_by).and_return(@fake_act_1).exactly(2).times
       num_perfs_act_1 = @fake_schedule_params[:performance_names].length()
       expect(Performance).to receive(:create!).with(hash_including :act_id => @fake_act_1.id)
                          .exactly(num_perfs_act_1).times

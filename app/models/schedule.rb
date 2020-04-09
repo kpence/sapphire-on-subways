@@ -127,9 +127,16 @@ class Schedule < ActiveRecord::Base
   # by default, entire schedule is put into act 1
   def import(schedule_params)
     act1_id = Act.find_by(number: 1, schedule_id: self.id).id
+    act2_id = Act.find_by(number: 2, schedule_id: self.id).id
     total_performances = schedule_params[:performance_names].length()
+    should_split = total_performances > 10
     schedule_params[:performance_names].each_with_index do |name, index|
-      Performance.create!(name: name, act_id: act1_id,
+      if should_split
+        act_id = (index + 1) <= (total_performances / 2) ? act1_id : act2_id
+      else
+        act_id = act1_id
+      end
+      Performance.create!(name: name.lstrip.rstrip, act_id: act_id,
                           scheduled: true, position: index+1,
                           locked: (index+1 == 1) || (index+1 == total_performances))
     end
@@ -138,8 +145,12 @@ class Schedule < ActiveRecord::Base
     schedule_params[:dancer_hashes].each do |dancer_hash|
       dancer = Dancer.create!(name: dancer_hash["name"])
       dancer_hash["dances"].each do |dance_name|
-        Dance.create!(performance_id: Performance.find_by(name: dance_name, act_id: act1_id).id,
-                      dancer_id: dancer.id)
+        performance = Performance.find_by(name: dance_name.lstrip.rstrip, act_id: act1_id)
+        if performance == nil
+          performance = Performance.find_by(name: dance_name.lstrip.rstrip, act_id: act2_id)
+        end
+        
+        Dance.create!(performance_id: performance.id, dancer_id: dancer.id)
       end
     end
   end
