@@ -23,11 +23,11 @@
             %td.actformat{:id => dom_id(perf)}
               = perf.name
           - if @conflicting_performances.include? perf.id
-            %tr
-              %td
+            %tr{:class => "unmoveable"}
+              %td{:class => "unmoveable"}
               - @conflicts[act.number].each do |conflict|
                 - if conflict[:first_performance] == perf.name
-                  %td{:class => "alert alert-danger"}
+                  %td{:class => "alert alert-danger unmoveable"}
                     - conflict[:dancers].each do |dancer_name|
                       %div= dancer_name
                     
