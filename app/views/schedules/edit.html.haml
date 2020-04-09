@@ -28,7 +28,6 @@
               - @conflicts[act.number].each do |conflict|
                 - if conflict[:first_performance] == perf.name
                   %td{:class => "alert alert-danger"}
-                    = "Conflicts:"
                     - conflict[:dancers].each do |dancer_name|
                       %div= dancer_name
                     
