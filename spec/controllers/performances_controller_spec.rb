@@ -57,4 +57,19 @@ describe PerformancesController do
     end
 
   end
+  
+  describe '#lock' do
+    fixtures :schedules, :acts, :performances
+    
+    before :each do
+      @fake_performance = performances(:InsertPerformance1)
+      @original_locked_value = @fake_performance.locked
+    end
+    
+    it 'should flip the boolean of locked within the performance' do
+      #expect Performance.locked != @original_locked_value
+    end
+    
+  end
+
 end
