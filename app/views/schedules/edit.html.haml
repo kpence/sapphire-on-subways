@@ -25,11 +25,13 @@
           - if @conflicting_performances.include? perf.id
             %tr
               %td
-              %td= "Conflict!!!"
               - @conflicts[act.number].each do |conflict|
                 - if conflict[:first_performance] == perf.name
-                  - conflict[:dancers].each do |dancer_name|
-                    %td= dancer_name
+                  %td{:class => "alert alert-danger"}
+                    = "Conflicts:"
+                    - conflict[:dancers].each do |dancer_name|
+                      %div= dancer_name
+                    
     - else
       %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
         %td.actformat{:class => "unmoveable"}
