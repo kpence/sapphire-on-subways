@@ -12,7 +12,7 @@ class PerformancesController < ApplicationController
     end
     Performance.where(id: params[:move_perf].to_i).update(act_id: params[:act_id].to_i)
 
-    redirect_to edit_schedule_path(id: schedule_id, post_id: "performance_"+params[:move_perf])
+    redirect_to edit_schedule_path(id: schedule_id) + "#performance_"+params[:move_perf]
   end
   
   def create
