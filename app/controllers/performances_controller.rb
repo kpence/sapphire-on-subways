@@ -23,4 +23,15 @@ class PerformancesController < ApplicationController
     notice_msg = "#{params[:new_performance_name]} inserted into Act #{Act.find(params[:act_id]).number}"
     redirect_to edit_schedule_path(id: params[:schedule_id].to_i), notice: notice_msg
   end
+  
+  def lock
+    performance_to_change = Performance.find(params[:performance_id])
+    
+    if performance_to_change.locked == True
+      performance_to_change.locked = False
+    else
+      performance_to_change.locked = True
+    end
+  end
+  
 end
