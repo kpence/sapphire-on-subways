@@ -185,6 +185,16 @@ Then /^(?:|I )should see "([^"]*)"$/ do |text|
   end
 end
 
+Then /^(?:|I )should see "([^"]*)" in between "([^"]*)" and "([^"]*)"$/ do |thing, before_thing, after_thing|
+  if page.body.respond_to? :should
+    page.should have_content(text)
+  else
+    assert page.has_content?(text)
+  end
+  page.body.should =~ /#{before_thing}.*#{thing}/m
+  page.body.should =~ /#{thing}.*#{after_thing}/m
+end
+
 Then /^(?:|I )should see the following (?:|performances in a )table$/ do |values|
   list = values.raw.map {|e| e[0]}
   list.each do |text|
@@ -192,6 +202,23 @@ Then /^(?:|I )should see the following (?:|performances in a )table$/ do |values
       page.should have_content(text)
     else
       assert page.has_content?(text)
+    end
+  end
+end
+
+Then /^(?:|I )should see the following (?:|performances in a )table in this order$/ do |values|
+  list = values.raw.map {|e| e[0]}
+  # First test that they are present
+  list.each_with_index do |text, i|
+    if page.respond_to? :should
+      page.should have_content(text)
+    else
+      assert page.has_content?(text)
+    end
+    if i < list.length - 1
+      first_dance = text
+      second_dance = list[i+1]
+      page.body.should =~ /#{first_dance}.*#{second_dance}/m
     end
   end
 end

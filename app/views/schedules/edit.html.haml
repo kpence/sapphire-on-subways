@@ -34,16 +34,16 @@
         %td.actformat{:class => "unmoveable"}
           %em [ This act is empty. Dragging a performance here will move it into this act. ]
 
-- @schedule.acts.each do |act|
-  %table{:id => "act "+act.number.to_s+" conflicts"}
-    %thead
-      %tr
-        %th= "Act #{act.number}: #{@conflicts[act.number].length()} Conflicts"
-    %tbody
-      - @conflicts[act.number].each do |conflict|
-        %tr
-          %td.actformat= "#{conflict[:first_performance]} & #{conflict[:second_performance]}"
-          - conflict[:dancers].each do |dancer_name|
-            %td.actformat=dancer_name
+-#- @schedule.acts.each do |act|
+-#  %table{:id => "act "+act.number.to_s+" conflicts"}
+-#    %thead
+-#      %tr
+-#        %th= "Act #{act.number}: #{@conflicts[act.number].length()} Conflicts"
+-#    %tbody
+-#      - @conflicts[act.number].each do |conflict|
+-#        %tr
+-#          %td.actformat= "#{conflict[:first_performance]} & #{conflict[:second_performance]}"
+-#          - conflict[:dancers].each do |dancer_name|
+-#            %td.actformat=dancer_name
 
 = link_to "Refresh", edit_schedule_path(id: @schedule.id)
