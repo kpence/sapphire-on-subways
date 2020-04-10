@@ -1,16 +1,8 @@
 -#  This file is app/views/movies/schedules.html.haml
+-#%link(rel="stylesheet" href="assets/stylesheets/button.css" crossorigin="anonymous")
+= javascript_include_tag 'application', 'data-turbolinks-track' => true
 
-:javascript
-  function myFunction() {
-  if(document.getElementById("demo").style.color == "black") {
-    document.getElementById("demo").style.color = "red";
-  }
-  else {
-    document.getElementById("demo").style.color = "black";
-  }
-    
 %h3= "Use this page to edit your schedule!"
-
 
 - @schedule.acts.each do |act|
   %table{:id => "act"+act.number.to_s}
@@ -31,10 +23,18 @@
         - @ordered_performances[act.number].each do |perf|
           %tr{:id => dom_id(perf)}
             %td.actformat{:id => dom_id(perf)}
-              = button_tag lock_performances_path do
-                = hidden_field_tag :performance_id, perf.id
-                = submit_tag "Lock"
+              - unless perf.locked == true
+                = button_to lock_performances_path do
+                  = hidden_field_tag :performance_id, perf.id
+                  = hidden_field_tag :schedule_id, act.schedule_id
+                  = submit_tag "Unlocked"
+              - else
+                = button_to lock_performances_path, :id => act.schedule_id do
+                  = hidden_field_tag :performance_id, perf.id
+                  = hidden_field_tag :schedule_id, act.schedule_id
+                  = submit_tag "Locked"
               = " " + perf.name
+
     - else
       %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
         %td.actformat{:class => "unmoveable"}
