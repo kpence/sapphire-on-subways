@@ -1,4 +1,4 @@
-Feature: User can lock a dance in an Act.
+Feature: User can remove a dance in an Act.
 
 Background: Start on the homepage
   Given I am on the DAS home page
