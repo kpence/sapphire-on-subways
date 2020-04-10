@@ -11,16 +11,16 @@ module ScheduleHelper
     end
   end
   
-  def intersect_by_dancer_id(list_a, list_b)
-    if list_a.length() > list_b.length()
-      return intersect_by_dancer_id(list_b, list_a)
+  def intersect_by_dancer_id(dances_a, dances_b)
+    if dances_a.length() > dances_b.length()
+      return intersect_by_dancer_id(dances_b, dances_a)
     end
     
     intersection = []
-    list_a.each do |a|
-      list_b.each do |b|
+    dances_a.each do |a|
+      dances_b.each do |b|
         if a.dancer_id == b.dancer_id
-          intersection.append(a.dancer_id)
+          intersection.append(Dancer.find(a.dancer_id).name)
         end
       end
     end
@@ -136,13 +136,16 @@ module ScheduleHelper
       end
     end
     
+    puts "Min score is " + min_score.to_s
+    
     return perms[min_idx]
   end
   
   def reorder_performances(winner_permutation)
     curr_pos = 1
     winner_permutation.each do |winner_index|
-      @performances[winner_index].position = curr_pos
+      perf = @performances[winner_index]
+      perf.update!(position: curr_pos)
       curr_pos += 1
     end
   end

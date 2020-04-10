@@ -53,6 +53,13 @@ When /^(?:|I )press "([^"]*)"$/ do |button|
   click_button(button)
 end
 
+When /^(?:|I )press "([^"]*)" for "([^"]*)"$/ do |button, dance_name|
+  
+  within("#performance_#{perf_id}") do
+    click_button(button)
+  end
+end
+
 When /^(?:|I )follow "([^"]*)"$/ do |link|
   click_link(link)
 end

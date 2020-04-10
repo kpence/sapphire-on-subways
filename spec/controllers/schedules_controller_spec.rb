@@ -2,6 +2,95 @@ require 'rails_helper'
 
 describe SchedulesController do
   
+  describe "#generate_conflict" do
+    fixtures :performances
+    
+    it 'should give nil when there is not actually a conflict' do
+      ret = controller.generate_conflict(nil, nil, [])
+      expect(ret == nil)
+    end
+    
+    it 'should convert the data given as input to a dictionary' do
+      @fake_perf1 = performances(:MyPerf1)
+      @fake_perf2 = performances(:MyPerf2)
+      @fake_dancers = ["Troy", "Kyle", "Jeevika", "Hudson", "Divia"]
+      ret = controller.generate_conflict(@fake_perf1, @fake_perf2, @fake_dancers)
+      expect(ret).to have_key(:first_performance)
+      expect(ret).to have_key(:second_performance)
+      expect(ret).to have_key(:dancers)
+      expect(ret[:first_performance]).to eq @fake_perf1.name
+      expect(ret[:second_performance]).to eq @fake_perf2.name
+      expect(ret[:dancers]).to eq @fake_dancers
+    end
+  end
+  
+  describe "#conflicts" do
+    fixtures :dances, :dancers, :performances, :acts
+    context "In the presence of an act with NO conflicts" do
+      before :each do
+        @fake_act = acts(:MyOtherAct1)
+        
+        @ordered_performances = {}
+        @ordered_performances[1] = @fake_act.performances.sort_by {|p| p.id }
+        controller.instance_variable_set(:@ordered_performances, @ordered_performances)
+        controller.instance_variable_set(:@conflicting_performances, [])
+        
+        allow(controller).to receive(:generate_conflict).and_return(nil, nil)
+        
+        # See the fixture data: This has no conflicts
+        @ret = controller.conflicts(1)
+      end
+      
+      it 'should return an empty list' do
+        expect(@ret).not_to eq nil
+        expect(@ret.length).to eq 0
+      end
+      
+      it 'should NOT add to the list of performances tracking the conflicts' do
+        perfs = controller.instance_variable_get(:@conflicting_performances)
+        expect(perfs.length).to eq 0
+      end
+    end
+    
+    context "In the presence of an act with conflicts" do
+      before :each do
+        # See the fixture data for details
+        @fake_act = acts(:MyOtherAct2)
+        @fake_perf1 = performances(:MyOtherPerf2)
+        @fake_perf2 = performances(:MyOtherPerf3)
+        @fake_dancer = dancers(:MyOtherDancer2)
+        
+        @ordered_performances = {}
+        @ordered_performances[2] = @fake_act.performances.sort_by {|p| p.id }
+        controller.instance_variable_set(:@ordered_performances, @ordered_performances)
+        controller.instance_variable_set(:@conflicting_performances, [])
+        
+        @fake_conflict = {:first_performance => @fake_perf1.name,
+                          :second_performance => @fake_perf2.name,
+                          :dancers => [@fake_dancer.name]
+        }
+        
+        allow(controller).to receive(:generate_conflict)
+            .and_return(nil, @fake_conflict, nil, nil, nil)
+        
+        # See the fixture data: This has one conflict between
+        # MyOtherPerf5 and MyOtherPerf6
+        @ret = controller.conflicts(2)
+      end
+      
+      it 'should return a list with the conflicts' do
+        expect(@ret.length).to eq 1
+        expect(@ret[0]).to eq @fake_conflict
+      end
+      
+      it 'should add to the list of performances tracking the conflicts' do
+        perfs = controller.instance_variable_get(:@conflicting_performances)
+        expect(perfs.length).to eq 1
+        expect(perfs[0]).to eq @fake_perf1.id
+      end
+    end
+  end
+  
   describe '#index' do
     it 'should call Schedule#all to get all schedules in the DB' do
       expect(Schedule).to receive(:all)
@@ -14,12 +103,7 @@ describe SchedulesController do
     #
     # All tests require checking the csv and a redirection upon completion
     
-    after:each do
-      expect(controller).to set_flash[:notice]
-    end
-        
     context "File will be uploaded" do
-      
       context "with good data" do
         fixtures :schedules
         before:each do
@@ -35,7 +119,7 @@ describe SchedulesController do
                                          :action => "edit", 
                                          :id => @fake_schedule.id)
           subject
-          expect(flash[:notice]).to eq "Successfully Imported Data!!!"
+          expect(flash[:success]).to eq "Successfully Imported Data!!!"
         end
         
         it 'should create the schedule/acts 1 and 2 and import the data' do
@@ -101,7 +185,7 @@ describe SchedulesController do
       end
     end
   end
-    
+  
   describe "#edit" do
     fixtures :schedules, :acts, :performances
     before :each do
@@ -152,10 +236,9 @@ describe SchedulesController do
     context "We came from the upload page" do
       it 'should generate a random schedule using the helper' do
         allow(Schedule).to receive(:find).and_return(@fake_schedule)
-        expect(controller.helpers).to receive(:minimize_conflicts)
+        expect(controller.helpers).to receive(:minimize_conflicts).exactly(2).times
         get :edit, params: {id: @fake_schedule.id}, flash: {minimize: true}
       end
     end
   end
-  
 end
