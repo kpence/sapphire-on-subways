@@ -2,8 +2,6 @@
 
 %h3= "Use this page to edit your schedule!"
 
-  
-
 - @schedule.acts.each do |act|
   - if act.number == 1
     %table.floatLeft{:id => "act"+act.number.to_s}
@@ -25,10 +23,20 @@
             %tr{:id => dom_id(perf)}
               %td.actformat{:id => dom_id(perf)}
                 = perf.name
+            - if @conflicting_performances.include? perf.id
+              %tr{:class => "unmoveable"}
+                %td{:class => "unmoveable"}
+                - @conflicts[act.number].each do |conflict|
+                  - if conflict[:first_performance] == perf.name
+                    %td{:class => "alert alert-danger unmoveable"}
+                      - conflict[:dancers].each do |dancer_name|
+                        %div= dancer_name
+                      
       - else
         %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
           %td.actformat{:class => "unmoveable"}
             %em [ This act is empty. Dragging a performance here will move it into this act. ]
+
   - if act.number == 2
     %table.floatRight{:id => "act"+act.number.to_s}
       %thead
@@ -49,9 +57,17 @@
               %tr{:id => dom_id(perf)}
                 %td.actformat{:id => dom_id(perf)}
                   = perf.name
+              - if @conflicting_performances.include? perf.id
+                %tr{:class => "unmoveable"}
+                  %td{:class => "unmoveable"}
+                  - @conflicts[act.number].each do |conflict|
+                    - if conflict[:first_performance] == perf.name
+                      %td{:class => "alert alert-danger unmoveable"}
+                        - conflict[:dancers].each do |dancer_name|
+                          %div= dancer_name
+                        
         - else
           %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
             %td.actformat{:class => "unmoveable"}
               %em [ This act is empty. Dragging a performance here will move it into this act. ]
-
 

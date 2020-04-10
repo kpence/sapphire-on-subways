@@ -1,6 +1,40 @@
 class SchedulesController < ApplicationController
   helper ScheduleHelper
   
+  def generate_conflict(perf1, perf2, intersect)
+    if intersect.length() == 0
+      return nil
+    end
+    
+    return {:first_performance => perf1.name,
+            :second_performance => perf2.name,
+            :dancers => intersect
+    }
+  end
+
+  def conflicts(act_number)
+    # Go linearly through the schedule and mark conflicts
+    conflict_list = []
+    performances = @ordered_performances[act_number]
+    
+    performances.each_with_index do |perf, i|
+      if i + 1 < performances.length()
+        first_dance_list = perf.dances
+        next_dance_list = performances[i + 1].dances
+        intersect = helpers.intersect_by_dancer_id(first_dance_list, next_dance_list)
+        conflict = generate_conflict(perf, performances[i+1], intersect)
+        
+        if conflict
+          conflict_list.append(conflict)
+          # Mark the first one to be the "conflicting" on for the view to catch
+          @conflicting_performances.append(perf.id)
+        end
+      end
+    end
+    
+    return conflict_list
+  end
+  
   def index
     @schedules = Schedule.all
   end
@@ -23,10 +57,10 @@ class SchedulesController < ApplicationController
       schedule.import(csv_data)
       notice_msg = "Successfully Imported Data!!!"
       flash[:minimize] = true
-      redirect_to edit_schedule_path(id: schedule.id), notice: notice_msg
+      redirect_to edit_schedule_path(id: schedule.id), flash: {success: notice_msg}
       return
     end
-    redirect_to schedules_path, notice: notice_msg
+    redirect_to schedules_path, flash: {notice: notice_msg}
   end
   
   def edit
@@ -43,10 +77,13 @@ class SchedulesController < ApplicationController
     end
     
     @ordered_performances = {}
+    @conflicts = {}
+    @conflicting_performances = []
     @schedule.acts.each do |act|
       @ordered_performances[act.number] = act.performances.sort_by do |perf|
         perf.position
       end
+      @conflicts[act.number] = self.conflicts(act.number)
     end
   end
 end

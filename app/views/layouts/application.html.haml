@@ -20,10 +20,13 @@
       %div.container.center.body
         #main
           - if flash[:notice]
-            %div.alert.alert-danger
+            %div.alert.alert-info
               #notice.message= flash[:notice]
           - elsif flash[:warning]
             %div.alert.alert-danger
               #warning.message= flash[:warning]
+          - elsif flash[:success]
+            %div.alert.alert-success
+              #notice.message= flash[:success]
 
           = yield
