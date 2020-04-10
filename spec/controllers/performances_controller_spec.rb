@@ -71,7 +71,8 @@ describe PerformancesController do
       expect(Performance).to receive(:find).with(@fake_performance.id.to_i).at_least(:once).and_return(@fake_performance)
       expect(Performance).to receive(:where).with(id: @fake_performance.id).at_least(:once).and_return(@fake_performance)
       expect(@fake_performance).to receive(:update).with(locked: !@fake_performance.locked)
-      post :lock, {params: {:performance_id => @fake_performance.id}}
+      post :lock, params: {:performance_id => @fake_performance.id}
+      expect(@fake_performance.locked).not_to eq @original_locked_value
     end
     
   end
