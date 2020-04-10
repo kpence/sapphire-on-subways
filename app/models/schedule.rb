@@ -112,8 +112,8 @@ class Schedule < ActiveRecord::Base
     # With just these two predictable keys
     dancer_hashes = dancer_hashes.map do |dancer_hash|
       new_dancer_hash = {}
-      new_dancer_hash["name"] = dancer_hash[@@dancer_name_col_header]
-      new_dancer_hash["dances"] = dancer_hash.select do |entry|
+      new_dancer_hash[:name] = dancer_hash[@@dancer_name_col_header]
+      new_dancer_hash[:dances] = dancer_hash.select do |entry|
         performance_names.include? entry
       end.keys
       
@@ -122,15 +122,11 @@ class Schedule < ActiveRecord::Base
 
     return { performance_names: performance_names, dancer_hashes: dancer_hashes }
   end
-
-  # Imports schedule parameters in bulk from schedule object returned by read_csv
-  # by default, entire schedule is put into act 1
-  def import(schedule_params)
-    act1_id = Act.find_by(number: 1, schedule_id: self.id).id
-    act2_id = Act.find_by(number: 2, schedule_id: self.id).id
-    total_performances = schedule_params[:performance_names].length()
-    should_split = total_performances > 10
-    schedule_params[:performance_names].each_with_index do |name, index|
+  
+  def generate_performances(performance_names, act1_id, act2_id)
+    total_performances = performance_names.length()
+    should_split = total_performances > 7
+    performance_names.each_with_index do |name, index|
       if should_split
         act_id = (index + 1) <= (total_performances / 2) ? act1_id : act2_id
       else
@@ -140,19 +136,34 @@ class Schedule < ActiveRecord::Base
                           scheduled: true, position: index+1,
                           locked: (index+1 == 1) || (index+1 == total_performances))
     end
-
+  end
+  
+  def get_performance(dance_name, act1_id, act2_id)
+    performance = Performance.find_by(name: dance_name.lstrip.rstrip, act_id: act1_id)
+    if performance == nil
+      performance = Performance.find_by(name: dance_name.lstrip.rstrip, act_id: act2_id)
+    end
+    return performance
+  end
+  
+  def generate_dances_and_dancers(dancer_hashes, act1_id, act2_id)
     # Create each dancer by name and insert each of their dances by name
-    schedule_params[:dancer_hashes].each do |dancer_hash|
-      dancer = Dancer.create!(name: dancer_hash["name"])
-      dancer_hash["dances"].each do |dance_name|
-        performance = Performance.find_by(name: dance_name.lstrip.rstrip, act_id: act1_id)
-        if performance == nil
-          performance = Performance.find_by(name: dance_name.lstrip.rstrip, act_id: act2_id)
-        end
-        
+    dancer_hashes.each do |dancer_hash|
+      dancer = Dancer.create!(name: dancer_hash[:name])
+      dancer_hash[:dances].each do |dance_name|
+        performance = get_performance(dance_name, act1_id, act2_id)
         Dance.create!(performance_id: performance.id, dancer_id: dancer.id)
       end
     end
+  end
+
+  # Imports schedule parameters in bulk from schedule object returned by read_csv
+  # by default, entire schedule is put into act 1
+  def import(schedule_params)
+    act1_id = Act.find_by(number: 1, schedule_id: self.id).id
+    act2_id = Act.find_by(number: 2, schedule_id: self.id).id
+    generate_performances(schedule_params[:performance_names], act1_id, act2_id)
+    generate_dances_and_dancers(schedule_params[:dancer_hashes], act1_id, act2_id)
   end
   
 end
