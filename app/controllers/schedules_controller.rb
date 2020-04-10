@@ -49,4 +49,22 @@ class SchedulesController < ApplicationController
       end
     end
   end
+  
+  def delete
+    schedule_id = params[:id]
+    if schedule_id == nil
+      redirect_to root, notice: "Schedule could not be deleted!"
+    end
+    
+    schedule = Schedule.find(schedule_id)
+    if schedule == nil
+      redirect_to root, notice: "Schedule could not be found!"
+    end
+    
+    # Each act is responsible for deleting data under it
+    Schedule.remove_acts(schedule_id)
+    Schedule.delete!(schedule_id)
+    
+    redirect_to root, flash: {success: "Successfully deleted schedule "+schedule_name}
+  end
 end
