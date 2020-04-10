@@ -36,11 +36,11 @@ Background: Start on the homepage
   | Act 2                     |
 
 Scenario: Lock the "6th dance" in "Act 1"
-  When I lock dance "6" in act "1"
-  Then I should see that dance "6" in act "1" changed to "Locked"
+  When I lock dance "Lost"
+  Then I should see that dance "Lost" changed to "Locked"
   
 Scenario: Lock the "6th dance" in "Act 1" then Unlock the "6th Dance" in "Act 1"
-  When I lock dance "6" in act "1"
-  Then I should see that dance "6" in act "1" changed to "Locked"
-  When I lock dance "6" in act "1"
-  Then I should see that dance "6" in act "1" changed to "Unlocked"
+  When I lock dance "Lost"
+  Then I should see that dance "Lost" changed to "Locked"
+  When I lock dance "Lost"
+  Then I should see that dance "Lost" changed to "Unlocked"

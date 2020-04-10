@@ -25,13 +25,13 @@
             %tr{:id => dom_id(perf)}
               %td.actformat{:id => dom_id(perf)}
                 - unless perf.locked == true
-                  = button_to lock_performances_path, :id => "lock" + perf.position.to_s + act.number.to_s, :class => "lock" + perf.position.to_s + act.number.to_s do
+                  = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
                     = hidden_field_tag :performance_id, perf.id
                     = hidden_field_tag :schedule_id, act.schedule_id
                     = hidden_field_tag :locked, false
                     = submit_tag "Unlocked"
                 - else
-                  = button_to lock_performances_path, :id => "lock" + perf.position.to_s + act.number.to_s, :class => "lock" + perf.position.to_s + act.number.to_s do
+                  = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
                     = hidden_field_tag :performance_id, perf.id
                     = hidden_field_tag :schedule_id, act.schedule_id
                     = hidden_field_tag :locked, true
@@ -71,13 +71,13 @@
               %tr{:id => dom_id(perf)}
                 %td.actformat{:id => dom_id(perf)}
                   - unless perf.locked == true
-                    = button_to lock_performances_path, :id => "lock" + perf.position.to_s + act.number.to_s, :class => "lock" + perf.position.to_s + act.number.to_s do
+                    = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
                       = hidden_field_tag :performance_id, perf.id
                       = hidden_field_tag :schedule_id, act.schedule_id
                       = hidden_field_tag :locked, false
                       = submit_tag "Unlocked"
                   - else
-                    = button_to lock_performances_path, :id => "lock" + perf.position.to_s + act.number.to_s, :class => "lock" + perf.position.to_s + act.number.to_s do
+                    = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
                       = hidden_field_tag :performance_id, perf.id
                       = hidden_field_tag :schedule_id, act.schedule_id
                       = hidden_field_tag :locked, true
