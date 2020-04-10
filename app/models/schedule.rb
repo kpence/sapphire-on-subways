@@ -126,7 +126,7 @@ class Schedule < ActiveRecord::Base
   # Imports schedule parameters in bulk from schedule object returned by read_csv
   # by default, entire schedule is put into act 1
   def import(schedule_params)
-    act1_id = Act.find_by_number(1).id
+    act1_id = Act.find_by(number: 1, schedule_id: self.id).id
     total_performances = schedule_params[:performance_names].length()
     schedule_params[:performance_names].each_with_index do |name, index|
       Performance.create!(name: name, act_id: act1_id,
@@ -138,9 +138,10 @@ class Schedule < ActiveRecord::Base
     schedule_params[:dancer_hashes].each do |dancer_hash|
       dancer = Dancer.create!(name: dancer_hash["name"])
       dancer_hash["dances"].each do |dance_name|
-        Dance.create!(performance_id: Performance.find_by_name(dance_name).id,
+        Dance.create!(performance_id: Performance.find_by(name: dance_name, act_id: act1_id).id,
                       dancer_id: dancer.id)
       end
     end
   end
+  
 end

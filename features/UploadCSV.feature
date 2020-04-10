@@ -2,7 +2,7 @@ Feature: User can upload a .csv file to the database
 
 Background: Start on the homepage
   Given I am on the DAS home page
-  Then I should see "Looks like you don't have any schedules yet! Click the button to upload your first one!"
+  Then I should see "Looks like you don't have any schedules yet!"
 
 Scenario: First Successful CSV File Upload
   When I attach the file "test_files/good_data_test.csv" to "file"

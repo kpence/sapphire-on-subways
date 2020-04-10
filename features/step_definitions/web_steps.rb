@@ -57,10 +57,17 @@ When /^(?:|I )follow "([^"]*)"$/ do |link|
   click_link(link)
 end
 
-When /^(?:|I )fill in "([^"]*)" with "([^"]*)"$/ do |field, value|
-  fill_in(field, :with => value)
+When("I fill insert dance into {string} with {string}") do |string, string2|
+  within("#" + string){fill_in("new_performance_name", :with => string2)}
 end
 
+Then("I press insert new dance for {string}") do |string|
+  click_button(string)
+end
+
+Then("I go back to schedule {string}") do |string|
+  visit "/schedules/" + string + "/edit"
+end
 When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
   fill_in(field, :with => value)
 end
@@ -75,11 +82,79 @@ end
 #
 # TODO: Add support for checkbox, select or option
 # based on naming conventions.
+
+
+# Click Drag stuff
+When /^I drag performance "([^"]*)" to "([^"]*)"$/ do |item_dragged_name, item_dropped_name|
+  item_dragged = Performance.all.filter { |e| e.name == item_dragged_name }[0]
+  item_dropped = Performance.all.filter { |e| e.name == item_dropped_name }[0]
+
+  begin
+    if item_dragged.act_id == item_dropped.act_id
+      page.execute_script %{ $("tr#performance_#{item_dragged.id}").simulateDragSortable({ move: #{item_dropped.position - item_dragged.position}}); }
+    else
+      page.execute_script %{ $("tr#performance_#{item_dragged.id}").simulate('drag-n-drop', { dragTarget: $("tr#performance_#{item_dropped.id}") }); }
+    end
+    sleep(1)
+  rescue Exception => ex
+    puts "Error: #{ex.class} #{ex.message}"
+  end
+end
+
+
+When /^I drop performance "([^"]*)" into the empty act$/ do |item_name|
+  item = Performance.all.filter { |e| e.name == item_name }[0]
+  dom = page.find("tr#performance_#{item.id}", visible: :all)
+
+  page.execute_script %{ $("tr#performance_#{item.id}").simulate('drag-n-drop', { dragTarget: $(".unmoveable") }); }
+  sleep(1)
+end
+
+Then /^performance "([^"]*)" should not be next to "([^"]*)"$/ do |item_name1,item_name2|
+  item1 = Performance.all.filter { |e| e.name == item_name1 }[0]
+  item2 = Performance.all.filter { |e| e.name == item_name2 }[0]
+  diff = (item1.position.to_i - item2.position.to_i).abs
+  diff.should !=1
+end
+
+Then /^performance "([^"]*)" should be next to "([^"]*)"$/ do |item_name1,item_name2|
+  item1 = Performance.all.filter { |e| e.name == item_name1 }[0]
+  item2 = Performance.all.filter { |e| e.name == item_name2 }[0]
+  diff = (item1.position.to_i - item2.position.to_i).abs
+  diff.should ==1
+end
+
+Then /^performance "([^"]*)" should be after "([^"]*)"$/ do |item_name1,item_name2|
+  item1 = Performance.all.filter { |e| e.name == item_name1 }[0]
+  item2 = Performance.all.filter { |e| e.name == item_name2 }[0]
+  item1.position.to_i.should > item2.position.to_i
+end
+
+Then /^performance "([^"]*)" should be right after "([^"]*)"$/ do |item_name1,item_name2|
+  item1 = Performance.all.filter { |e| e.name == item_name1 }[0]
+  item2 = Performance.all.filter { |e| e.name == item_name2 }[0]
+  item1.position.to_i.should == (item2.position.to_i+1)
+end
+
+Then /^performance "([^"]*)" should be in act ([0-9])$/ do |item_name,act_number|
+  item = Performance.all.filter { |e| e.name == item_name }[0]
+  act = Act.all.filter { |e| e.id == item.act_id }[0]
+  act.number.should ==act_number.to_i
+end
+
 #
+When /^(?:|I )fill in the following:$/ do |fields|
+  pending
+end
+
 When /^(?:|I )fill in the following:$/ do |fields|
   fields.rows_hash.each do |name, value|
     When %{I fill in "#{name}" with "#{value}"}
   end
+end
+
+Then(/^I go back to the homepage$/) do
+  visit root_path
 end
 
 When /^(?:|I )select "([^"]*)" from "([^"]*)"$/ do |value, field|
@@ -107,6 +182,17 @@ Then /^(?:|I )should see "([^"]*)"$/ do |text|
     page.should have_content(text)
   else
     assert page.has_content?(text)
+  end
+end
+
+Then /^(?:|I )should see the following (?:|performances in a )table$/ do |values|
+  list = values.raw.map {|e| e[0]}
+  list.each do |text|
+    if page.respond_to? :should
+      page.should have_content(text)
+    else
+      assert page.has_content?(text)
+    end
   end
 end
 

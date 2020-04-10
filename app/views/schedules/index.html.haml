@@ -1,10 +1,17 @@
 -#  This file is app/views/movies/index.html.haml
 
 - if @schedules.empty?
-  %h3= "Looks like you don't have any schedules yet! Click the button to upload your first one!"
+  %h3 
+  %h3= "Looks like you don't have any schedules yet!"
+  %h3= "Click the button to upload your first one!"
 - else
-  %h2= "Schedules" 
+  %h3= "Schedules"
+  - @schedules.each do |schedule|
+    = link_to schedule.name, edit_schedule_path(id: schedule.id)
 
 = form_tag import_schedules_path, multipart: true do
+  %h5= "Choose a file: "
   = file_field_tag :file
+  %h5= "Name: "
+  = text_field_tag :schedule_name, nil, placeholder: 'Enter a name...'
   = submit_tag "Import from file"

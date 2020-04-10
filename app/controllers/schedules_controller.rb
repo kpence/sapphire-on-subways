@@ -1,4 +1,6 @@
 class SchedulesController < ApplicationController
+  helper ScheduleHelper
+  
   def index
     @schedules = Schedule.all
   end
@@ -15,11 +17,12 @@ class SchedulesController < ApplicationController
       # On success, materialize the schedule with 2 acts, and send the data read
       # from the CSV file (by default, all performances in act 1)
       csv_data = Schedule.read_csv(params[:file])
-      schedule = Schedule.create!(filename: params[:file].path)
+      schedule = Schedule.create!(filename: params[:file].path, name: params[:schedule_name])
       Act.create!(number: 1, schedule_id: schedule.id)
       Act.create!(number: 2, schedule_id: schedule.id)
       schedule.import(csv_data)
       notice_msg = "Successfully Imported Data!!!"
+      flash[:minimize] = true
       redirect_to edit_schedule_path(id: schedule.id), notice: notice_msg
       return
     end
@@ -31,6 +34,10 @@ class SchedulesController < ApplicationController
     if @schedule == nil
       redirect_to schedules_path, notice: "Schedule with id #{params[:id]} could not be found."
       return
+    end
+    
+    if flash[:minimize]
+      helpers.minimize_conflicts(@schedule.acts[0].performances)
     end
     
     @ordered_performances = {}

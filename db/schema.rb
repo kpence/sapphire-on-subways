@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200323034852) do
+ActiveRecord::Schema.define(version: 20200326042421) do
 
   create_table "acts", force: :cascade do |t|
     t.integer "number"
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(version: 20200323034852) do
 
   create_table "schedules", force: :cascade do |t|
     t.string "filename"
+    t.string "name"
   end
 
 end
