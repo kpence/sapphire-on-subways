@@ -69,9 +69,9 @@ describe PerformancesController do
     
     it 'should flip the boolean of locked within the performance' do
       expect(Performance).to receive(:find).with(@fake_performance.id.to_i).at_least(:once).and_return(@fake_performance)
-      expect(@fake_performance).to receive(:update).with(locked: @original_locked_value)
-      post :lock, params: {:performance_id => @fake_performance.id}
-      expect(@fake_performance.locked).not_to eq @original_locked_value
+      expect(@fake_performance).to receive(:update!).with(locked: !@fake_performance.locked).and_call_original
+      post :lock, {params: {:performance_id => @fake_performance.id}}
+      expect(@fake_performance.locked).not_to be(@original_locked_value)
     end
     
   end

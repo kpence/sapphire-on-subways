@@ -35,11 +35,11 @@ Background: Start on the homepage
   And I should see the following table
   | Act 2                     |
 
-Scenario: Lock the "6th dance" in "Act 1"
+Scenario: Lock dance "Lost"
   When I lock dance "Lost"
   Then I should see that dance "Lost" changed to "Locked"
   
-Scenario: Lock the "6th dance" in "Act 1" then Unlock the "6th Dance" in "Act 1"
+Scenario: Lock "Lost" in then Unlock "Lost"
   When I lock dance "Lost"
   Then I should see that dance "Lost" changed to "Locked"
   When I lock dance "Lost"
