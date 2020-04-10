@@ -72,4 +72,5 @@ describe PerformancesController do
       expect @fake_performance.scheduled == false
     end
   end
+
 end

@@ -46,5 +46,8 @@ class SchedulesController < ApplicationController
         perf.position
       end
     end
+
+
+
   end
 end

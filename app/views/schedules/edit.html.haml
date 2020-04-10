@@ -22,8 +22,13 @@
       %tbody{:class => "sortable", "data-url" => sort_performances_path(:act_id => act.id)}
         - @ordered_performances[act.number].each do |perf|
           %tr{:id => dom_id(perf)}
-            %td.actformat{:id => dom_id(perf)}
-              = perf.name
+            - unless perf.scheduled == false
+              %td.actformat{:id => dom_id(perf)}
+                = perf.name
+                = button_to remove_performances_path, :id => act.schedule_id do
+                  = hidden_field_tag :performance_id, perf.id
+                  = hidden_field_tag :schedule_id, act.schedule_id
+                  = submit_tag "X"
     - else
       %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
         %td.actformat{:class => "unmoveable"}

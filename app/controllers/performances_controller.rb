@@ -23,4 +23,14 @@ class PerformancesController < ApplicationController
     notice_msg = "#{params[:new_performance_name]} inserted into Act #{Act.find(params[:act_id]).number}"
     redirect_to edit_schedule_path(id: params[:schedule_id].to_i), notice: notice_msg
   end
+  def remove
+    
+    #Unschedules a performance
+    Performance.where(id: params[:performance_id].to_i).update(scheduled: false)
+    
+    flash[:notice] = "#{Performance.find(params[:performance_id]).name} Removed"
+    
+    #Updates schedule view for user
+    redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
+  end
 end
