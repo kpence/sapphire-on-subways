@@ -6,19 +6,11 @@ MyAct2:
   id: 2
   number: 2
   schedule_id: 1
-MyAct3:
-  id: 3
-  number: 3
-  schedule_id: 1
 MyOtherAct1:
-  id: 4
-  number: 2
+  id: 3
+  number: 1
   schedule_id: 2
 MyOtherAct2:
-  id: 5
+  id: 4
   number: 2
-  schedule_id: 2
-MyOtherAct3:
-  id: 6
-  number: 3
   schedule_id: 2
