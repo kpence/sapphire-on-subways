@@ -57,4 +57,17 @@ describe PerformancesController do
     end
 
   end
+  
+  describe '#remove' do 
+    fixtures :schedules, :acts, :performances
+    
+    before :each do 
+      @fake_performance = performances(:InsertPerformance1)
+      @original_scheduled_value = @fake_performance.scheduled
+    end
+    
+    it 'should change scheduled attribute to false' do
+      #expect Performance.scheduled != @original_scheduled_value
+    end
+  end
 end
