@@ -89,13 +89,17 @@ MyOtherDance5:
   dancer_id: 4
 MyOtherDance6:
   id: 23
-  performance_id: 1
-  dancer_id: 5
+  performance_id: 6
+  dancer_id: 4
 MyOtherDance7:
   id: 24
-  performance_id: 6
+  performance_id: 1
   dancer_id: 5
 MyOtherDance8:
   id: 25
+  performance_id: 6
+  dancer_id: 5
+MyOtherDance9:
+  id: 26
   performance_id: 3
   dancer_id: 6

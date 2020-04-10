@@ -1,31 +1,31 @@
 class SchedulesController < ApplicationController
   helper ScheduleHelper
+  
+  def generate_conflict(perf1, perf2, intersect)
+    if intersect.length() == 0
+      return nil
+    end
+    
+    return {:first_performance => perf1.name,
+            :second_performance => perf2.name,
+            :dancers => intersect
+    }
+  end
 
   def conflicts(act_number)
     # Go linearly through the schedule and mark conflicts
     conflict_list = []
-    
     performances = @ordered_performances[act_number]
     
     performances.each_with_index do |perf, i|
       if i + 1 < performances.length()
         first_dance_list = perf.dances
         next_dance_list = performances[i + 1].dances
-        
         intersect = helpers.intersect_by_dancer_id(first_dance_list, next_dance_list)
+        conflict = generate_conflict(perf, performances[i+1], intersect)
         
-        if intersect.length() > 0
-          conflict = {:first_performance => perf.name,
-                      :second_performance => performances[i+1].name,
-                      :dancers => []
-          }
-          
-          intersect.each do |dancer_name|
-            conflict[:dancers].append(dancer_name)
-          end
-          
+        if conflict
           conflict_list.append(conflict)
-          
           # Mark the first one to be the "conflicting" on for the view to catch
           @conflicting_performances.append(perf.id)
         end

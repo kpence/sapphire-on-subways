@@ -30,32 +30,32 @@ MyPerf6:
   position: 5
 MyOtherPerf1:
   id: 7
-  act_id: 3
+  act_id: 4
   name: MyOtherPerf1
   position: 6
 MyOtherPerf2:
   id: 8
-  act_id: 3
+  act_id: 4
   name: MyOtherPerf2
   position: 5
 MyOtherPerf3:
   id: 9
-  act_id: 3
+  act_id: 4
   name: MyOtherPerf3
   position: 4
 MyOtherPerf4:
   id: 10
-  act_id: 4
+  act_id: 5
   name: MyOtherPerf4
   position: 3
 MyOtherPerf5:
   id: 11
-  act_id: 4
+  act_id: 5
   name: MyOtherPerf5
   position: 2
 MyOtherPerf6:
   id: 12
-  act_id: 4
+  act_id: 5
   name: MyOtherPerf6
   position: 1
 InsertPerformance1:
