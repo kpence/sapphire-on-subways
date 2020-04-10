@@ -24,10 +24,8 @@ class PerformancesController < ApplicationController
     redirect_to edit_schedule_path(id: params[:schedule_id].to_i), notice: notice_msg
   end
   def remove
-    cancelled_performance = Performance.find(params[:performance_id].to_i)
     
     #Unschedules a performance
-    cancelled_performance.update_attribute(:scheduled, false)
     Performance.where(id: params[:performance_id].to_i).update(scheduled: false)
     
     flash[:notice] = "#{Performance.find(params[:performance_id]).name} Removed"

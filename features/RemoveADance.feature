@@ -1,4 +1,4 @@
-Feature: User can lock a dance in an Act.
+Feature: User can remove a dance from an Act.
 
 Background: Start on the homepage
   Given I am on the DAS home page
@@ -36,7 +36,7 @@ Background: Start on the homepage
   | Act 2                     |
 
 Scenario: Remove "Sugar" in "Act 1"
-  When I press "X" for "Sugar" in "Act 1"
+  When I press X for "Sugar" in "Act 1"
   Then I should see "Sugar Deleted"
   And I should see the following performances in a table
   | Act 1                     |

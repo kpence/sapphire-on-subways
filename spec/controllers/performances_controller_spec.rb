@@ -70,4 +70,5 @@ describe PerformancesController do
       #expect Performance.scheduled != @original_scheduled_value
     end
   end
+
 end
