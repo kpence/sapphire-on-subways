@@ -103,12 +103,7 @@ describe SchedulesController do
     #
     # All tests require checking the csv and a redirection upon completion
     
-    after:each do
-      expect(controller).to set_flash[:notice]
-    end
-        
     context "File will be uploaded" do
-      
       context "with good data" do
         fixtures :schedules
         before:each do
@@ -124,7 +119,7 @@ describe SchedulesController do
                                          :action => "edit", 
                                          :id => @fake_schedule.id)
           subject
-          expect(flash[:notice]).to eq "Successfully Imported Data!!!"
+          expect(flash[:success]).to eq "Successfully Imported Data!!!"
         end
         
         it 'should create the schedule/acts 1 and 2 and import the data' do

@@ -57,10 +57,10 @@ class SchedulesController < ApplicationController
       schedule.import(csv_data)
       notice_msg = "Successfully Imported Data!!!"
       flash[:minimize] = true
-      redirect_to edit_schedule_path(id: schedule.id), notice: notice_msg
+      redirect_to edit_schedule_path(id: schedule.id), flash: {success: notice_msg}
       return
     end
-    redirect_to schedules_path, notice: notice_msg
+    redirect_to schedules_path, flash: {notice: notice_msg}
   end
   
   def edit
