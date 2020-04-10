@@ -152,7 +152,7 @@ describe SchedulesController do
     context "We came from the upload page" do
       it 'should generate a random schedule using the helper' do
         allow(Schedule).to receive(:find).and_return(@fake_schedule)
-        expect(controller.helpers).to receive(:minimize_conflicts)
+        expect(controller.helpers).to receive(:minimize_conflicts).exactly(2).times
         get :edit, params: {id: @fake_schedule.id}, flash: {minimize: true}
       end
     end

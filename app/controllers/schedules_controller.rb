@@ -37,7 +37,9 @@ class SchedulesController < ApplicationController
     end
     
     if flash[:minimize]
-      helpers.minimize_conflicts(@schedule.acts[0].performances)
+      @schedule.acts.each do |act|
+        helpers.minimize_conflicts(act.performances)
+      end
     end
     
     @ordered_performances = {}
