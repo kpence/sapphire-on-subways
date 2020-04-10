@@ -38,3 +38,13 @@
 .droppable-hover {
   background: #1D3558;
 }
+
+.floatLeft { 
+  width: 50%; float: left; 
+}
+.floatRight {
+  width: 50%; float: right; 
+}
+.contain { 
+  overflow: hidden;
+}
