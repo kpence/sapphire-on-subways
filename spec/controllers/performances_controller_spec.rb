@@ -63,11 +63,14 @@ describe PerformancesController do
     
     before :each do
       @fake_performance = performances(:InsertPerformance1)
+      @fake_schedule = schedules(:MySchedule)
       @original_locked_value = @fake_performance.locked
     end
     
     it 'should flip the boolean of locked within the performance' do
-      #expect Performance.locked != @original_locked_value
+      expect(Performance).to receive(:where).with({id: @fake_performance.id.to_i}).at_least(:once).and_return(@fake_performance)
+      expect(@fake_performance).to receive(:update).with(locked: !@fake_performance.locked)
+      post :lock, {params: {:performance_id => @fake_performance.id.to_i}}
     end
     
   end
