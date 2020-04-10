@@ -177,5 +177,101 @@ describe Schedule do
                                                :dancer_id => @fake_dancer_2.id)
       end
     end
+
+    context "Schedules with enough performances will split performances between acts upon import" do
+      before :each do
+        # Mock data complex enough to really test the function
+        @fake_act_1 = acts(:MyAct1)
+        @fake_act_2 = acts(:MyAct2)
+        @fake_performance_1 = performances(:MyPerf1)
+        @fake_performance_2 = performances(:MyPerf2)
+        @fake_performance_3 = performances(:MyPerf3)
+        @fake_performance_4 = performances(:MyPerf4)
+        @fake_performance_5 = performances(:MyPerf5)
+        @fake_performance_6 = performances(:MyPerf6)
+        @fake_performance_7 = performances(:MyPerf7)
+        @fake_performance_8 = performances(:MyPerf8)
+        @fake_performance_9 = performances(:MyPerf9)
+        @fake_performance_10 = performances(:MyPerf10)
+        @fake_performance_11 = performances(:MyPerf11)
+        @fake_dancer_1 = dancers(:MyDancer1)
+        @fake_dancer_2 = dancers(:MyDancer2)
+        @fake_schedule = schedules(:MySchedule)
+        
+        @fake_schedule_params =
+        {:performance_names => [@fake_performance_1.name,
+                                @fake_performance_2.name,
+                                @fake_performance_3.name,
+                                @fake_performance_4.name,
+                                @fake_performance_5.name,
+                                @fake_performance_6.name,
+                                @fake_performance_7.name,
+                                @fake_performance_8.name,
+                                @fake_performance_9.name,
+                                @fake_performance_10.name,
+                                @fake_performance_11.name],
+         :dancer_hashes => [
+            {"name" => @fake_dancer_1.name,
+             "dances" => [@fake_performance_10.name,
+                          @fake_performance_11.name]
+            },
+            {"name" => @fake_dancer_2.name,
+             "dances" => [@fake_performance_1.name,
+                          @fake_performance_3.name]
+            }
+          ]
+        }
+        allow(Act).to receive(:find_by).and_return(@fake_act_1, @fake_act_2)
+
+        
+				allow(Performance).to receive(:create!)
+
+        allow(Performance).to receive(:create!).with(
+          hash_including :name => @fake_performance_1.name).and_return(@fake_performance_1)
+        allow(Performance).to receive(:create!).with(
+          hash_including :name => @fake_performance_3.name).and_return(@fake_performance_3)
+        allow(Performance).to receive(:create!).with(
+          hash_including :name => @fake_performance_10.name).and_return(@fake_performance_10)
+        allow(Performance).to receive(:create!).with(
+          hash_including :name => @fake_performance_11.name).and_return(@fake_performance_11)
+
+
+        allow(Dancer).to receive(:create!).and_return(@fake_dancer_1, @fake_dancer_2)
+        #allow(Performance).to receive(:find_by).with(hash_including :act_id => 1).and_return(
+                                                                #@fake_performance_1,
+                                                                #@fake_performance_3)
+        #allow(Performance).to receive(:find_by).with(hash_including :act_id => 2).and_return(
+                                                                #@fake_performance_10, 
+                                                                #@fake_performance_11)
+      end
+
+      it 'should create each dancer associated with some dances' do
+        num_dancer_1_dances = @fake_schedule_params[:dancer_hashes][0]["dances"].length()
+        num_dancer_2_dances = @fake_schedule_params[:dancer_hashes][1]["dances"].length()
+        
+        # Dancer 1's fake dances:
+        expect(Dance).to receive(:create!).with(hash_including :dancer_id => @fake_dancer_1.id)
+                                          .exactly(num_dancer_1_dances).times
+        # Dancer 2's fake dances:
+        expect(Dance).to receive(:create!).with(hash_including :dancer_id => @fake_dancer_2.id)
+                                          .exactly(num_dancer_2_dances).times
+
+      end
+      
+      it 'should associate dances with the appropriate performance/dancer pair' do
+                                               
+        # Dancer 1's fake dances:
+        expect(Dance).to receive(:create!).with(:performance_id => @fake_performance_10.id,
+                                                :dancer_id => @fake_dancer_1.id)
+        expect(Dance).to receive(:create!).with(:performance_id => @fake_performance_11.id,
+                                                :dancer_id => @fake_dancer_1.id)
+        #
+        # Dancer 2's fake dances:
+        expect(Dance).to receive(:create!).with(:performance_id => @fake_performance_1.id,
+                                                :dancer_id => @fake_dancer_2.id)
+        expect(Dance).to receive(:create!).with(:performance_id => @fake_performance_3.id,
+                                               :dancer_id => @fake_dancer_2.id)
+      end
+    end
   end
 end
