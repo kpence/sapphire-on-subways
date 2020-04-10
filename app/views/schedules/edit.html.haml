@@ -27,11 +27,13 @@
                 = button_to lock_performances_path do
                   = hidden_field_tag :performance_id, perf.id
                   = hidden_field_tag :schedule_id, act.schedule_id
+                  = hidden_field_tag :locked, perf.locked
                   = submit_tag "Unlocked"
               - else
                 = button_to lock_performances_path, :id => act.schedule_id do
                   = hidden_field_tag :performance_id, perf.id
                   = hidden_field_tag :schedule_id, act.schedule_id
+                  = hidden_field_tag :locked, perf.locked
                   = submit_tag "Locked"
               = " " + perf.name
 
