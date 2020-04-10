@@ -25,13 +25,17 @@ class PerformancesController < ApplicationController
   end
   
   def lock
-    performance_to_change = Performance.find(params[:performance_id])
+    performance_to_change = Performance.find(params[:performance_id].to_i)
     
-    if performance_to_change.locked == True
-      performance_to_change.locked = False
+    if performance_to_change.locked == true
+      Performance.where(id: params[:performance_id].to_i).update(locked: false)
     else
-      performance_to_change.locked = True
+      Performance.where(id: params[:performance_id].to_i).update(locked: true)
     end
+    
+    redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
+    
   end
   
+
 end
