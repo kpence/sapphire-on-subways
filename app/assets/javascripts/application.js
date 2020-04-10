@@ -16,5 +16,8 @@
 //= require jquery-ui/widget
 //= require jquery-ui/sortable
 //= require jquery-ui/droppable
+//= require jquery.simulate
+//= require jquery.simulate.ext
+//= require jquery.simulate.drag-n-drop
 //= require turbolinks
 //= require_tree .
