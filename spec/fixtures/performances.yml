@@ -65,3 +65,13 @@ InsertPerformance1:
   position: 4
   locked: false
   scheduled: false
+MyPerf7:
+  id: 14
+  act_id: 2
+  name: MyPerf7
+  position: 7
+MyPerf8:
+  id: 15
+  act_id: 2
+  name: MyPerf8
+  position: 8

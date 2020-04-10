@@ -54,10 +54,11 @@ describe SchedulesController do
     
     context "In the presence of an act with conflicts" do
       before :each do
+        # See the fixture data for details
         @fake_act = acts(:MyOtherAct2)
-        @fake_perf1 = performances(:MyOtherPerf5)
-        @fake_perf2 = performances(:MyOtherPerf6)
-        @fake_dancer = dancers(:MyOtherDancer4)
+        @fake_perf1 = performances(:MyOtherPerf2)
+        @fake_perf2 = performances(:MyOtherPerf3)
+        @fake_dancer = dancers(:MyOtherDancer2)
         
         @ordered_performances = {}
         @ordered_performances[2] = @fake_act.performances.sort_by {|p| p.id }
@@ -69,7 +70,8 @@ describe SchedulesController do
                           :dancers => [@fake_dancer.name]
         }
         
-        allow(controller).to receive(:generate_conflict).and_return(nil, @fake_conflict)
+        allow(controller).to receive(:generate_conflict)
+            .and_return(nil, @fake_conflict, nil, nil, nil)
         
         # See the fixture data: This has one conflict between
         # MyOtherPerf5 and MyOtherPerf6
@@ -239,7 +241,7 @@ describe SchedulesController do
     context "We came from the upload page" do
       it 'should generate a random schedule using the helper' do
         allow(Schedule).to receive(:find).and_return(@fake_schedule)
-        expect(controller.helpers).to receive(:minimize_conflicts)
+        expect(controller.helpers).to receive(:minimize_conflicts).exactly(2).times
         get :edit, params: {id: @fake_schedule.id}, flash: {minimize: true}
       end
     end

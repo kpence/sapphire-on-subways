@@ -69,37 +69,37 @@ MyDance17:
 
 MyOtherDance1:
   id: 18
-  performance_id: 4
-  dancer_id: 1
+  performance_id: 8
+  dancer_id: 7
 MyOtherDance2:
   id: 19
-  performance_id: 2
-  dancer_id: 2
+  performance_id: 8
+  dancer_id: 8
 MyOtherDance3:
   id: 20
-  performance_id: 6
-  dancer_id: 2
+  performance_id: 9
+  dancer_id: 8
 MyOtherDance4:
   id: 21
-  performance_id: 5
-  dancer_id: 3
+  performance_id: 11
+  dancer_id: 8
 MyOtherDance5:
   id: 22
-  performance_id: 5
-  dancer_id: 4
+  performance_id: 7
+  dancer_id: 9
 MyOtherDance6:
   id: 23
-  performance_id: 6
-  dancer_id: 4
+  performance_id: 10
+  dancer_id: 9
 MyOtherDance7:
   id: 24
-  performance_id: 1
-  dancer_id: 5
+  performance_id: 7
+  dancer_id: 10
 MyOtherDance8:
   id: 25
-  performance_id: 6
-  dancer_id: 5
+  performance_id: 9
+  dancer_id: 10
 MyOtherDance9:
   id: 26
-  performance_id: 3
-  dancer_id: 6
+  performance_id: 12
+  dancer_id: 10
