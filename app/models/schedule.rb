@@ -134,7 +134,7 @@ class Schedule < ActiveRecord::Base
       end
       Performance.create!(name: name.lstrip.rstrip, act_id: act_id,
                           scheduled: true, position: index+1,
-                          locked: (index+1 == 1) || (index+1 == total_performances))
+                          locked: false)
     end
   end
   
