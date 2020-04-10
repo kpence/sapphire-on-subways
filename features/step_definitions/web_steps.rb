@@ -72,6 +72,14 @@ When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
   fill_in(field, :with => value)
 end
 
+When ("I lock dance {string} in act {string}") do |string1, string2|
+  find("#lock"+string1+string2).click
+end
+
+Then ("I should see that dance {string} in act {string} changed to {string}") do |string1, string2, string3|
+  within("#lock"+string1+string2){page.should have_selector("input[type=submit][value='#{string3}']")}
+end
+
 # Use this to fill in an entire form with data from a table. Example:
 #
 #   When I fill in the following:
@@ -189,7 +197,7 @@ Then /^(?:|I )should see the following (?:|performances in a )table$/ do |values
   list = values.raw.map {|e| e[0]}
   list.each do |text|
     if page.respond_to? :should
-      page.should have_content(text)
+        page.should have_content(text)
     else
       assert page.has_content?(text)
     end

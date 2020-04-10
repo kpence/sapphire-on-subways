@@ -36,6 +36,5 @@ Background: Start on the homepage
   | Act 2                     |
 
 Scenario: Lock the "6th dance" in "Act 1"
-  When I press "lock" for "dance 6" in "Act 1"
-  Then I should see that "lock" changed to "unlock"
-  And I should see that "lock" is now red
+  When I lock dance "6" in act "1"
+  Then I should see that dance "6" in act "1" changed to "Locked"
