@@ -207,9 +207,6 @@ Then /^(?:|I )should see the following (?:|performances in a )table(?:| for act 
   list = values.raw.map {|e| e[0]}
   list.each do |text|
     if page.respond_to? :should
-<<<<<<< HEAD
-        page.should have_content(text)
-=======
       page.should have_content(text)
       if act_number
         if act_number == "1"
@@ -230,7 +227,6 @@ Then /^(?:|I )should see the following (?:|performances in a )table in this orde
   list.each_with_index do |text, i|
     if page.respond_to? :should
       page.should have_content(text)
->>>>>>> master
     else
       assert page.has_content?(text)
     end
