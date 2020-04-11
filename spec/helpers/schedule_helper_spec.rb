@@ -30,7 +30,7 @@ describe ScheduleHelper do
         
         # Dance 1 and 2 are both dancer 1 (that is the only intersection)
         expect(res.length()).to eq(1)
-        expect(res).to eq([dancers(:MyDancer1).id])
+        expect(res).to eq([dancers(:MyDancer1).name])
       end
       
       it 'should find the intersection when the intersection is empty' do
@@ -83,11 +83,14 @@ describe ScheduleHelper do
         end
       end
       
-      values = [[1], [1], [1], [], [5],
-                [1,6], [1,2,6], [], [2],
-                [1,6], [3], [],
-                [4], [2,4],
-                [4]]
+      @fake_names = ["MyDancer1", "MyDancer2", "MyDancer3",
+                     "MyDancer4", "MyDancer5", "MyDancer6"]
+      
+      values = [["MyDancer1"], ["MyDancer1"], ["MyDancer1"], [], ["MyDancer5"],
+                ["MyDancer1","MyDancer6"], ["MyDancer1","MyDancer2","MyDancer6"], [], ["MyDancer2"],
+                ["MyDancer1","MyDancer6"], ["MyDancer3"], [],
+                ["MyDancer4"], ["MyDancer2","MyDancer4"],
+                ["MyDancer4"]]
       @sample_graph = {
         @fake_perfs[0].id => {
           @fake_perfs[1].id => values[0], @fake_perfs[2].id => values[1], 
@@ -144,11 +147,11 @@ describe ScheduleHelper do
           end
         end
       end
-      it 'should have only nonnegative values conflicts' do
+      it 'should give names in conflicts for dancers in the list' do
         @graph_result.each do |id, matching_hash|
           matching_hash.each do |paired_id, conflicts|
             conflicts.each do |conflict|
-              expect(conflict).to be >= 0
+              expect(@fake_names.include? conflict)
             end
           end
         end

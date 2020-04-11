@@ -57,4 +57,37 @@ describe PerformancesController do
     end
 
   end
+  
+  describe '#remove' do 
+    fixtures :schedules, :acts, :performances
+    
+    before :each do 
+      @fake_performance = performances(:InsertPerformance1)
+      #@original_scheduled_value = @fake_performance.scheduled
+      @fake_schedule_removed_from = schedules(:MySchedule)
+    end
+    
+    it 'should change scheduled attribute to false' do
+      post :remove, params: {performance_id: @fake_performance.id, new_performance_name: "InsertPerformance1", position: 4, schedule_id: @fake_schedule_removed_from.id}
+      expect @fake_performance.scheduled == false
+    end
+  end
+
+  describe '#lock' do
+    fixtures :schedules, :acts, :performances
+    
+    before :each do
+      @fake_performance = performances(:InsertPerformance1)
+      @fake_schedule = schedules(:MySchedule)
+      @original_locked_value = @fake_performance.locked
+    end
+    
+    it 'should flip the boolean of locked within the performance' do
+      expect(Performance).to receive(:find).with(@fake_performance.id.to_i).at_least(:once).and_return(@fake_performance)
+      expect(@fake_performance).to receive(:update!).with(locked: !@fake_performance.locked).and_call_original
+      post :lock, {params: {:performance_id => @fake_performance.id}}
+      expect(@fake_performance.locked).not_to be(@original_locked_value)
+    end
+  end
+
 end

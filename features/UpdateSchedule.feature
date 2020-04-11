@@ -33,8 +33,8 @@ Scenario: Click and drag to swap "Fall" with "Sugar"
   | Show Me How You Burlesque |
   | Nails, Hair, Hips, Heels  |
   | I Will Wait               |
-  When I drag performance "Fall" to "Sugar"
-  Then performance "Sugar" should be right after "Fall"
+#  When I drag performance "Fall" to "Sugar"
+#  Then performance "Fall" should be right after "Sugar"
 
 #Scenario: Click and drag to move "Falling", "Old Money", and "Lost" into "Act 2"
 #  When I drag performance "Sorrow" to "Falling"
