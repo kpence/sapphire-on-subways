@@ -30,9 +30,9 @@ class PerformancesController < ApplicationController
     #Unschedules a performance
     Performance.where(id: params[:performance_id].to_i).update(scheduled: false)
     
+    #Display to User Which Dance Was Removed
     flash[:notice] = "#{Performance.find(params[:performance_id]).name} Removed"
     
-    #Updates schedule view for user
     redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
   end
 end
