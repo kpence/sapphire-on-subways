@@ -250,7 +250,7 @@ describe ScheduleHelper do
               expect(ordering).to include(index)
             end
           end
-          expect(res.length).to eq 
+          expect(res.length).to eq max_perms
         end
       end
     end

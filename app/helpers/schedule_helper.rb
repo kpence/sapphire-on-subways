@@ -99,15 +99,23 @@ module ScheduleHelper
   
   def permute(original_order, num_perms, excluded)
     perms = [original_order]
-    if num_perms == factorial(original_order.length())
+    if num_perms <= @@MAX_PERMS - 1 && 
+          factorial(original_order.length()) <= @@MAX_PERMS - 1
       perms = original_order.permutation.to_a
     else
-      (1..num_perms-1).to_a.each do
+      (1..@@MAX_PERMS-1).to_a.each do
         # Find a new ordering
         new_order = original_order.shuffle
         perms = add_order(perms, original_order, new_order)
       end
     end
+    
+    perms.each do |perm|
+      excluded.each do |excluded_index|
+        perm.insert(excluded_index, excluded_index)
+      end
+    end
+    
     return perms
   end
   
