@@ -197,11 +197,28 @@ Then /^(?:|I )should see "([^"]*)"$/ do |text|
   end
 end
 
-Then /^(?:|I )should see the following (?:|performances in a )table$/ do |values|
+Then /^(?:|I )should see "([^"]*)" in between "([^"]*)" and "([^"]*)"$/ do |thing, before_thing, after_thing|
+  if page.body.respond_to? :should
+    page.should have_content(text)
+  else
+    assert page.has_content?(text)
+  end
+  page.body.should =~ /#{before_thing}.*#{thing}/m
+  page.body.should =~ /#{thing}.*#{after_thing}/m
+end
+
+Then /^(?:|I )should see the following (?:|performances in a )table(?:| for act ([0-9]))$/ do |act_number, values|
   list = values.raw.map {|e| e[0]}
   list.each do |text|
     if page.respond_to? :should
       page.should have_content(text)
+      if act_number
+        if act_number == "1"
+          page.body.should =~ /#{Rack::Utils.escape_html(text)}.*Act 2/m
+        else
+          page.body.should =~ /Act 2.*#{Rack::Utils.escape_html(text)}/m
+        end
+      end
     else
       assert page.has_content?(text)
     end
