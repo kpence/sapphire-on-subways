@@ -22,30 +22,35 @@
       - unless @ordered_performances[act.number].empty?
         %tbody{:class => "sortable", "data-url" => sort_performances_path(:act_id => act.id)}
           - @ordered_performances[act.number].each do |perf|
-            %tr{:id => dom_id(perf)}
-              %td.actformat{:id => dom_id(perf)}
-                - unless perf.locked == true
-                  = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+            - unless perf.scheduled == false
+              %tr{:id => dom_id(perf)}
+                %td.actformat{:id => dom_id(perf)}
+                  = button_to remove_performances_path, :id => "remove" + perf.name.to_s, :class => "remove" + perf.name.to_s do
                     = hidden_field_tag :performance_id, perf.id
                     = hidden_field_tag :schedule_id, act.schedule_id
-                    = hidden_field_tag :locked, false
-                    = submit_tag "Unlocked"
-                - else
-                  = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
-                    = hidden_field_tag :performance_id, perf.id
-                    = hidden_field_tag :schedule_id, act.schedule_id
-                    = hidden_field_tag :locked, true
-                    = submit_tag "Locked"
-                = perf.name
-            - if @conflicting_performances.include? perf.id
-              %tr{:class => "unmoveable"}
-                %td{:class => "unmoveable"}
-                - @conflicts[act.number].each do |conflict|
-                  - if conflict[:first_performance] == perf.name
-                    %td{:class => "alert alert-danger unmoveable"}
-                      - conflict[:dancers].each do |dancer_name|
-                        %div= dancer_name
-                      
+                    = hidden_field_tag :scheduled, true
+                    = submit_tag "X"
+                  - unless perf.locked == true
+                    = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                      = hidden_field_tag :performance_id, perf.id
+                      = hidden_field_tag :schedule_id, act.schedule_id
+                      = hidden_field_tag :locked, false
+                      = submit_tag "Unlocked"
+                  - else
+                    = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                      = hidden_field_tag :performance_id, perf.id
+                      = hidden_field_tag :schedule_id, act.schedule_id
+                      = hidden_field_tag :locked, true
+                      = submit_tag "Locked"
+                  = perf.name
+              - if @conflicting_performances.include? perf.id
+                %tr{:class => "unmoveable"}
+                  %td{:class => "unmoveable"}
+                  - @conflicts[act.number].each do |conflict|
+                    - if conflict[:first_performance] == perf.name
+                      %td{:class => "alert alert-danger unmoveable"}
+                        - conflict[:dancers].each do |dancer_name|
+                          %div= dancer_name
       - else
         %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
           %td.actformat{:class => "unmoveable"}
@@ -68,29 +73,35 @@
         - unless @ordered_performances[act.number].empty?
           %tbody{:class => "sortable", "data-url" => sort_performances_path(:act_id => act.id)}
             - @ordered_performances[act.number].each do |perf|
-              %tr{:id => dom_id(perf)}
-                %td.actformat{:id => dom_id(perf)}
-                  - unless perf.locked == true
-                    = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+              - unless perf.scheduled == false
+                %tr{:id => dom_id(perf)}
+                  %td.actformat{:id => dom_id(perf)}
+                    = button_to remove_performances_path, :id => "remove" + perf.name.to_s, :class => "remove" + perf.name.to_s do
                       = hidden_field_tag :performance_id, perf.id
                       = hidden_field_tag :schedule_id, act.schedule_id
-                      = hidden_field_tag :locked, false
-                      = submit_tag "Unlocked"
-                  - else
-                    = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
-                      = hidden_field_tag :performance_id, perf.id
-                      = hidden_field_tag :schedule_id, act.schedule_id
-                      = hidden_field_tag :locked, true
-                      = submit_tag "Locked"
-                  = perf.name
-              - if @conflicting_performances.include? perf.id
-                %tr{:class => "unmoveable"}
-                  %td{:class => "unmoveable"}
-                  - @conflicts[act.number].each do |conflict|
-                    - if conflict[:first_performance] == perf.name
-                      %td{:class => "alert alert-danger unmoveable"}
-                        - conflict[:dancers].each do |dancer_name|
-                          %div= dancer_name
+                      = hidden_field_tag :scheduled, true
+                      = submit_tag "X"
+                    - unless perf.locked == true
+                      = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                        = hidden_field_tag :performance_id, perf.id
+                        = hidden_field_tag :schedule_id, act.schedule_id
+                        = hidden_field_tag :locked, false
+                        = submit_tag "Unlocked"
+                    - else
+                      = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                        = hidden_field_tag :performance_id, perf.id
+                        = hidden_field_tag :schedule_id, act.schedule_id
+                        = hidden_field_tag :locked, true
+                        = submit_tag "Locked"
+                    = perf.name
+                - if @conflicting_performances.include? perf.id
+                  %tr{:class => "unmoveable"}
+                    %td{:class => "unmoveable"}
+                    - @conflicts[act.number].each do |conflict|
+                      - if conflict[:first_performance] == perf.name
+                        %td{:class => "alert alert-danger unmoveable"}
+                          - conflict[:dancers].each do |dancer_name|
+                            %div= dancer_name
                         
         - else
           %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}

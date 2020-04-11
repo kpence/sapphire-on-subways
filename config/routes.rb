@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :performances do
     collection {
       put :sort
+      post :remove
       post :lock
     }
   end

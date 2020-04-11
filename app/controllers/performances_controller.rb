@@ -25,6 +25,17 @@ class PerformancesController < ApplicationController
     notice_msg = "#{params[:new_performance_name]} inserted into Act #{Act.find(params[:act_id]).number}"
     redirect_to edit_schedule_path(id: params[:schedule_id].to_i), notice: notice_msg
   end
+
+  def remove
+    
+    #Unschedules a performance
+    Performance.where(id: params[:performance_id].to_i).update(scheduled: false)
+    
+    #Display to User Which Dance Was Removed
+    flash[:notice] = "#{Performance.find(params[:performance_id]).name} Removed"
+    
+    redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
+  end
   
   def lock
     performance_to_change = Performance.find(params[:performance_id].to_i)
@@ -33,5 +44,4 @@ class PerformancesController < ApplicationController
     redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
     
   end
-  
 end

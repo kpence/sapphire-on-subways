@@ -85,5 +85,8 @@ class SchedulesController < ApplicationController
       end
       @conflicts[act.number] = self.conflicts(act.number)
     end
+
+
+
   end
 end
