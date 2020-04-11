@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     collection {
       put :sort
       post :remove
+      post :lock
     }
   end
 
