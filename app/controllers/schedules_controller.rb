@@ -89,4 +89,9 @@ class SchedulesController < ApplicationController
 
 
   end
+  
+  def minimize
+    flash[:minimize] = true
+    redirect_to edit_schedule_path(id: params[:id]), flash: {success: "New minimal schedule generated!"}
+  end
 end

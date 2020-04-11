@@ -108,3 +108,5 @@
             %td.actformat{:class => "unmoveable"}
               %em [ This act is empty. Dragging a performance here will move it into this act. ]
 
+%div
+  = button_to "Regenerate", minimize_schedule_path(@schedule.id), method: "get"

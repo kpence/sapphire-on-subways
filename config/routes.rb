@@ -4,6 +4,9 @@ Rails.application.routes.draw do
     collection {
       post :import
     }
+    member {
+      get :minimize
+    }
   end
   
   resources :performances do
