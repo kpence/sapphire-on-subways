@@ -43,14 +43,14 @@
                       = hidden_field_tag :locked, true
                       = submit_tag "Locked"
                   = perf.name
-            - if @conflicting_performances.include? perf.id
-              %tr{:class => "unmoveable"}
-                %td{:class => "unmoveable"}
-                - @conflicts[act.number].each do |conflict|
-                  - if conflict[:first_performance] == perf.name
-                    %td{:class => "alert alert-danger unmoveable"}
-                      - conflict[:dancers].each do |dancer_name|
-                        %div= dancer_name
+              - if @conflicting_performances.include? perf.id
+                %tr{:class => "unmoveable"}
+                  %td{:class => "unmoveable"}
+                  - @conflicts[act.number].each do |conflict|
+                    - if conflict[:first_performance] == perf.name
+                      %td{:class => "alert alert-danger unmoveable"}
+                        - conflict[:dancers].each do |dancer_name|
+                          %div= dancer_name
       - else
         %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
           %td.actformat{:class => "unmoveable"}
@@ -94,14 +94,14 @@
                         = hidden_field_tag :locked, true
                         = submit_tag "Locked"
                     = perf.name
-              - if @conflicting_performances.include? perf.id
-                %tr{:class => "unmoveable"}
-                  %td{:class => "unmoveable"}
-                  - @conflicts[act.number].each do |conflict|
-                    - if conflict[:first_performance] == perf.name
-                      %td{:class => "alert alert-danger unmoveable"}
-                        - conflict[:dancers].each do |dancer_name|
-                          %div= dancer_name
+                - if @conflicting_performances.include? perf.id
+                  %tr{:class => "unmoveable"}
+                    %td{:class => "unmoveable"}
+                    - @conflicts[act.number].each do |conflict|
+                      - if conflict[:first_performance] == perf.name
+                        %td{:class => "alert alert-danger unmoveable"}
+                          - conflict[:dancers].each do |dancer_name|
+                            %div= dancer_name
                         
         - else
           %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
