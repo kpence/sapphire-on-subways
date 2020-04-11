@@ -27,6 +27,17 @@ Some configurations:
       ```
 	      Follow the instructions here to install ChromeDriver
         https://github.com/SeleniumHQ/selenium/wiki/ChromeDriver#quick-installation
+      ```	
+	cd /tmp/
+	wget https://chromedriver.storage.googleapis.com/2.37/chromedriver_linux64.zip
+	unzip chromedriver_linux64.zip
+	sudo mv chromedriver /usr/bin/chromedriver
+	chromedriver --version
+
+	curl https://intoli.com/install-google-chrome.sh | bash
+	sudo mv /usr/bin/google-chrome-stable /usr/bin/google-chrome
+	google-chrome --version && which google-chrome
+	
   - Run __RSpec__ from the root folder: `rspec spec/<spec name>` for any spec. To run all specs, simply run `rspec spec/*`
 
 * Deployment instructions: Credit to Dr. Michael Nowak, as these come from his tutorial
