@@ -200,6 +200,23 @@ Then /^(?:|I )should see the following (?:|performances in a )table$/ do |values
   end
 end
 
+Then /^(?:|I )should see the following (?:|performances in a )table in this order$/ do |values|
+  list = values.raw.map {|e| e[0]}
+  # First test that they are present
+  list.each_with_index do |text, i|
+    if page.respond_to? :should
+      page.should have_content(text)
+    else
+      assert page.has_content?(text)
+    end
+    if i < list.length - 1
+      first_dance = text
+      second_dance = list[i+1]
+      page.body.should =~ /#{first_dance}.*#{second_dance}/m
+    end
+  end
+end
+
 Then /^(?:|I )should see \/([^\/]*)\/$/ do |regexp|
   regexp = Regexp.new(regexp)
 
