@@ -195,50 +195,144 @@ describe ScheduleHelper do
   end
   
   describe "#permute" do
-    context "When the number of permutations is small enough" do
-      it 'should return all permutations of that order' do
-        original_order = [1, 2, 3]
-        correct_perms = original_order.permutation.to_a
-        res = helper.permute(original_order, correct_perms.length())
-        expect(res).to eq(correct_perms)
+    context "When there is nothing to exclude from locks" do
+      context "When the number of permutations is small enough" do
+        it 'should return all permutations of that order' do
+          original_order = [0, 1, 2]
+          correct_perms = original_order.permutation.to_a
+          res = helper.permute(original_order, correct_perms.length(), [])
+          expect(res).to eq(correct_perms)
+        end
+      end
+      context "When the number of permutations is too large" do
+        it 'should only yield 10000 random ones (including the given order)' do
+          original_order = (1..100).to_a
+          max_perms = ScheduleHelper.class_variable_get(:@@MAX_PERMS)
+          res = helper.permute(original_order, max_perms, [])
+          expect(res.length()).to eq(max_perms)
+          expect(res.include? original_order)
+        end
       end
     end
-    context "When the number of permutations is too large" do
-      it 'should only yield 10000 random ones (including the given order)' do
-        original_order = (1..100).to_a
-        max_perms = ScheduleHelper.class_variable_get(:@@MAX_PERMS)
-        res = helper.permute(original_order, max_perms)
-        expect(res.length()).to eq(max_perms)
-        expect(res.include? original_order)
+    
+    context "When locks exclude certain dances" do
+      context "When the number of permutations is small enough" do
+        before :each do
+          @original_order = [0, 1, 3, 5]
+          @excluded = [2, 4]
+          @correct_perms = @original_order.permutation.to_a
+          @correct_perms.each do |perm|
+            @excluded.each do |excluded_index|
+              perm.insert(excluded_index, excluded_index)
+            end
+          end
+        end
+        it 'should return all permutations of that order' do
+          res = helper.permute(@original_order, @correct_perms.length(), @excluded)
+          expect(res).to eq(@correct_perms)
+        end
+      end
+      context "When the number of permutations is too large" do
+        before :each do
+          @original_order = (0..100).to_a
+          @excluded = [1, 3, 4, 5, 23, 88, 99]
+          @original_order -= @excluded
+        end
+        it 'should return all permutations of that order' do
+          max_perms = ScheduleHelper.class_variable_get(:@@MAX_PERMS)
+          res = helper.permute(@original_order, max_perms * 2, @excluded)
+          # both included and excluded should be in there
+          (@original_order + @excluded).each do |index|
+            res.each do |ordering|
+              expect(ordering).to include(index)
+            end
+          end
+          expect(res.length).to eq 
+        end
       end
     end
   end
   
   describe "#get_perms" do
-    fixtures :performances
+    fixtures :performances, :acts
     before :each do
-      @perf1 = performances(:MyPerf1)
-      @perf2 = performances(:MyPerf2)
-      @perf3 = performances(:MyPerf3)
-      @perf4 = performances(:MyPerf4)
-      @perf5 = performances(:MyPerf5)
-      @perf6 = performances(:MyPerf6)
-      @perf7 = performances(:MyOtherPerf1)
-      @perf8 = performances(:MyOtherPerf2)
-      @perf_under_10k = [@perf1, @perf2, @perf3, @perf4]
-      @perf_exceed_10k = [@perf1, @perf2, @perf3, @perf4, @perf5, @perf6, @perf7, @perf8]
+      @fake_act1 = acts(:MyAct1)
+      @fake_act2 = acts(:MyAct2)
+      @perf7 = performances(:MyPerf7)
+      @perf8 = performances(:MyPerf8)
+      @perf13 = performances(:InsertPerformance1)
+      
+      @perfs = @fake_act1.performances + @fake_act2.performances
+      expect(helper).to receive(:factorial).and_call_original.at_least(:once)
     end
-    it 'should should not exceed 10k permutations' do
-      original_order = (0..7).to_a
-      expect(helper).to receive(:factorial).with(8).and_return(40320)
-      expect(helper).to receive(:permute).with(original_order, 999)
-      helper.get_perms(@perf_exceed_10k)
+    after :each do
+      helper.get_perms(@perfs)
     end
-    it 'should should return the correct factorial number' do
-      original_order = (0..3).to_a
-      expect(helper).to receive(:factorial).with(4).and_return(24)
-      expect(helper).to receive(:permute).with(original_order, 24)
-      helper.get_perms(@perf_under_10k)
+    
+    context "Enough dances to exceed max" do
+      before :each do
+        @original_order = (0..@perfs.length - 1).to_a
+        @max_perms = ScheduleHelper.class_variable_get(:@@MAX_PERMS)
+      end
+      
+      context "WITH exclusions" do
+        before :each do
+          @locked_indices = [0,2]
+          @locked_indices.each do |index|
+            @perfs[index].locked = true
+          end
+          # The rest are false
+        end
+      
+        it 'should separate these indices out when permuting' do
+          expect(helper).to receive(:permute)
+              .with(@original_order - @locked_indices, 
+                    @max_perms - 1,
+                    @locked_indices)
+        end
+      end
+      
+      context "WITHOUT exclusions" do
+        it 'should separate these indices out when permuting' do
+          expect(helper).to receive(:permute)
+              .with(@original_order, 
+                    @max_perms - 1,
+                    [])
+        end
+      end
+    end
+      
+    context "NOT enough dances to exceed max" do
+      before :each do
+        @perfs -= [@perf7, @perf8, @perf13]
+        @original_order = (0..@perfs.length - 1).to_a
+      end
+      
+      context "WITH exclusions" do
+        before :each do
+          @locked_indices = [0,2]
+          @locked_indices.each do |index|
+            @perfs[index].locked = true
+          end
+          # The rest are false
+        end
+      
+        it 'should separate these indices out when permuting' do
+          expect(helper).to receive(:permute)
+              .with(@original_order - @locked_indices, 
+                    helper.factorial(@original_order.length),
+                    @locked_indices)
+        end
+      end
+      
+      context "WITHOUT exclusions" do
+        it 'should separate these indices out when permuting' do
+          expect(helper).to receive(:permute)
+              .with(@original_order, 
+                    helper.factorial(@original_order.length),
+                    [])
+        end
+      end
     end
   end
   

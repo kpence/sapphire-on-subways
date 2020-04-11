@@ -97,7 +97,7 @@ module ScheduleHelper
     return perms
   end
   
-  def permute(original_order, num_perms)
+  def permute(original_order, num_perms, excluded)
     perms = [original_order]
     if num_perms == factorial(original_order.length())
       perms = original_order.permutation.to_a
@@ -114,6 +114,13 @@ module ScheduleHelper
   def get_perms(performances)
     original_order = (0..performances.length() - 1).to_a
     
+    excluded = []
+    original_order.each do |index|
+      if performances[index].locked
+        excluded.append(index)
+      end
+    end
+    
     factorial_value = factorial(performances.length())
 
     if factorial_value > @@MAX_PERMS
@@ -122,7 +129,7 @@ module ScheduleHelper
       num_perms = factorial_value
     end
     
-    return permute(original_order, num_perms)
+    return permute(original_order - excluded, num_perms, excluded)
   end
   
   def find_min_perm(perms)
