@@ -24,9 +24,10 @@
               - unless perf.scheduled == false
                 %td.actformat{:id => dom_id(perf)}
                   = perf.name
-                  = button_to remove_performances_path, :id => act.schedule_id do
+                  = button_to remove_performances_path, :id => "remove" + perf.name.to_s, :class => "remove" + perf.name.to_s do
                     = hidden_field_tag :performance_id, perf.id
                     = hidden_field_tag :schedule_id, act.schedule_id
+                    = hidden_field_tag :scheduled, true
                     = submit_tag "X"
             - if @conflicting_performances.include? perf.id
               %tr{:class => "unmoveable"}
@@ -62,9 +63,10 @@
                 - unless perf.scheduled == false
                   %td.actformat{:id => dom_id(perf)}
                     = perf.name
-                    = button_to remove_performances_path, :id => act.schedule_id do
+                    = button_to remove_performances_path, :id => "remove" + perf.name.to_s, :class => "remove" + perf.name.to_s do
                       = hidden_field_tag :performance_id, perf.id
                       = hidden_field_tag :schedule_id, act.schedule_id
+                      = hidden_field_tag :scheduled, true
                       = submit_tag "X"
               - if @conflicting_performances.include? perf.id
                 %tr{:class => "unmoveable"}

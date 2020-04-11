@@ -12,8 +12,7 @@ Background: Start on the homepage
 
 
 Scenario: Remove "Sugar" in "Act 1"
-  When I press "X" for "Sugar"
-  Then I should see "Sugar Removed"
+  When I remove dance "Sugar"
   Then I should see the following performances in a table in this order
   | Act 1                     |
   | I Don’t Think About You   |
