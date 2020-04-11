@@ -116,6 +116,8 @@ module ScheduleHelper
       end
     end
     
+    # Also need to check if the factorial exceeds the num_perms asked for
+    
     return perms
   end
   
