@@ -29,19 +29,19 @@
                     = hidden_field_tag :performance_id, perf.id
                     = hidden_field_tag :schedule_id, act.schedule_id
                     = hidden_field_tag :scheduled, true
-                    = submit_tag "X"
+                    = image_submit_tag("x.png", alt: "Remove")
                   - unless perf.locked == true
                     = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
                       = hidden_field_tag :performance_id, perf.id
                       = hidden_field_tag :schedule_id, act.schedule_id
                       = hidden_field_tag :locked, false
-                      = submit_tag "Unlocked"
+                      = image_submit_tag("unlock.jpg", alt: "Unlocked")
                   - else
                     = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
                       = hidden_field_tag :performance_id, perf.id
                       = hidden_field_tag :schedule_id, act.schedule_id
                       = hidden_field_tag :locked, true
-                      = submit_tag "Locked"
+                      = image_submit_tag("lock.png", alt: "Locked")
                   = perf.name
               - if @conflicting_performances.include? perf.id
                 %tr{:class => "unmoveable"}
@@ -80,19 +80,19 @@
                       = hidden_field_tag :performance_id, perf.id
                       = hidden_field_tag :schedule_id, act.schedule_id
                       = hidden_field_tag :scheduled, true
-                      = submit_tag "X"
+                      = image_submit_tag("x.png", alt: "Remove")
                     - unless perf.locked == true
                       = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
                         = hidden_field_tag :performance_id, perf.id
                         = hidden_field_tag :schedule_id, act.schedule_id
                         = hidden_field_tag :locked, false
-                        = submit_tag "Unlocked"
+                        = image_submit_tag("unlock.jpg", alt: "Unlocked")
                     - else
                       = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
                         = hidden_field_tag :performance_id, perf.id
                         = hidden_field_tag :schedule_id, act.schedule_id
                         = hidden_field_tag :locked, true
-                        = submit_tag "Locked"
+                        = image_submit_tag("lock.png", alt: "Locked")
                     = perf.name
                 - if @conflicting_performances.include? perf.id
                   %tr{:class => "unmoveable"}
