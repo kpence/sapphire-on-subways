@@ -53,11 +53,8 @@ When /^(?:|I )press "([^"]*)"$/ do |button|
   click_button(button)
 end
 
-When /^(?:|I )press "([^"]*)" for "([^"]*)"$/ do |button, dance_name|
-  
-  within("#performance_#{perf_id}") do
-    click_button(button)
-  end
+When ("I remove dance {string}") do |string1|
+  find("#remove"+string1).click
 end
 
 When /^(?:|I )follow "([^"]*)"$/ do |link|
