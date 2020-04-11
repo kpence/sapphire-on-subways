@@ -72,6 +72,14 @@ When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
   fill_in(field, :with => value)
 end
 
+When ("I lock dance {string}") do |string1|
+  find("#lock"+string1).click
+end
+
+Then ("I should see that dance {string} changed to {string}") do |string1, string2|
+  within("#lock"+string1){page.should have_selector("input[type=submit][value='#{string2}']")}
+end
+
 # Use this to fill in an entire form with data from a table. Example:
 #
 #   When I fill in the following:

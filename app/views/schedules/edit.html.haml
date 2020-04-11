@@ -1,4 +1,6 @@
 -#  This file is app/views/movies/schedules.html.haml
+-#%link(rel="stylesheet" href="assets/stylesheets/button.css" crossorigin="anonymous")
+= javascript_include_tag 'application', 'data-turbolinks-track' => true
 
 %h3= "Use this page to edit your schedule!"
 
@@ -22,6 +24,18 @@
           - @ordered_performances[act.number].each do |perf|
             %tr{:id => dom_id(perf)}
               %td.actformat{:id => dom_id(perf)}
+                - unless perf.locked == true
+                  = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                    = hidden_field_tag :performance_id, perf.id
+                    = hidden_field_tag :schedule_id, act.schedule_id
+                    = hidden_field_tag :locked, false
+                    = submit_tag "Unlocked"
+                - else
+                  = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                    = hidden_field_tag :performance_id, perf.id
+                    = hidden_field_tag :schedule_id, act.schedule_id
+                    = hidden_field_tag :locked, true
+                    = submit_tag "Locked"
                 = perf.name
             - if @conflicting_performances.include? perf.id
               %tr{:class => "unmoveable"}
@@ -56,6 +70,18 @@
             - @ordered_performances[act.number].each do |perf|
               %tr{:id => dom_id(perf)}
                 %td.actformat{:id => dom_id(perf)}
+                  - unless perf.locked == true
+                    = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                      = hidden_field_tag :performance_id, perf.id
+                      = hidden_field_tag :schedule_id, act.schedule_id
+                      = hidden_field_tag :locked, false
+                      = submit_tag "Unlocked"
+                  - else
+                    = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                      = hidden_field_tag :performance_id, perf.id
+                      = hidden_field_tag :schedule_id, act.schedule_id
+                      = hidden_field_tag :locked, true
+                      = submit_tag "Locked"
                   = perf.name
               - if @conflicting_performances.include? perf.id
                 %tr{:class => "unmoveable"}
