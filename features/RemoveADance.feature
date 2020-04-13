@@ -9,15 +9,19 @@ Background: Start on the homepage
   Then I should be on the Edit Schedule page
   And I should see "Successfully Imported Data!!!"
   Given I am on the Edit Schedule page
-
+  Then I should see the following performances in a table for act 1 in order
+  | I Don’t Think About You   |
+  | Life is Good              |
+  | Sugar                     |
+  | All I Ask                 |
+  | Sorrow                    |
+  And I should see no performances in the table for act 2
 
 Scenario: Remove "Sugar" in "Act 1"
   When I remove dance "Sugar"
-  Then I should see the following performances in a table in this order
-  | Act 1                     |
+  Then I should see the following performances in a table for act 1 in order
   | I Don’t Think About You   |
   | Life is Good              |
   | All I Ask                 |
   | Sorrow                    |
-  And I should see the following table in this order
-  | Act 2                     |                    
+  And I should see no performances in the table for act 2
