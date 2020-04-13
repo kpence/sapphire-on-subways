@@ -9,31 +9,27 @@ Background: Start on the homepage
   Then I should be on the Edit Schedule page
   And I should see "Successfully Imported Data!!!"
   Given I am on the Edit Schedule page
-
-Scenario: See Conflicts for a Small Schedule
-  Then I should see the following performances in a table in this order
-  | Act 1                     |
+  Then I should see the following performances in a table for act 1 in order
   | I Don’t Think About You   |
   | Life is Good              |
   | Sugar                     |
   | All I Ask                 |
   | Sorrow                    |
-  And I should see the following table in this order
-  | Act 2                     |
-  And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
+  And I should see no performances in the table for act 2
+
+Scenario: See Conflicts for a Small Schedule
+  Then I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
 
 @selenium_chrome_headless
 Scenario: See Conflicts after Updating the Schedule
-  Then I should see the following performances in a table in this order
-  | Act 1                     |
-  | I Don’t Think About You   |
-  | Life is Good              |
-  | Sugar                     |
-  | All I Ask                 |
-  | Sorrow                    |
-  And I should see the following table in this order
-  | Act 2                     |
-  And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
+  Then I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
   When I drag performance "I Don’t Think About You" to "Life is Good"
   Then I should see "Andrea Onate" in between "I Don’t Think About You" and "Sugar"
   And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
+  And I should see the following performances in a table for act 1 in order
+  | Life is Good              |
+  | I Don’t Think About You   |
+  | Sugar                     |
+  | All I Ask                 |
+  | Sorrow                    |
+  And I should see no performances in the table for act 2
