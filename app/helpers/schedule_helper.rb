@@ -110,9 +110,13 @@ module ScheduleHelper
       end
     end
     
-    perms.each do |perm|
-      excluded.each do |excluded_index|
-        perm.insert(excluded_index, excluded_index)
+    if excluded.length > 0
+      perms.each do |perm|
+        #puts "perm before: " + perm.to_s + " Excludeds: " + excluded.to_s
+        excluded.each do |excluded_index|
+          perm.insert(excluded_index, excluded_index)
+        end
+        #puts "perm after: " + perm.to_s
       end
     end
     

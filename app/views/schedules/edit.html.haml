@@ -4,6 +4,9 @@
 
 %h3= "Use this page to edit your schedule!"
 
+%div.text-center
+  = button_to "Regenerate", minimize_schedule_path(@schedule.id), method: "get", class: "btn btn-success"
+
 - @schedule.acts.each do |act|
   - if act.number == 1
     %table.floatLeft{:id => "act"+act.number.to_s}
@@ -107,6 +110,3 @@
           %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
             %td.actformat{:class => "unmoveable"}
               %em [ This act is empty. Dragging a performance here will move it into this act. ]
-
-%div
-  = button_to "Regenerate", minimize_schedule_path(@schedule.id), method: "get"

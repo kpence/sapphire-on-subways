@@ -70,23 +70,23 @@ class SchedulesController < ApplicationController
       return
     end
     
-    if flash[:minimize]
-      @schedule.acts.each do |act|
-        helpers.minimize_conflicts(act.performances)
-      end
-    end
-    
     @ordered_performances = {}
     @conflicts = {}
     @conflicting_performances = []
     @schedule.acts.each do |act|
+      # Put them in an order the helper can digest
       @ordered_performances[act.number] = act.performances.sort_by do |perf|
         perf.position
       end
+      # Minimize them and regenerate the structure if necessary
+      if flash[:minimize]
+        helpers.minimize_conflicts(@ordered_performances[act.number])
+        @ordered_performances[act.number] = act.performances.sort_by do |perf|
+          perf.position
+        end
+      end
       @conflicts[act.number] = self.conflicts(act.number)
     end
-
-
 
   end
   

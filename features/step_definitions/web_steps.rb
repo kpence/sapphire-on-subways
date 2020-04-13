@@ -77,6 +77,7 @@ When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
 end
 
 When ("I lock dance {string}") do |string1|
+  #puts page.to_s
   find("#lock"+string1).click
 end
 
