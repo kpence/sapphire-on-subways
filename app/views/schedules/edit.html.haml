@@ -50,7 +50,7 @@
         %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
           %td.actFormat{:class => "unmoveable"}
             %em [ This act is empty. Dragging a performance here will move it into this act. ]
-    %div{:id =>"Insert Dance into Act#{act.number}"}  
+    %div{:id =>"act#{act.number}insert"}  
       = form_tag performances_path do
         = text_field_tag :new_performance_name, nil
         = hidden_field_tag :act_id, act.id

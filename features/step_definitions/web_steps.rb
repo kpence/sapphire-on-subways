@@ -62,7 +62,7 @@ When /^(?:|I )follow "([^"]*)"$/ do |link|
 end
 
 When("I fill insert dance into {string} with {string}") do |string, string2|
-  within("#" + string){fill_in("new_performance_name", :with => string2)}
+  within("#" + string + "insert"){fill_in("new_performance_name", :with => string2)}
 end
 
 Then("I press insert new dance for {string}") do |string|
