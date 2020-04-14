@@ -207,38 +207,34 @@ Then /^(?:|I )should see "([^"]*)" in between "([^"]*)" and "([^"]*)"$/ do |thin
   page.body.should =~ /#{thing}.*#{after_thing}/m
 end
 
-Then /^(?:|I )should see the following (?:|performances in a )table(?:| for act ([0-9]))$/ do |act_number, values|
-  list = values.raw.map {|e| e[0]}
-  list.each do |text|
-    if page.respond_to? :should
-      page.should have_content(text)
-      if act_number
-        if act_number == "1"
-          page.body.should =~ /#{Rack::Utils.escape_html(text)}.*Act 2/m
+Then /^(?:|I )should see the following (?:|performances in a )table(?:| for act ([0-9]))(?:| (in order))$/ do |act_number, in_order, values|
+  within("#act"+act_number) do
+    list = values.raw.map {|e| e[0]}
+    list.each do |text|
+      if page.respond_to? :should
+        page.should have_content(text)
+      else
+        assert page.has_content?(text)
+      end
+    end
+    if in_order
+      regex_str = ""
+      list.each_with_index do |text, i|
+        if i < list.length - 1
+          regex_str += text + ".*"
         else
-          page.body.should =~ /Act 2.*#{Rack::Utils.escape_html(text)}/m
+          regex_str += text
         end
       end
-    else
-      assert page.has_content?(text)
+      regex = /#{regex_str}/m
+      page.body.should =~ regex
     end
   end
 end
 
-Then /^(?:|I )should see the following (?:|performances in a )table in this order$/ do |values|
-  list = values.raw.map {|e| e[0]}
-  # First test that they are present
-  list.each_with_index do |text, i|
-    if page.respond_to? :should
-      page.should have_content(text)
-    else
-      assert page.has_content?(text)
-    end
-    if i < list.length - 1
-      first_dance = text
-      second_dance = list[i+1]
-      page.body.should =~ /#{first_dance}.*#{second_dance}/m
-    end
+Then /^(?:|I )should see no performances in the table for act ([0-9])$/ do |act_number|
+  within("#act"+act_number) do
+    page.body.should =~ /This act is empty. Dragging a performance here will move it into this act./m
   end
 end
 
