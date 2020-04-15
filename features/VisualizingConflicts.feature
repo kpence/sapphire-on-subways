@@ -23,9 +23,7 @@ Scenario: See Conflicts for a Small Schedule
 @selenium_chrome_headless
 Scenario: See Conflicts after Updating the Schedule
   Then I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
-  When I drag performance "I Don’t Think About You" to "Life is Good"
-  Then I should see "Andrea Onate" in between "I Don’t Think About You" and "Sugar"
-  And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
+  When I drag performance "I Don’t Think About You" to "Sugar"
   And I should see the following performances in a table for act 1 in order
   | Life is Good              |
   | I Don’t Think About You   |
@@ -33,3 +31,6 @@ Scenario: See Conflicts after Updating the Schedule
   | All I Ask                 |
   | Sorrow                    |
   And I should see no performances in the table for act 2
+  Then I should see "Andrea Onate" in between "I Don’t Think About You" and "Sugar"
+  And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
+ 
