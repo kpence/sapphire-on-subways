@@ -8,8 +8,10 @@
   %div{:class => "#{@act_classes[act.number]}"}
     %table{:id => "act"+act.number.to_s}
       %thead
-        %tr
+        %tr.actHeader
           %th= "Act #{act.number}"
+        %tr
+          %td
       - unless @ordered_performances[act.number].empty?
         %tbody{:class => "sortable", "data-url" => sort_performances_path(:act_id => act.id)}
           - @ordered_performances[act.number].each do |perf|
@@ -18,25 +20,27 @@
                 %td.actFormat{:id => dom_id(perf)}
                   %div.floatLeft
                     = perf.name
-                  %div.floatCenter
                   %div.floatRight
-                    = button_to remove_performances_path, :id => "remove" + perf.name.to_s, :class => "remove" + perf.name.to_s do
-                      = hidden_field_tag :performance_id, perf.id
-                      = hidden_field_tag :schedule_id, act.schedule_id
-                      = hidden_field_tag :scheduled, true
-                      = image_submit_tag("x.png", alt: "Remove")
-                    - unless perf.locked == true
-                      = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                    %div.floatLeftButton
+                      - unless perf.locked == true
+                        = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                          = hidden_field_tag :performance_id, perf.id
+                          = hidden_field_tag :schedule_id, act.schedule_id
+                          = hidden_field_tag :locked, false
+                          = image_submit_tag("unlock.jpg", alt: "Unlocked")
+                      - else
+                        = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                          = hidden_field_tag :performance_id, perf.id
+                          = hidden_field_tag :schedule_id, act.schedule_id
+                          = hidden_field_tag :locked, true
+                          = image_submit_tag("lock.png", alt: "Locked")
+                    %div.floatRightButton
+                      = button_to remove_performances_path, :id => "remove" + perf.name.to_s, :class => "remove" + perf.name.to_s do
                         = hidden_field_tag :performance_id, perf.id
                         = hidden_field_tag :schedule_id, act.schedule_id
-                        = hidden_field_tag :locked, false
-                        = image_submit_tag("unlock.jpg", alt: "Unlocked")
-                    - else
-                      = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
-                        = hidden_field_tag :performance_id, perf.id
-                        = hidden_field_tag :schedule_id, act.schedule_id
-                        = hidden_field_tag :locked, true
-                        = image_submit_tag("lock.png", alt: "Locked")
+                        = hidden_field_tag :scheduled, true
+                        = image_submit_tag("x.png", alt: "Remove")
+
               - if @conflicting_performances.include? perf.id
                 %tr{:class => "unmoveable"}
                   %td{:class => "unmoveable"}
@@ -50,7 +54,7 @@
         %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
           %td.actFormat{:class => "unmoveable"}
             %em [ This act is empty. Dragging a performance here will move it into this act. ]
-    %div{:id =>"act#{act.number}insert"}  
+    %div.center{:id =>"act#{act.number}insert"}  
       = form_tag performances_path do
         = text_field_tag :new_performance_name, nil
         = hidden_field_tag :act_id, act.id

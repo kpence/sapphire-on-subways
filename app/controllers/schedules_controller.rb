@@ -86,8 +86,8 @@ class SchedulesController < ApplicationController
       @conflicts[act.number] = self.conflicts(act.number)
     end
     @act_classes = {}
-    @act_classes[1] = "floatLeft"
-    @act_classes[2] = "floatRight"
+    @act_classes[1] = "floatLeftA"
+    @act_classes[2] = "floatRightA"
 
 
 
