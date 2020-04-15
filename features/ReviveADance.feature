@@ -12,6 +12,14 @@ Background: Start on the homepage
   Then I should see the following performances in a table for act 1 in order
   | I Don’t Think About You   |
   | Life is Good              |
+  | Sugar                     |
+  | All I Ask                 |
+  | Sorrow                    |
+  And I should see no performances in the table for act 2
+  When I remove dance "Sugar"
+  Then I should see the following performances in a table for act 1 in order
+  | I Don’t Think About You   |
+  | Life is Good              |
   | All I Ask                 |
   | Sorrow                    |
   And I should see no performances in the table for act 2

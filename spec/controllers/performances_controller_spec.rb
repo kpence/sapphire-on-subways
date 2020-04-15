@@ -90,19 +90,19 @@ describe PerformancesController do
     end
   end
   
-  # describe '#revive' do 
-  #   fixtures :schedules, :acts, :performances
+  describe '#revive' do 
+    fixtures :schedules, :acts, :performances
     
-  #   before :each do 
-  #     @fake_performance = performances(:InsertPerformance1)
-  #     #@original_scheduled_value = @fake_performance.scheduled
-  #     @fake_schedule_removed_from = schedules(:MySchedule)
-  #   end
+    before :each do 
+      @fake_performance = performances(:InsertPerformance1)
+      #@original_scheduled_value = @fake_performance.scheduled
+      @fake_schedule_removed_from = schedules(:MySchedule)
+    end
     
-  #   it 'should change scheduled attribute to true' do
-  #     post :revive, params: {performance_id: @fake_performance.id, new_performance_name: "InsertPerformance1", position: 4, schedule_id: @fake_schedule_removed_from.id}
-  #     expect @fake_performance.scheduled == true
-  #   end
-  # end
+    it 'should change scheduled attribute to true' do
+      post :revive, params: {performance_id: @fake_performance.id, new_performance_name: "InsertPerformance1", position: 4, schedule_id: @fake_schedule_removed_from.id}
+      expect @fake_performance.scheduled == true
+    end
+  end
 
 end
