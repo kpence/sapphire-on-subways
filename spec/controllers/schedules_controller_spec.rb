@@ -241,4 +241,33 @@ describe SchedulesController do
       end
     end
   end
+  
+  describe "#delete" do
+    fixtures :schedules, :acts, :performances
+    
+    before :each do
+      #Find the Schedule
+      allow(Schedule).to receive(:find).and_return(@fake_schedule)
+    end
+    
+    it 'should delete all of the dancers' do
+    
+    end
+    
+    it 'should delete all of the dances' do
+    
+    end
+    
+    it 'should delete all of the performances' do
+      
+    end
+    
+    it 'should delete all of the acts' do
+      
+    end
+    
+    it 'should delete the schedule' do
+      
+    end
+  end
 end
