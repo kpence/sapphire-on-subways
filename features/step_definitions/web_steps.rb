@@ -53,12 +53,16 @@ When /^(?:|I )press "([^"]*)"$/ do |button|
   click_button(button)
 end
 
+When ("I remove dance {string}") do |string1|
+  find("#remove"+string1).click
+end
+
 When /^(?:|I )follow "([^"]*)"$/ do |link|
   click_link(link)
 end
 
 When("I fill insert dance into {string} with {string}") do |string, string2|
-  within("#" + string){fill_in("new_performance_name", :with => string2)}
+  within("#" + string + "insert"){fill_in("new_performance_name", :with => string2)}
 end
 
 Then("I press insert new dance for {string}") do |string|
@@ -70,6 +74,14 @@ Then("I go back to schedule {string}") do |string|
 end
 When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
   fill_in(field, :with => value)
+end
+
+When ("I lock dance {string}") do |string1|
+  find("#lock"+string1).click
+end
+
+Then ("I should see that dance {string} changed to {string}") do |string1, string2|
+  within("#lock"+string1){page.should have_selector("input[type=image][src='#{string2}']")}
 end
 
 # Use this to fill in an entire form with data from a table. Example:
@@ -90,12 +102,59 @@ When /^I drag performance "([^"]*)" to "([^"]*)"$/ do |item_dragged_name, item_d
   item_dropped = Performance.all.filter { |e| e.name == item_dropped_name }[0]
 
   begin
-    if item_dragged.act_id == item_dropped.act_id
-      page.execute_script %{ $("tr#performance_#{item_dragged.id}").simulateDragSortable({ move: #{item_dropped.position - item_dragged.position}}); }
-    else
-      page.execute_script %{ $("tr#performance_#{item_dragged.id}").simulate('drag-n-drop', { dragTarget: $("tr#performance_#{item_dropped.id}") }); }
-    end
-    sleep(1)
+		original_item_position = item_dragged.position
+		original_act_id = item_dragged.act_id
+		pos = item_dropped.position
+		item_new_pos = pos
+		item_dropped_act_id = item_dropped.act_id
+		nxt = Performance.all.filter{ |e| e.position == pos && e.act_id == item_dropped_act_id}[0]
+		index = pos + 1
+		while true
+			item = nxt
+			nxt = Performance.all.filter{ |e| e.position == pos+1 && e.act_id == item_dropped_act_id}[0]
+			if item == nil
+				break
+			end
+			if item.id == item_dragged.id
+				pos += 1
+				next
+			end
+			item.position = index
+			Performance.where( id: item.id.to_i ).update(position: index)
+			index += 1
+			pos += 1
+		end
+		item_dragged.position = item_new_pos
+		item_dragged.act_id = item_dropped.act_id
+		Performance.where( id: item_dragged.id.to_i ).update(position: item_new_pos, act_id: item_dropped.act_id)
+
+		if original_act_id != item_dropped.act_id
+			nxt = Performance.all.filter{ |e| e.position == original_item_position + 1 && e.act_id == original_act_id}[0]
+			index = original_item_position
+			pos = index + 1
+			while true
+				item = nxt
+				nxt = Performance.all.filter{ |e| e.position == pos+1 && e.act_id == item_dropped_act_id}[0]
+				if item == nil
+					break
+				end
+				item.position = index
+				Performance.where( id: item.id.to_i ).update(position: index)
+				index += 1
+				pos += 1
+			end
+		end
+
+    #if item_dragged.act_id == item_dropped.act_id
+      #page.execute_script %{ $("tr#performance_#{item_dragged.id}").simulateDragSortable({ move: #{item_dropped.position - item_dragged.position}}); }
+			# Now i'm just going to build the :params, but swap the dragged and target
+    #else
+      #page.execute_script %{ $("tr#performance_#{item_dragged.id}").simulateDragSortable({ move: #{item_dropped.position}, dropOn: $("tr#performance_#{item_dropped.id}") }); }
+    #end
+    sleep(2)
+		current_path = URI.parse(current_url).path
+		visit current_path
+    sleep(2)
   rescue Exception => ex
     puts "Error: #{ex.class} #{ex.message}"
   end
@@ -107,7 +166,7 @@ When /^I drop performance "([^"]*)" into the empty act$/ do |item_name|
   dom = page.find("tr#performance_#{item.id}", visible: :all)
 
   page.execute_script %{ $("tr#performance_#{item.id}").simulate('drag-n-drop', { dragTarget: $(".unmoveable") }); }
-  sleep(1)
+  sleep(15)
 end
 
 Then /^performance "([^"]*)" should not be next to "([^"]*)"$/ do |item_name1,item_name2|
@@ -130,10 +189,10 @@ Then /^performance "([^"]*)" should be after "([^"]*)"$/ do |item_name1,item_nam
   item1.position.to_i.should > item2.position.to_i
 end
 
-Then /^performance "([^"]*)" should be right after "([^"]*)"$/ do |item_name1,item_name2|
+Then /^performance "([^"]*)" should be right (before|after) "([^"]*)"$/ do |item_name1,order,item_name2|
   item1 = Performance.all.filter { |e| e.name == item_name1 }[0]
   item2 = Performance.all.filter { |e| e.name == item_name2 }[0]
-  item1.position.to_i.should == (item2.position.to_i+1)
+  item1.position.to_i.should == (item2.position.to_i+((order=="after")?0:-1))
 end
 
 Then /^performance "([^"]*)" should be in act ([0-9])$/ do |item_name,act_number|
@@ -185,21 +244,44 @@ Then /^(?:|I )should see "([^"]*)"$/ do |text|
   end
 end
 
-Then /^(?:|I )should see the following (?:|performances in a )table(?:| for act ([0-9]))$/ do |act_number, values|
-  list = values.raw.map {|e| e[0]}
-  list.each do |text|
-    if page.respond_to? :should
-      page.should have_content(text)
-      if act_number
-        if act_number == "1"
-          page.body.should =~ /#{Rack::Utils.escape_html(text)}.*Act 2/m
+Then /^(?:|I )should see "([^"]*)" in between "([^"]*)" and "([^"]*)"$/ do |thing, before_thing, after_thing|
+  if page.body.respond_to? :should
+    page.should have_content(text)
+  else
+    assert page.has_content?(text)
+  end
+  page.body.should =~ /#{before_thing}.*#{thing}/m
+  page.body.should =~ /#{thing}.*#{after_thing}/m
+end
+
+Then /^(?:|I )should see the following (?:|performances in a )table(?:| for act ([0-9]))(?:| (in order))$/ do |act_number, in_order, values|
+  within("#act"+act_number) do
+    list = values.raw.map {|e| e[0]}
+    list.each do |text|
+      if page.respond_to? :should
+        page.should have_content(text)
+      else
+        assert page.has_content?(text)
+      end
+    end
+    if in_order
+      regex_str = ""
+      list.each_with_index do |text, i|
+        if i < list.length - 1
+          regex_str += text + ".*"
         else
-          page.body.should =~ /Act 2.*#{Rack::Utils.escape_html(text)}/m
+          regex_str += text
         end
       end
-    else
-      assert page.has_content?(text)
+      regex = /#{regex_str}/m
+      page.body.should =~ regex
     end
+  end
+end
+
+Then /^(?:|I )should see no performances in the table for act ([0-9])$/ do |act_number|
+  within("#act"+act_number) do
+    page.body.should =~ /This act is empty. Dragging a performance here will move it into this act./m
   end
 end
 

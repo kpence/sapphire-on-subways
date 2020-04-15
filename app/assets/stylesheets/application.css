@@ -30,9 +30,19 @@
   margin: auto;
   padding: 10px;
 }
-.actformat {
-    border: 1px solid black;
-    padding: 5px;
+
+.actHeader {
+  font-family:'Avenir LT W01 65 Medium';
+  background-color: #1D3558;
+  text-align: center;
+  color: white;
+  font-size: large;
+  border: 1px solid black;
+}
+.actFormat {
+  border: 1px solid black;
+  padding: 5px;
+  width: 65%;
 }
 
 .droppable-hover {
@@ -40,11 +50,22 @@
 }
 
 .floatLeft { 
-  width: 50%; float: left; 
+  width: 60%; float: left; 
 }
 .floatRight {
+  width: 40%; float: right; 
+}
+
+.floatLeftButton { 
+  width: 50%; float: left; 
+}
+.floatRightButton {
   width: 50%; float: right; 
 }
-.contain { 
-  overflow: hidden;
+
+.floatLeftA { 
+  width: 50%; float: left; 
+}
+.floatRightA {
+  width: 50%; float: right; 
 }
