@@ -19,10 +19,10 @@ Background: Start on the homepage
 
 Scenario: Lock dance "Sugar"
   When I lock dance "Sugar"
-  Then I should see that dance "Sugar" changed to "Locked"
+  Then I should see that dance "Sugar" changed to "/images/lock.png"
   
 Scenario: Lock "Sugar" and then Unlock "Sugar"
   When I lock dance "Sugar"
-  Then I should see that dance "Sugar" changed to "Locked"
+  Then I should see that dance "Sugar" changed to "/images/lock.png"
   When I lock dance "Sugar"
-  Then I should see that dance "Sugar" changed to "Unlocked"
+  Then I should see that dance "Sugar" changed to "/images/unlock.jpg"

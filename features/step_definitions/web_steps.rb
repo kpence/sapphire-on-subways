@@ -62,7 +62,7 @@ When /^(?:|I )follow "([^"]*)"$/ do |link|
 end
 
 When("I fill insert dance into {string} with {string}") do |string, string2|
-  within("#" + string){fill_in("new_performance_name", :with => string2)}
+  within("#" + string + "insert"){fill_in("new_performance_name", :with => string2)}
 end
 
 Then("I press insert new dance for {string}") do |string|
@@ -81,7 +81,7 @@ When ("I lock dance {string}") do |string1|
 end
 
 Then ("I should see that dance {string} changed to {string}") do |string1, string2|
-  within("#lock"+string1){page.should have_selector("input[type=submit][value='#{string2}']")}
+  within("#lock"+string1){page.should have_selector("input[type=image][src='#{string2}']")}
 end
 
 # Use this to fill in an entire form with data from a table. Example:

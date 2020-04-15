@@ -5,44 +5,42 @@
 %h3= "Use this page to edit your schedule!"
 
 - @schedule.acts.each do |act|
-  - if act.number == 1
-    %table.floatLeft{:id => "act"+act.number.to_s}
+  %div{:class => "#{@act_classes[act.number]}"}
+    %table{:id => "act"+act.number.to_s}
       %thead
-        %tr
+        %tr.actHeader
           %th= "Act #{act.number}"
-          %td{:id =>"Insert Dance into Act#{act.number}"}  
-            = form_tag performances_path do
-              = text_field_tag :new_performance_name, nil
-              = hidden_field_tag :act_id, act.id
-              = hidden_field_tag :position, @ordered_performances[act.number].length
-              = hidden_field_tag :schedule, false
-              = hidden_field_tag :locked, false
-              = hidden_field_tag :schedule_id, act.schedule_id
-              = submit_tag "Insert Dance into Act#{act.number}"
+        %tr
+          %td
       - unless @ordered_performances[act.number].empty?
         %tbody{:class => "sortable", "data-url" => sort_performances_path(:act_id => act.id)}
           - @ordered_performances[act.number].each do |perf|
             - unless perf.scheduled == false
               %tr{:id => dom_id(perf)}
-                %td.actformat{:id => dom_id(perf)}
-                  = button_to remove_performances_path, :id => "remove" + perf.name.to_s, :class => "remove" + perf.name.to_s do
-                    = hidden_field_tag :performance_id, perf.id
-                    = hidden_field_tag :schedule_id, act.schedule_id
-                    = hidden_field_tag :scheduled, true
-                    = submit_tag "X"
-                  - unless perf.locked == true
-                    = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
-                      = hidden_field_tag :performance_id, perf.id
-                      = hidden_field_tag :schedule_id, act.schedule_id
-                      = hidden_field_tag :locked, false
-                      = submit_tag "Unlocked"
-                  - else
-                    = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
-                      = hidden_field_tag :performance_id, perf.id
-                      = hidden_field_tag :schedule_id, act.schedule_id
-                      = hidden_field_tag :locked, true
-                      = submit_tag "Locked"
-                  = perf.name
+                %td.actFormat{:id => dom_id(perf)}
+                  %div.floatLeft
+                    = perf.name
+                  %div.floatRight
+                    %div.floatLeftButton
+                      - unless perf.locked == true
+                        = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                          = hidden_field_tag :performance_id, perf.id
+                          = hidden_field_tag :schedule_id, act.schedule_id
+                          = hidden_field_tag :locked, false
+                          = image_submit_tag("unlock.jpg", alt: "Unlocked")
+                      - else
+                        = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                          = hidden_field_tag :performance_id, perf.id
+                          = hidden_field_tag :schedule_id, act.schedule_id
+                          = hidden_field_tag :locked, true
+                          = image_submit_tag("lock.png", alt: "Locked")
+                    %div.floatRightButton
+                      = button_to remove_performances_path, :id => "remove" + perf.name.to_s, :class => "remove" + perf.name.to_s do
+                        = hidden_field_tag :performance_id, perf.id
+                        = hidden_field_tag :schedule_id, act.schedule_id
+                        = hidden_field_tag :scheduled, true
+                        = image_submit_tag("x.png", alt: "Remove")
+
               - if @conflicting_performances.include? perf.id
                 %tr{:class => "unmoveable"}
                   %td{:class => "unmoveable"}
@@ -51,60 +49,17 @@
                       %td{:class => "alert alert-danger unmoveable"}
                         - conflict[:dancers].each do |dancer_name|
                           %div= dancer_name
+                           
       - else
         %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
-          %td.actformat{:class => "unmoveable"}
+          %td.actFormat{:class => "unmoveable"}
             %em [ This act is empty. Dragging a performance here will move it into this act. ]
-
-  - if act.number == 2
-    %table.floatRight{:id => "act"+act.number.to_s}
-      %thead
-        %tr
-          %th= "Act #{act.number}"
-          %td{:id =>"Insert Dance into Act#{act.number}"}  
-            = form_tag performances_path do
-              = text_field_tag :new_performance_name, nil
-              = hidden_field_tag :act_id, act.id
-              = hidden_field_tag :position, @ordered_performances[act.number].length
-              = hidden_field_tag :schedule, false
-              = hidden_field_tag :locked, false
-              = hidden_field_tag :schedule_id, act.schedule_id
-              = submit_tag "Insert Dance into Act#{act.number}"
-        - unless @ordered_performances[act.number].empty?
-          %tbody{:class => "sortable", "data-url" => sort_performances_path(:act_id => act.id)}
-            - @ordered_performances[act.number].each do |perf|
-              - unless perf.scheduled == false
-                %tr{:id => dom_id(perf)}
-                  %td.actformat{:id => dom_id(perf)}
-                    = button_to remove_performances_path, :id => "remove" + perf.name.to_s, :class => "remove" + perf.name.to_s do
-                      = hidden_field_tag :performance_id, perf.id
-                      = hidden_field_tag :schedule_id, act.schedule_id
-                      = hidden_field_tag :scheduled, true
-                      = submit_tag "X"
-                    - unless perf.locked == true
-                      = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
-                        = hidden_field_tag :performance_id, perf.id
-                        = hidden_field_tag :schedule_id, act.schedule_id
-                        = hidden_field_tag :locked, false
-                        = submit_tag "Unlocked"
-                    - else
-                      = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
-                        = hidden_field_tag :performance_id, perf.id
-                        = hidden_field_tag :schedule_id, act.schedule_id
-                        = hidden_field_tag :locked, true
-                        = submit_tag "Locked"
-                    = perf.name
-                - if @conflicting_performances.include? perf.id
-                  %tr{:class => "unmoveable"}
-                    %td{:class => "unmoveable"}
-                    - @conflicts[act.number].each do |conflict|
-                      - if conflict[:first_performance] == perf.name
-                        %td{:class => "alert alert-danger unmoveable"}
-                          - conflict[:dancers].each do |dancer_name|
-                            %div= dancer_name
-                        
-        - else
-          %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
-            %td.actformat{:class => "unmoveable"}
-              %em [ This act is empty. Dragging a performance here will move it into this act. ]
-
+    %div.center{:id =>"act#{act.number}insert"}  
+      = form_tag performances_path do
+        = text_field_tag :new_performance_name, nil
+        = hidden_field_tag :act_id, act.id
+        = hidden_field_tag :position, @ordered_performances[act.number].length
+        = hidden_field_tag :schedule, false
+        = hidden_field_tag :locked, false
+        = hidden_field_tag :schedule_id, act.schedule_id
+        = submit_tag "Insert Dance into Act#{act.number}"         
