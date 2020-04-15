@@ -171,9 +171,7 @@ class Schedule < ActiveRecord::Base
     schedule.acts.each do |act|
       act.performances.each do |performance|
         performance.dances.each do |dance|
-          dance.dancers.each do |dancer|
-            Dancer.delete(dancer)
-          end
+          Dancer.delete(dance.dancer)
           Dance.delete(dance)
         end
         Performance.delete(performance)
