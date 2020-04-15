@@ -31,18 +31,15 @@ Scenario: Press the refresh button to generate a new schedule (no locked dances)
 Scenario: Move unlocked but not unlocked dances on regenerate
   When I drag performance "Sorrow" to "I Don’t Think About You"
   Then I should see the following performances in a table for act 1 in order
+  | Sorrow                    |
   | I Don’t Think About You   |
   | Life is Good              |
-  | Sorrow                    |
   | Sugar                     |
   | All I Ask                 |
   And I should see no performances in the table for act 2
-  And I should see "Amber Krizan" in between "Life is Good" and "Sorrow"
-  And I should see "Ashley Carey" in between "Life is Good" and "Sorrow"
-  And I should see "Amanda Hohlt" in between "Sorrow" and "Sugar"
-  And I should see "Andrea Onate" in between "Sorrow" and "Sugar"
+  And I should see "Andrea Onate" in between "Sorrow" and "I Don’t Think About You"
   # If I change this to "All I Ask", it breaks:
-  When I lock dance "Sugar" 
+  When I lock dance "All I Ask" 
   Then I press "Regenerate"
   Then I should see the following performances in a table for act 1 in order
   | Sorrow                    |
