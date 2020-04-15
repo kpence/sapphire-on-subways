@@ -3,6 +3,9 @@
 -#= javascript_include_tag 'application', 'data-turbolinks-track' => true
 
 %h3= "Use this page to edit your schedule!"
+= button_to delete_schedules_path do
+  = hidden_field_tag :id, @schedule.id
+  = "Delete Schedule"
 
 - @schedule.acts.each do |act|
   %div{:class => "#{@act_classes[act.number]}"}
