@@ -44,4 +44,15 @@ class PerformancesController < ApplicationController
     redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
     
   end
+  
+  def revive
+    
+    #Schedules a performance
+    Performance.where(id: params[:performance_id].to_i).update(scheduled: true)
+    
+    #Display to User Which Dance Was Removed
+    flash[:notice] = "#{Performance.find(params[:performance_id]).name} Added Back"
+    
+    redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
+  end
 end

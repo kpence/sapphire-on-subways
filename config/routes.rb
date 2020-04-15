@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       put :sort
       post :remove
       post :lock
+      post :revive
     }
   end
 
