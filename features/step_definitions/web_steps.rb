@@ -57,6 +57,10 @@ When ("I remove dance {string}") do |string1|
   find("#remove"+string1).click
 end
 
+# When ("I revive dance {string}") do |string1|
+#   find("#revive"+string1).click
+# end
+
 When /^(?:|I )follow "([^"]*)"$/ do |link|
   click_link(link)
 end
