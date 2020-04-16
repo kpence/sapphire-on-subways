@@ -169,14 +169,7 @@ class Schedule < ActiveRecord::Base
   def self.remove_acts(schedule_id)
     schedule = Schedule.find(schedule_id)
     schedule.acts.each do |act|
-      act.performances.each do |performance|
-        performance.dances.each do |dance|
-          Dancer.delete(dance.dancer)
-          Dance.delete(dance)
-        end
-        Performance.delete(performance)
-      end
-      Act.delete(act)
+      Act.delete_performances(act)
     end
   end
 
