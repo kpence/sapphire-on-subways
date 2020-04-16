@@ -55,7 +55,7 @@ describe SchedulesController do
     context "In the presence of an act with conflicts" do
       before :each do
         # See the fixture data for details
-        @fake_act = acts(:MyOtherAct2)
+        @fake_act = acts(:MyOtherAct1)
         @fake_perf1 = performances(:MyOtherPerf2)
         @fake_perf2 = performances(:MyOtherPerf3)
         @fake_dancer = dancers(:MyOtherDancer2)
@@ -71,7 +71,7 @@ describe SchedulesController do
         }
         
         allow(controller).to receive(:generate_conflict)
-            .and_return(nil, @fake_conflict, nil, nil, nil)
+            .and_return(nil, @fake_conflict)
         
         # See the fixture data: This has one conflict between
         # MyOtherPerf5 and MyOtherPerf6
@@ -95,6 +95,19 @@ describe SchedulesController do
     it 'should call Schedule#all to get all schedules in the DB' do
       expect(Schedule).to receive(:all)
       get :index
+    end
+  end
+  
+  describe "#remove_unscheduled" do
+    fixtures :performances
+    it 'should return a filtered list if there are unscheduled performances' do
+      @fake_perf1 = performances(:MyPerf1)
+      @fake_perf2 = performances(:MyPerf2)
+      @fake_perf3 = performances(:MyPerf3)
+      @fake_perf2.scheduled = false;
+      
+      ret = controller.remove_unscheduled([@fake_perf1, @fake_perf2, @fake_perf3])
+      expect(ret).to eq ([@fake_perf1, @fake_perf3])
     end
   end
     
@@ -233,7 +246,7 @@ describe SchedulesController do
       end
     end
     
-    context "We came from the upload page" do
+    context "We came from the a page that wants us to minimize" do
       it 'should generate a random schedule using the helper' do
         allow(Schedule).to receive(:find).and_return(@fake_schedule)
         expect(controller.helpers).to receive(:minimize_conflicts).exactly(2).times
