@@ -29,7 +29,7 @@ Scenario: Remove "Sugar" in "Act 1"
   And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
   And I should see "Amber Krizan" in between "Life is Good" and "All I Ask"
   And I should see "Audrey Harris" in between "Life is Good" and "All I Ask"
-  And I should not see "Sugar"
+  And I should not see dance "Sugar"
   
 Scenario: Remove the first dance
   When I remove dance "I Don’t Think About You"
@@ -40,7 +40,7 @@ Scenario: Remove the first dance
   | Sorrow                    |
   And I should see no performances in the table for act 2
   And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
-  And I should not see "I Don’t Think About You"
+  And I should not see dance "I Don’t Think About You"
   
 Scenario: Remove the last dance
   When I remove dance "Sorrow"
@@ -50,7 +50,7 @@ Scenario: Remove the last dance
   | Sugar                     |
   | All I Ask                 |
   And I should see no performances in the table for act 2
-  And I should not see "Sorrow"
+  And I should not see dance "Sorrow"
   
 Scenario: Remove All the Dances in an Act
   When I remove dance "Sugar"
@@ -63,7 +63,7 @@ Scenario: Remove All the Dances in an Act
   And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
   And I should see "Amber Krizan" in between "Life is Good" and "All I Ask"
   And I should see "Audrey Harris" in between "Life is Good" and "All I Ask"
-  And I should not see "Sugar"
+  And I should not see dance "Sugar"
   
   Then I remove dance "I Don’t Think About You"
   Then I should see the following performances in a table for act 1 in order
@@ -74,8 +74,8 @@ Scenario: Remove All the Dances in an Act
   And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
   And I should see "Amber Krizan" in between "Life is Good" and "All I Ask"
   And I should see "Audrey Harris" in between "Life is Good" and "All I Ask"
+  And I should not see dance "I Don’t Think About You"
   And I should not see "Sugar"
-  And I should not see "I Don’t Think About You"
   
   Then I remove dance "Life is Good"
   Then I should see the following performances in a table for act 1 in order
@@ -83,25 +83,25 @@ Scenario: Remove All the Dances in an Act
   | Sorrow                    |
   And I should see no performances in the table for act 2
   And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
+  And I should not see dance "Life is Good"
   And I should not see "Sugar"
   And I should not see "I Don’t Think About You"
-  And I should not see "Life is Good"
   
   Then I remove dance "Sorrow"
   Then I should see the following performances in a table for act 1 in order
   | All I Ask                 |
   And I should see no performances in the table for act 2
+  And I should not see dance "Sorrow"
   And I should not see "Sugar"
   And I should not see "I Don’t Think About You"
   And I should not see "Life is Good"
-  And I should not see "Sorrow"
   
   Then I remove dance "All I Ask"
   And I should see no performances in the table for act 1
   And I should see no performances in the table for act 2
+  And I should not see dance "All I Ask"
   And I should not see "Sugar"
   And I should not see "I Don’t Think About You"
   And I should not see "Life is Good"
   And I should not see "Sorrow"
-  And I should not see "All I Ask"
   
