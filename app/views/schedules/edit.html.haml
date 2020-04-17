@@ -65,7 +65,7 @@
         = hidden_field_tag :schedule_id, act.schedule_id
         = submit_tag "Insert Dance into Act#{act.number}"        
     %div.left{:class => "sortable", "data-url" => sort_performances_path(:act_id => act.id)}
-      - @ordered_performances[act.number].each do |perf|
+      - @unscheduled_performances[act.number].each do |perf|
         - unless perf.scheduled == true
           %tr{:id => dom_id(perf)}
             %tr.actFormat{:id => dom_id(perf)}

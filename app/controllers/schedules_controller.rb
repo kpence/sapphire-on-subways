@@ -73,6 +73,16 @@ class SchedulesController < ApplicationController
     return perfs
   end
   
+  def unscheduled(performances)
+    perfs = []
+    performances.each do |perf|
+      if !perf.scheduled
+        perfs.append(perf)
+      end
+    end
+    return perfs
+  end
+  
   def edit
     @schedule = Schedule.find(params[:id])
     if @schedule == nil
@@ -89,7 +99,9 @@ class SchedulesController < ApplicationController
     @ordered_performances = {}
     @conflicts = {}
     @conflicting_performances = []
+    @unscheduled_performances = []
     @schedule.acts.each do |act|
+      @unscheduled_performances[act.number] = unscheduled(act.performances)
       @ordered_performances[act.number] = remove_unscheduled(act.performances)
           .sort_by { |perf| perf.position }
       @conflicts[act.number] = self.conflicts(act.number)
