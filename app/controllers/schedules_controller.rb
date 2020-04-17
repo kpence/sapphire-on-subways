@@ -101,8 +101,10 @@ class SchedulesController < ApplicationController
   
   def delete
     schedule_id = params[:id]
-    if schedule_id == nil
-      redirect_to schedules_path, notice: "Schedule could not be deleted!"
+    @schedule = Schedule.find(params[:id])
+    if @schedule == nil
+      redirect_to schedules_path, notice: "Schedule with id #{params[:id]} could not be found."
+      return
     end
     
     # Each act is responsible for deleting data under it

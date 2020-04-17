@@ -259,8 +259,17 @@ describe SchedulesController do
     fixtures :schedules, :acts, :performances, :dances, :dancers
     
     context "schedule can't be found" do
+      before :each do
+        @schedule = schedules(:MySchedule)
+      end
+      
       it 'should redirect to the root page with the following notice' do
+        allow(Schedule).to receive(:find).and_return(nil)
+        post :delete, params: {id: @schedule.id}
         
+        expect(subject).to redirect_to(schedules_path)
+        expect(controller).to set_flash[:notice]
+        expect(flash[:notice]).to eq "Schedule with id " + @schedule.id.to_s + " could not be found."
       end
     end
 
@@ -268,15 +277,12 @@ describe SchedulesController do
       before :each do
         @schedule = schedules(:MySchedule)
         @acts = acts(:MyAct1,:MyAct2)
-        @performances = performances(:MyPerf1,:MyPerf2,:MyPerf3,:MyPerf4,:MyPerf5,:MyPerf6)
+        @performances = performances(:MyPerf1,:MyPerf2,:MyPerf3,:MyPerf4,:MyPerf5,:MyPerf6,:MyPerf7,:MyPerf8)
         @dances = dances(:MyDance1,:MyDance2,:MyDance3,:MyDance4,:MyDance5,:MyDance6,
                           :MyDance7,:MyDance8,:MyDance9,:MyDance10,:MyDance11,:MyDance12,
                           :MyDance13,:MyDance14,:MyDance15,:MyDance16,:MyDance17)
       end
       
-      it 'should redirect with following notice if schedule id ill nil' do
-        redirect_to
-      end
 
       it 'should delete all of the dancers' do
         @dances.each do |dance|
