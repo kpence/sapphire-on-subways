@@ -166,4 +166,11 @@ class Schedule < ActiveRecord::Base
     generate_dances_and_dancers(schedule_params[:dancer_hashes], act1_id, act2_id)
   end
   
+  def self.remove_acts(schedule_id)
+    schedule = Schedule.find(schedule_id.to_i)
+    schedule.acts.each do |act|
+      Act.delete_performances(act)
+    end
+  end
+
 end
