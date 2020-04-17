@@ -58,7 +58,7 @@ When ("I remove dance {string}") do |string1|
 end
 
 # When ("I revive dance {string}") do |string1|
-#   find("#revive"+string1).click
+#   find("#revive"+string1.gsub(" ", "_")).click
 # end
 
 When /^(?:|I )follow "([^"]*)"$/ do |link|
