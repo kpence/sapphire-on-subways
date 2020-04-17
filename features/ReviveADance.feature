@@ -29,6 +29,7 @@ Scenario: Revive "Sugar" in "Act 1"
   And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
   And I should see "Amber Krizan" in between "Life is Good" and "All I Ask"
   And I should see "Audrey Harris" in between "Life is Good" and "All I Ask"
+  And I should not see dance "Sugar" for act 1
   When I revive dance "Sugar"
   Then I should see the following performances in a table for act 1 in order
   | Sugar                     |
@@ -51,6 +52,7 @@ Scenario: Revive the first dance
   | Sorrow                    |
   And I should see no performances in the table for act 2
   And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
+  And I should not see dance "I Don't Think About You" for act 1
   When I revive dance "I Don’t Think About You"
   Then I should see the following performances in a table for act 1 in order
   | I Don’t Think About You   |
@@ -69,6 +71,7 @@ Scenario: Revive the first dance
   | Sugar                     |
   | All I Ask                 |
   And I should see no performances in the table for act 2
+  And I should not see dance "Sorrow" for act 1
   When I revive dance "Sorrow"
   Then I should see the following performances in a table for act 1 in order
   | Sorrow                    |

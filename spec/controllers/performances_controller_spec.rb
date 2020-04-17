@@ -94,7 +94,7 @@ describe PerformancesController do
     fixtures :schedules, :acts, :performances
     
     before :each do 
-      @fake_performance = performances(:InsertPerformance1)
+      @fake_performance = performances(:MyPerf1)
       #@original_scheduled_value = @fake_performance.scheduled
       @fake_schedule_removed_from = schedules(:MySchedule)
     end

@@ -72,7 +72,7 @@
               %div.floatLeft
                 = perf.name
               %div.floatLeftButton
-              = button_to revive_performances_path, :id => "revive" + perf.name.to_s, :class => "revive" + perf.name.to_s do
+              = button_to revive_performances_path, :id => "revive" + perf.name.to_s.gsub(" ", "_"), :class => "revive" + perf.name.to_s.gsub(" ", "_") do
                 = hidden_field_tag :performance_id, perf.id
                 = hidden_field_tag :schedule_id, act.schedule_id
                 = hidden_field_tag :scheduled, true

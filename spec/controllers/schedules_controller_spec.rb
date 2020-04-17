@@ -110,6 +110,19 @@ describe SchedulesController do
       expect(ret).to eq ([@fake_perf1, @fake_perf3])
     end
   end
+  
+  describe "#unscheduled" do
+    fixtures :performances
+    it 'should return a filtered list if there are unscheduled performances' do
+      @fake_perf1 = performances(:MyPerf1)
+      @fake_perf2 = performances(:MyPerf2)
+      @fake_perf3 = performances(:MyPerf3)
+      @fake_perf2.scheduled = false;
+      
+      ret = controller.unscheduled([@fake_perf1, @fake_perf2, @fake_perf3])
+      expect(ret).to eq ([@fake_perf2])
+    end
+  end
     
   describe '#import' do
     # Using "good" data here, although these things should happen regardless
