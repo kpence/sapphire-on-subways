@@ -54,7 +54,7 @@ When /^(?:|I )press "([^"]*)"$/ do |button|
 end
 
 When ("I remove dance {string}") do |string1|
-  find("#remove"+string1).click
+  find("#remove"+string1.gsub(" ", "_")).click
 end
 
 When /^(?:|I )follow "([^"]*)"$/ do |link|
@@ -300,6 +300,15 @@ Then /^(?:|I )should not see "([^"]*)"$/ do |text|
     page.should have_no_content(text)
   else
     assert page.has_no_content?(text)
+  end
+end
+
+Then /^(?:|I )should not see dance "([^"]*)"$/ do |text|
+  if page.respond_to? :should
+    # Should be in the notice at the top of the page
+    page.should have_content(text, count: 1)
+  else
+    assert page.has_content?(text, count: 1)
   end
 end
 

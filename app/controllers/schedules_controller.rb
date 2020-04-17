@@ -63,6 +63,16 @@ class SchedulesController < ApplicationController
     redirect_to schedules_path, flash: {notice: notice_msg}
   end
   
+  def remove_unscheduled(performances)
+    perfs = []
+    performances.each do |perf|
+      if perf.scheduled
+        perfs.append(perf)
+      end
+    end
+    return perfs
+  end
+  
   def edit
     @schedule = Schedule.find(params[:id])
     if @schedule == nil
@@ -72,7 +82,7 @@ class SchedulesController < ApplicationController
     
     if flash[:minimize]
       @schedule.acts.each do |act|
-        helpers.minimize_conflicts(act.performances)
+        helpers.minimize_conflicts(remove_unscheduled(act.performances))
       end
     end
     
@@ -80,17 +90,13 @@ class SchedulesController < ApplicationController
     @conflicts = {}
     @conflicting_performances = []
     @schedule.acts.each do |act|
-      @ordered_performances[act.number] = act.performances.sort_by do |perf|
-        perf.position
-      end
+      @ordered_performances[act.number] = remove_unscheduled(act.performances)
+          .sort_by { |perf| perf.position }
       @conflicts[act.number] = self.conflicts(act.number)
     end
     @act_classes = {}
     @act_classes[1] = "floatLeftA"
     @act_classes[2] = "floatRightA"
-
-
-
   end
   
   def delete
