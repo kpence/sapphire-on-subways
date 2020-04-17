@@ -167,7 +167,7 @@ class Schedule < ActiveRecord::Base
   end
   
   def self.remove_acts(schedule_id)
-    schedule = Schedule.find(schedule_id)
+    schedule = Schedule.find(schedule_id.to_i)
     schedule.acts.each do |act|
       Act.delete_performances(act)
     end

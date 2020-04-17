@@ -284,37 +284,39 @@ describe SchedulesController do
       end
       
 
+      it 'should find the schedule by the schedule id' do
+        expect(Schedule).to receive(:find).with(@schedule.id.to_s)  
+      end
+      
       it 'should delete all of the dancers' do
         @dances.each do |dance|
           expect(Dancer).to receive(:delete).with(dance.dancer)
         end
-        post:delete, params: {id: @schedule.id.to_i}
       end
       
       it 'should delete all of the dances' do
         @dances.each do |dance|
           expect(Dance).to receive(:delete).with(dance)
         end
-        post:delete, params: {id: @schedule.id.to_i}
       end
       
       it 'should delete all of the performances' do
         @performances.each do |performance|
           expect(Performance).to receive(:delete).with(performance)
         end
-        
-        post:delete, params: {id: @schedule.id.to_i}
       end
       
       it 'should delete all of the acts' do
         @acts.each do |act|
            expect(Act).to receive(:delete).with(act)
         end
-        post:delete, params: {id: @schedule.id.to_i}
       end
       
       it 'should delete the schedule' do
         expect(Schedule).to receive(:delete).with(@schedule.id)
+      end
+      
+      after :each do
         post:delete, params: {id: @schedule.id.to_i}
       end
     end
