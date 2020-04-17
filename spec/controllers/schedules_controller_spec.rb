@@ -243,31 +243,61 @@ describe SchedulesController do
   end
   
   describe "#delete" do
-    fixtures :schedules, :acts, :performances
+    fixtures :schedules, :acts, :performances, :dances, :dancers
     
-    before :each do
-      #Find the Schedule
-      allow(Schedule).to receive(:find).and_return(@fake_schedule)
+    context "schedule can't be found" do
+      it 'should redirect to the root page with the following notice' do
+        
+      end
     end
-    
-    it 'should delete all of the dancers' do
-    
-    end
-    
-    it 'should delete all of the dances' do
-    
-    end
-    
-    it 'should delete all of the performances' do
+
+    context "schedule is found" do
+      before :each do
+        @schedule = schedules(:MySchedule)
+        @acts = acts(:MyAct1,:MyAct2)
+        @performances = performances(:MyPerf1,:MyPerf2,:MyPerf3,:MyPerf4,:MyPerf5,:MyPerf6)
+        @dances = dances(:MyDance1,:MyDance2,:MyDance3,:MyDance4,:MyDance5,:MyDance6,
+                          :MyDance7,:MyDance8,:MyDance9,:MyDance10,:MyDance11,:MyDance12,
+                          :MyDance13,:MyDance14,:MyDance15,:MyDance16,:MyDance17)
+      end
       
-    end
-    
-    it 'should delete all of the acts' do
+      it 'should redirect with following notice if schedule id ill nil' do
+        redirect_to
+      end
+
+      it 'should delete all of the dancers' do
+        @dances.each do |dance|
+          expect(Dancer).to receive(:delete).with(dance.dancer)
+        end
+        post:delete, params: {id: @schedule.id.to_i}
+      end
       
-    end
-    
-    it 'should delete the schedule' do
+      it 'should delete all of the dances' do
+        @dances.each do |dance|
+          expect(Dance).to receive(:delete).with(dance)
+        end
+        post:delete, params: {id: @schedule.id.to_i}
+      end
       
+      it 'should delete all of the performances' do
+        @performances.each do |performance|
+          expect(Performance).to receive(:delete).with(performance)
+        end
+        
+        post:delete, params: {id: @schedule.id.to_i}
+      end
+      
+      it 'should delete all of the acts' do
+        @acts.each do |act|
+           expect(Act).to receive(:delete).with(act)
+        end
+        post:delete, params: {id: @schedule.id.to_i}
+      end
+      
+      it 'should delete the schedule' do
+        expect(Schedule).to receive(:delete).with(@schedule.id)
+        post:delete, params: {id: @schedule.id.to_i}
+      end
     end
   end
 end
