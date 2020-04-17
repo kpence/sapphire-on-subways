@@ -18,5 +18,5 @@ Background: Start on the homepage
   And I should see no performances in the table for act 2
   
 Scenario: Remove the schedule
-  When I press "Remove Schedule"
+  When I press "Delete Schedule"
   Then I should be on the DAS home page
