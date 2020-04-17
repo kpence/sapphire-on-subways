@@ -23,19 +23,22 @@
                   %div.floatRight
                     %div.floatLeftButton
                       - unless perf.locked == true
-                        = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                        = button_to lock_performances_path, :id => "lock" + perf.name.to_s.gsub(" ", "_"), 
+                              :class => "lock" + perf.name.to_s.gsub(" ", "_") do
                           = hidden_field_tag :performance_id, perf.id
                           = hidden_field_tag :schedule_id, act.schedule_id
                           = hidden_field_tag :locked, false
                           = image_submit_tag("unlock.jpg", alt: "Unlocked")
                       - else
-                        = button_to lock_performances_path, :id => "lock" + perf.name.to_s, :class => "lock" + perf.name.to_s do
+                        = button_to lock_performances_path, :id => "lock" + perf.name.to_s.gsub(" ", "_"), 
+                              :class => "lock" + perf.name.to_s.gsub(" ", "_") do
                           = hidden_field_tag :performance_id, perf.id
                           = hidden_field_tag :schedule_id, act.schedule_id
                           = hidden_field_tag :locked, true
                           = image_submit_tag("lock.png", alt: "Locked")
                     %div.floatRightButton
-                      = button_to remove_performances_path, :id => "remove" + perf.name.to_s, :class => "remove" + perf.name.to_s do
+                      = button_to remove_performances_path, :id => "remove" + perf.name.to_s.gsub(" ", "_"), 
+                            :class => "remove" + perf.name.to_s.gsub(" ", "_") do
                         = hidden_field_tag :performance_id, perf.id
                         = hidden_field_tag :schedule_id, act.schedule_id
                         = hidden_field_tag :scheduled, true

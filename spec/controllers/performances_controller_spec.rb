@@ -36,24 +36,24 @@ describe PerformancesController do
     fixtures :schedules, :acts, :performances
     
     before :each do
-      @new_fake_performance = performances(:InsertPerformance1)
-      @fake_schedule_inserted_into = schedules(:MySchedule)
-      @fake_act = @new_fake_performance.act
+      @fake_schedule = schedules(:MySchedule)
+      @fake_act1 = @fake_schedule.acts[0]
     end
     
-    subject { post :create, params: {act_id: @fake_act.id, 
+    subject { post :create, params: {act_id: @fake_act1.id, 
                                     new_performance_name: "InsertPerformance1", 
-                                    position: 4,
-                                    schedule_id: @fake_schedule_inserted_into.id
+                                    #position: 4, # position should not be a parameter- should be inserted last
+                                    schedule_id: @fake_schedule.id
     } }
     after:each do
-      expect(subject).to redirect_to(edit_schedule_path(id: @fake_schedule_inserted_into.id))
+      expect(subject).to redirect_to(edit_schedule_path(id: @fake_schedule.id))
       subject
     end
 
     #Insert should only be available if a schedule has been loaded in, so we can assume a schedule has been loaded already
     it 'should create a new performance' do
-      expect(Performance).to receive(:create!).and_return(@new_fake_performance)
+      #It's not important what it is supposed to return. Only what it should be called with
+      expect(Performance).to receive(:create!)#.with(...)
     end
 
   end
@@ -62,13 +62,13 @@ describe PerformancesController do
     fixtures :schedules, :acts, :performances
     
     before :each do 
-      @fake_performance = performances(:InsertPerformance1)
+      @fake_performance = performances(:MyPerf1)
       #@original_scheduled_value = @fake_performance.scheduled
       @fake_schedule_removed_from = schedules(:MySchedule)
     end
     
     it 'should change scheduled attribute to false' do
-      post :remove, params: {performance_id: @fake_performance.id, new_performance_name: "InsertPerformance1", position: 4, schedule_id: @fake_schedule_removed_from.id}
+      post :remove, params: {performance_id: @fake_performance.id, new_performance_name: "MyPerf1", position: 4, schedule_id: @fake_schedule_removed_from.id}
       expect @fake_performance.scheduled == false
     end
   end
@@ -77,7 +77,7 @@ describe PerformancesController do
     fixtures :schedules, :acts, :performances
     
     before :each do
-      @fake_performance = performances(:InsertPerformance1)
+      @fake_performance = performances(:MyPerf1)
       @fake_schedule = schedules(:MySchedule)
       @original_locked_value = @fake_performance.locked
     end

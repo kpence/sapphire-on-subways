@@ -123,9 +123,6 @@ describe Schedule do
         num_half_performances = @fake_performances.length/2
         expect(Performance).to receive(:create!).with(hash_including :act_id => @act1_id)
             .exactly(num_half_performances).times
-        if @fake_performances.length % 2 == 1
-          num_half_performances += 1
-        end
         expect(Performance).to receive(:create!).with(hash_including :act_id => @act2_id)
             .exactly(num_half_performances).times
       end
