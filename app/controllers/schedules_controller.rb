@@ -75,9 +75,8 @@ class SchedulesController < ApplicationController
   
   def form_schedule(gen_conflicts=false)
     @schedule.acts.each do |act|
+      Rails.logger.info act.performances.to_s
       @ordered_performances[act.number] = remove_unscheduled(act.performances).sort_by { |perf| perf.position }
-      puts "Act " + act.number.to_s + ": " + act.performances.to_s
-      puts "Act " + act.number.to_s + " ordered: " + @ordered_performances[act.number].to_s
       @unscheduled_performances[act.number] = (act.performances - @ordered_performances[act.number])
           .sort_by { |perf| perf.position }
       if gen_conflicts
@@ -96,7 +95,7 @@ class SchedulesController < ApplicationController
   # Do the work of adjusting all the relative positions before and after
   # using the helper to minimize the conflicts
   def minimize_schedule
-    helpers.minimize_conflicts(@schedule, @ordered_performances)
+    @ordered_performances = helpers.minimize_conflicts(@schedule, @ordered_performances)
     form_schedule(true)
   end
   
@@ -113,8 +112,6 @@ class SchedulesController < ApplicationController
     if flash[:minimize]
       minimize_schedule()
     end
-    
-    puts @ordered_performances.to_s
     
     @act_classes = {}
     @act_classes[1] = "floatLeftA"

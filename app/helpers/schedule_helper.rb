@@ -142,21 +142,27 @@ module ScheduleHelper
   # Adjust all the positions of dances after act 1 back to their
   # positions relative to only their act(s)
   def divide(first_act2)
-    puts "Performances before div::: " + @performances.to_s
-    act2_perfs = @performances.select {|perf| perf.position >= first_act2}
-    #puts "act2_perfs = " + act2_perfs.sort_by {|perf| perf.position}.map {|perf| perf.name}.to_s
-    act1_perfs = @performances - act2_perfs
-    act1_perfs.each do |act1_perf|
-      puts "act1 perf " + act1_perf.name + " pos " + act1_perf.position.to_s
-      act1_perf.act_id = @schedule.acts[0].id
+    num_act1_perfs = @performances.select {|perf| perf.position < first_act2}.length
+    
+    @performances.each do |perf|
+      if perf.position < first_act2
+        Rails.logger.info "Act before: " + perf.act.number.to_s
+        perf.act = @schedule.acts[0]
+        perf.save
+        Rails.logger.info "Act after: " + perf.act.number.to_s
+      else
+        Rails.logger.info "Act before: " + perf.act.number.to_s
+        perf.act = @schedule.acts[1]
+        perf.position = perf.position - num_act1_perfs
+        perf.save
+        Rails.logger.info "Act after: " + perf.act.number.to_s
+      end
     end
-    num_act1_perfs = act1_perfs.length()
-    act2_perfs.each do |act2_perf|
-      puts "act2 perf " + act2_perf.name + " pos " + act2_perf.position.to_s
-      act2_perf.position = act2_perf.position - num_act1_perfs 
-      act2_perf.act_id = @schedule.acts[1].id
+    
+    [1,2].each do |idx|
+      @ordered_performances[idx] = @performances.select {|p| p.act.number == idx }
+                                          .sort_by {|p| p.position }
     end
-    puts "Performances after div::: " + @performances.to_s
   end
   
   def form_graph
@@ -296,11 +302,11 @@ module ScheduleHelper
   def reorder_performances(winner_permutation)
     curr_pos = 1
     winner_permutation.each do |winner_index|
-      #puts "winner index " + winner_index.to_s + " " + @performances[winner_index].name.to_s + " position " + curr_pos.to_s
       perf = @performances[winner_index]
-      perf.position = curr_pos
+      perf.update(position: curr_pos)
       curr_pos += 1
     end
+    @performances.sort_by! {|p| p.position }
   end
   
   # Takes a list of performances (AR object references) and attempts
@@ -308,8 +314,11 @@ module ScheduleHelper
   # of each performance- no need to return)
   def minimize_conflicts(schedule, ordered_performances)
     @schedule = schedule
+    @ordered_performances = ordered_performances
     @performances = concatenate(@ordered_performances[1], 
                                 @ordered_performances[2])
+                                
+    original_act2_start = @ordered_performances[1].length
     
     @performances_struct = ScheduleStructure.new(@performances)
     
@@ -318,17 +327,33 @@ module ScheduleHelper
     winner_permutation = find_min_perm(perms)
     reorder_performances(winner_permutation)
     
-    divide(11) # The performance positions back into 2 acts
-    
-    [1,2].each do |idx|
-      @ordered_performances[idx].each do |p|
-        p.save
-      end
-    end
+    divide(original_act2_start) # The performance positions back into 2 acts
     
     #puts "HERE: " + performances_struct.perfs.to_s
     
-    return @performances
+    @schedule.reload
+    
+    return @ordered_performances
   end
+  
+  # def print_performances(msg)
+  #   Rails.logger.info msg
+  #   Rails.logger.info "@performances:"
+  #   @performances.each do |perf|
+  #     Rails.logger.info perf.position.to_s + " " + perf.name + " act " + perf.act.number.to_s + " id " + perf.id.to_s
+  #   end
+  # end
+  
+  # def print_ordered_performances(msg)
+  #   Rails.logger.info msg
+  #   Rails.logger.info "@ordered_performances:"
+  #   [1,2].each do |idx|
+  #     Rails.logger.info "Act " + idx.to_s
+  #     @ordered_performances[idx].each do |p|
+  #       Rails.logger.info p.position.to_s + " " + p.name + " act " + p.act.number.to_s + " id " + p.id.to_s
+  #       p.save
+  #     end
+  #   end
+  # end
   
 end
