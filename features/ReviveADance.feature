@@ -63,7 +63,7 @@ Scenario: Revive the first dance
   And I should see no performances in the table for act 2
   And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
   
-  Scenario: Revive the last dance
+Scenario: Revive the last dance
   When I remove dance "Sorrow"
   Then I should see the following performances in a table for act 1 in order
   | I Don’t Think About You   |
