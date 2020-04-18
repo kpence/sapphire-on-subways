@@ -95,7 +95,7 @@ class SchedulesController < ApplicationController
   # Do the work of adjusting all the relative positions before and after
   # using the helper to minimize the conflicts
   def minimize_schedule
-    @ordered_performances = helpers.minimize_conflicts(@schedule, @ordered_performances)
+    helpers.minimize_conflicts(@schedule, @ordered_performances)
     form_schedule(true)
   end
   
@@ -117,7 +117,6 @@ class SchedulesController < ApplicationController
     @act_classes[1] = "floatLeftA"
     @act_classes[2] = "floatRightA"
   end
-  
 
   def minimize
     flash[:minimize] = true

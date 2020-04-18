@@ -1,102 +1,4 @@
-class ScheduleStructure
-  attr_accessor :perfs
-  
-  def populate(part, act_number, starting_perf, num_act_perfs=nil)
-    tmp_idx = starting_perf
-    if part == :beginning or part == :ending
-      while tmp_idx >= 0 and tmp_idx < @performances.length and
-            @performances[tmp_idx].locked and
-            @performances[tmp_idx].act.number == act_number
-        @perfs[act_number][part].append(tmp_idx)
-        tmp_idx += (part == :beginning) ? 1 : -1
-      end
-      if part == :ending
-        @perfs[act_number][part].reverse!
-      end
-      
-    else  # part :others
-      # Any more here and it would be in :ending or :beginning
-      if @perfs[act_number][:beginning].length >= num_act_perfs - 2
-        return
-      end
-      last_idx = (act_number == 1) ? num_act_perfs - 1 : @performances.length - 1
-      if @perfs[act_number][:ending].length > 0
-        last_idx = @perfs[act_number][:ending][0] - 2
-      end
-      while tmp_idx <= last_idx
-        if @performances[tmp_idx].locked
-          tmp_list = []
-          while @performances[tmp_idx].locked
-            tmp_list.append(tmp_idx)
-            tmp_idx += 1
-          end
-          @perfs[act_number][:others].append(tmp_list)
-        end
-        tmp_idx += 1
-      end
-    end
-  end
-  
-  def initialize(perf_list)
-    @performances = perf_list
-    
-    @perfs = {}
-    @perfs[1] = {
-      :beginning => [],
-      :ending => [],
-      :others => []
-    }
-    @perfs[2] = {
-      :beginning => [],
-      :ending => [],
-      :others => []
-    }
-    
-    num_act1_perfs = @performances.select { |perf| perf.act.number == 1 }.length
-    num_act2_perfs = @performances.select { |perf| perf.act.number == 2 }.length
-    
-    if num_act1_perfs > 0
-      populate(:beginning, 1, 0)
-      if @perfs[1][:beginning].length < num_act1_perfs - 1
-        populate(:ending, 1, num_act1_perfs - 1)
-        if @perfs[1][:beginning].length > 0
-          last_beginning_perf_position_idx = @perfs[1][:beginning].length - 1
-          last_beginning_perf_position = @perfs[1][:beginning][last_beginning_perf_position_idx]
-          
-          # Add 2 because otherwise, it would be in beginning
-          populate(:others, 1, last_beginning_perf_position + 2, num_act1_perfs)
-        else
-          populate(:others, 1, 0, num_act1_perfs)
-        end
-      end
-    end
-    
-    # If they are all in act 1, stop here
-    if @performances.length == num_act1_perfs
-      return
-    end
-    
-    if num_act2_perfs > 0
-      populate(:beginning, 2, num_act1_perfs)
-      if @perfs[2][:beginning].length < num_act2_perfs - 1
-        populate(:ending, 2, @performances.length - 1)
-        if @perfs[2][:beginning].length > 0
-          last_beginning_perf_position_idx = @perfs[2][:beginning].length - 1
-          last_beginning_perf_position = @perfs[2][:beginning][last_beginning_perf_position_idx]
-          
-          # Add 2 because otherwise, it would be in beginning
-          populate(:others, 2, last_beginning_perf_position + 2, num_act2_perfs)
-        else
-          populate(:others, 2, num_act1_perfs, num_act2_perfs)
-        end
-      end
-    end
-    
-  end
-end
-
-module ScheduleHelper
-  
+module ScheduleHelper  
   @@MAX_PERMS = 1000
   
   # Thank you https://medium.com/@daweiner16/factorial-using-ruby-app-academy-practice-problem-c1a179ac445f
@@ -146,23 +48,21 @@ module ScheduleHelper
     
     @performances.each do |perf|
       if perf.position < first_act2
-        Rails.logger.info "Act before: " + perf.act.number.to_s
         perf.act = @schedule.acts[0]
         perf.save
-        Rails.logger.info "Act after: " + perf.act.number.to_s
       else
-        Rails.logger.info "Act before: " + perf.act.number.to_s
         perf.act = @schedule.acts[1]
         perf.position = perf.position - num_act1_perfs
         perf.save
-        Rails.logger.info "Act after: " + perf.act.number.to_s
       end
     end
     
+    # Have to reload the schedule and fix up @ordered_performances
     [1,2].each do |idx|
       @ordered_performances[idx] = @performances.select {|p| p.act.number == idx }
                                           .sort_by {|p| p.position }
     end
+    @schedule.reload
   end
   
   def form_graph
@@ -320,40 +220,13 @@ module ScheduleHelper
                                 
     original_act2_start = @ordered_performances[1].length
     
-    @performances_struct = ScheduleStructure.new(@performances)
-    
     form_graph
     perms = get_perms(@performances)
     winner_permutation = find_min_perm(perms)
     reorder_performances(winner_permutation)
     
-    divide(original_act2_start) # The performance positions back into 2 acts
-    
-    #puts "HERE: " + performances_struct.perfs.to_s
-    
-    @schedule.reload
+    divide(original_act2_start + 1) # The performance positions back into 2 acts
     
     return @ordered_performances
   end
-  
-  # def print_performances(msg)
-  #   Rails.logger.info msg
-  #   Rails.logger.info "@performances:"
-  #   @performances.each do |perf|
-  #     Rails.logger.info perf.position.to_s + " " + perf.name + " act " + perf.act.number.to_s + " id " + perf.id.to_s
-  #   end
-  # end
-  
-  # def print_ordered_performances(msg)
-  #   Rails.logger.info msg
-  #   Rails.logger.info "@ordered_performances:"
-  #   [1,2].each do |idx|
-  #     Rails.logger.info "Act " + idx.to_s
-  #     @ordered_performances[idx].each do |p|
-  #       Rails.logger.info p.position.to_s + " " + p.name + " act " + p.act.number.to_s + " id " + p.id.to_s
-  #       p.save
-  #     end
-  #   end
-  # end
-  
 end
