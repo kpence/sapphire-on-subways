@@ -55,7 +55,7 @@ describe SchedulesController do
     context "In the presence of an act with conflicts" do
       before :each do
         # See the fixture data for details
-        @fake_act = acts(:MyOtherAct2)
+        @fake_act = acts(:MyOtherAct1)
         @fake_perf1 = performances(:MyOtherPerf2)
         @fake_perf2 = performances(:MyOtherPerf3)
         @fake_dancer = dancers(:MyOtherDancer2)
@@ -71,7 +71,7 @@ describe SchedulesController do
         }
         
         allow(controller).to receive(:generate_conflict)
-            .and_return(nil, @fake_conflict, nil, nil, nil)
+            .and_return(nil, @fake_conflict)
         
         # See the fixture data: This has one conflict between
         # MyOtherPerf5 and MyOtherPerf6
@@ -95,6 +95,19 @@ describe SchedulesController do
     it 'should call Schedule#all to get all schedules in the DB' do
       expect(Schedule).to receive(:all)
       get :index
+    end
+  end
+  
+  describe "#remove_unscheduled" do
+    fixtures :performances
+    it 'should return a filtered list if there are unscheduled performances' do
+      @fake_perf1 = performances(:MyPerf1)
+      @fake_perf2 = performances(:MyPerf2)
+      @fake_perf3 = performances(:MyPerf3)
+      @fake_perf2.scheduled = false;
+      
+      ret = controller.remove_unscheduled([@fake_perf1, @fake_perf2, @fake_perf3])
+      expect(ret).to eq ([@fake_perf1, @fake_perf3])
     end
   end
     
@@ -233,11 +246,78 @@ describe SchedulesController do
       end
     end
     
-    context "We came from the upload page" do
+    context "We came from the a page that wants us to minimize" do
       it 'should generate a random schedule using the helper' do
         allow(Schedule).to receive(:find).and_return(@fake_schedule)
         expect(controller.helpers).to receive(:minimize_conflicts).exactly(2).times
         get :edit, params: {id: @fake_schedule.id}, flash: {minimize: true}
+      end
+    end
+  end
+  
+  describe "#delete" do
+    fixtures :schedules, :acts, :performances, :dances, :dancers
+    
+    context "schedule can't be found" do
+      before :each do
+        @schedule = schedules(:MySchedule)
+      end
+      
+      it 'should redirect to the root page with the following notice' do
+        allow(Schedule).to receive(:find).and_return(nil)
+        post :delete, params: {id: @schedule.id}
+        
+        expect(subject).to redirect_to(schedules_path)
+        expect(controller).to set_flash[:notice]
+        expect(flash[:notice]).to eq "Schedule with id " + @schedule.id.to_s + " could not be found."
+      end
+    end
+
+    context "schedule is found" do
+      before :each do
+        @schedule = schedules(:MySchedule)
+        @acts = acts(:MyAct1,:MyAct2)
+        @performances = performances(:MyPerf1,:MyPerf2,:MyPerf3,:MyPerf4,:MyPerf5,:MyPerf6,:MyPerf7,:MyPerf8)
+        @dances = dances(:MyDance1,:MyDance2,:MyDance3,:MyDance4,:MyDance5,:MyDance6,
+                          :MyDance7,:MyDance8,:MyDance9,:MyDance10,:MyDance11,:MyDance12,
+                          :MyDance13,:MyDance14,:MyDance15,:MyDance16,:MyDance17)
+      end
+      
+
+      it 'should find the schedule by the schedule id' do
+        expect(Schedule).to receive(:find).with(@schedule.id.to_s)  
+      end
+      
+      it 'should delete all of the dancers' do
+        @dances.each do |dance|
+          expect(Dancer).to receive(:delete).with(dance.dancer)
+        end
+      end
+      
+      it 'should delete all of the dances' do
+        @dances.each do |dance|
+          expect(Dance).to receive(:delete).with(dance)
+        end
+      end
+      
+      it 'should delete all of the performances' do
+        @performances.each do |performance|
+          expect(Performance).to receive(:delete).with(performance)
+        end
+      end
+      
+      it 'should delete all of the acts' do
+        @acts.each do |act|
+           expect(Act).to receive(:delete).with(act)
+        end
+      end
+      
+      it 'should delete the schedule' do
+        expect(Schedule).to receive(:delete).with(@schedule.id)
+      end
+      
+      after :each do
+        post:delete, params: {id: @schedule.id.to_i}
       end
     end
   end

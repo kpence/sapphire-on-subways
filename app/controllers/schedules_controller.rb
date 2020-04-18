@@ -121,8 +121,24 @@ class SchedulesController < ApplicationController
     @act_classes[2] = "floatRightA"
   end
   
+
   def minimize
     flash[:minimize] = true
     redirect_to edit_schedule_path(id: params[:id]), flash: {success: "New minimal schedule generated!"}
+  end
+
+  def delete
+    schedule_id = params[:id]
+    @schedule = Schedule.find(params[:id])
+    if @schedule == nil
+      redirect_to schedules_path, notice: "Schedule with id #{params[:id]} could not be found."
+      return
+    end
+    
+    # Each act is responsible for deleting data under it
+    Schedule.remove_acts(schedule_id)
+    Schedule.delete(schedule_id.to_i)
+    
+    redirect_to root_path, flash: {success: "Successfully deleted schedule "+schedule_id.to_s}
   end
 end
