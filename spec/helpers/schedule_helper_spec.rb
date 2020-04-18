@@ -45,32 +45,6 @@ describe ScheduleHelper do
     end
   end
   
-  describe "#count_conflicts" do
-    fixtures :dances, :dancers
-    before :each do
-      @double1 = double('dance1')
-      @double2 = double('dance2')
-      @dance_1 = dances(:MyDance1)
-      @dance_2 = dances(:MyDance2)
-      @dance_3 = dances(:MyDance3)
-      @dance_4 = dances(:MyDance4)
-      @dance_5 = dances(:MyDance5)
-    end
-    it 'calls the intersect by dancer id method with two arguments' do
-      expect(helper).to receive(:intersect_by_dancer_id).with(@double1, @double2).and_return(@double1)
-      expect(@double1).to receive(:length)
-      helper.count_conflicts(@double1, @double2)
-    end
-    it 'should count the nubmer of dancers in the intersection' do
-      expect(helper).to receive(:intersect_by_dancer_id).with([@dance_1,@dance_2,@dance_3,@dance_4], [@dance_5]).and_return([])
-      expect(helper).to receive(:intersect_by_dancer_id).with([@dance_1,@dance_2], [@dance_3,@dance_4]).and_return([@dance_1.id])
-      expect(helper).to receive(:intersect_by_dancer_id).with([@dance_1,@dance_2], [@dance_3,@dance_4,@dance_5]).and_return([@dance_1.id, @dance_5.id])
-      expect(helper.count_conflicts([@dance_1,@dance_2,@dance_3,@dance_4], [@dance_5])).to eq(0)
-      expect(helper.count_conflicts([@dance_1,@dance_2], [@dance_3,@dance_4])).to eq(1)
-      expect(helper.count_conflicts([@dance_1,@dance_2], [@dance_3,@dance_4,@dance_5])).to eq(2)
-    end
-  end
-  
   describe "#form_graph" do
     fixtures :schedules, :performances, :dancers, :dances, :acts
     before :each do
@@ -112,10 +86,6 @@ describe ScheduleHelper do
           @fake_perfs[5].id => values[14]
         }
       }
-      
-      values.each do |val|
-        allow(helper).to receive(:count_conflicts).and_return(val)
-      end
       
       helper.instance_variable_set(:@performances, @fake_perfs)
       helper.form_graph
