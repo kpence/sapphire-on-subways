@@ -165,5 +165,56 @@ class Schedule < ActiveRecord::Base
     generate_performances(schedule_params[:performance_names], act1_id, act2_id)
     generate_dances_and_dancers(schedule_params[:dancer_hashes], act1_id, act2_id)
   end
+
+  # Exports the performances into a CSV format string
+  def self.to_csv(performances, conflicts_hash, conflicting_perf)
+
+    rows = {}
+
+    ["1","2"].each do |act_number|
+      unless performances.has_key? act_number
+        performances[act_number] = []
+      end
+    end
+
+    ["1","2"].each do |act_number|
+      performances[act_number].each_with_index do |perf_id,index|
+
+        perf = Performance.find(perf_id.to_i)
+
+        if (rows[index] == nil)
+          rows[index] = (act_number == "1") ? [] : [nil,nil]
+        end
+
+
+        rows[index].append(perf.name)
+
+        if conflicting_perf.include? perf_id
+          conflicts_hash[act_number].each do |conflict|
+            if conflict[:first_performance] == perf.name
+              rows[index].append((conflict[:dancers] == nil) ? nil : conflict[:dancers].join(", "))
+              break
+            end
+          end
+        else
+          rows[index].append(nil)
+        end
+
+        if act_number == "1" && index >= performances["2"].length
+          rows[index].append(nil)
+          rows[index].append(nil)
+        end
+      end
+    end
+
+    csv = CSV.generate do |csv|
+      csv << ['Act 1', 'Act 1 conflicts', 'Act 2', 'Act 2 conflicts']
+      rows.each do |row|
+        csv << row[1]
+      end
+    end
+
+    return csv
+  end
   
 end

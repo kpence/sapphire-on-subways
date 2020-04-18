@@ -16,6 +16,9 @@ module NavigationHelpers
     when /^the DAS home\s?page$/
       '/schedules'
     
+    when /^(the)?\s?Export Schedule page$/
+      '/schedules/export'
+    
     when /^(the)?\s?Edit Schedule(s)?\s?page$/
       edit_schedule_path(id: Schedule.first.id)
 

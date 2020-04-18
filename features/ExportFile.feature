@@ -17,6 +17,7 @@ Background: Start on the homepage
   | Sorrow                    |
   And I should see no performances in the table for act 2
   
-Scenario: Export Schedule "Test"
-  
-  
+Scenario: Export Schedule "Test", Page Doesn't Change
+  Given I am on the Edit Schedule page
+  When I press "Export Schedule to CSV"
+  Then I should be on Export Schedule page

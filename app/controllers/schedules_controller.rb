@@ -89,7 +89,17 @@ class SchedulesController < ApplicationController
     @act_classes[1] = "floatLeftA"
     @act_classes[2] = "floatRightA"
 
-
+    #flash[:conflicts] = @conflicts
+    #flash[:ordered_performances] = @ordered_performances
+    #flash[:conflicting_performances] = @conflicting_performances
 
   end
+
+
+  def export
+    @schedule = Schedule.find(params[:id])
+    
+    send_data Schedule.to_csv(params[:ordered_performances], params[:conflicts], params[:conflicting_performances]), filename: "#{@schedule.name}_exported_schedule.csv"
+  end
+  
 end
