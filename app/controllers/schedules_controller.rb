@@ -73,16 +73,6 @@ class SchedulesController < ApplicationController
     return perfs
   end
   
-  def unscheduled(performances)
-    perfs = []
-    performances.each do |perf|
-      if !perf.scheduled
-        perfs.append(perf)
-      end
-    end
-    return perfs
-  end
-  
   def edit
     @schedule = Schedule.find(params[:id])
     if @schedule == nil
