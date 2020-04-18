@@ -3,75 +3,95 @@ MyPerf1:
   act_id: 1
   name: MyPerf1
   position: 1
+  scheduled: true
+  
 MyPerf2:
   id: 2
   act_id: 1
   name: MyPerf2
   position: 2
+  scheduled: true
+  
 MyPerf3:
   id: 3
   act_id: 1
   name: MyPerf3
   position: 3
+  scheduled: true
+  
 MyPerf4:
   id: 4
   act_id: 2
   name: MyPerf4
-  position: 3
+  position: 4
+  scheduled: true
+  
 MyPerf5:
   id: 5
   act_id: 2
   name: MyPerf5
-  position: 4
+  position: 5
+  scheduled: true
+  
 MyPerf6:
   id: 6
   act_id: 2
   name: MyPerf6
-  position: 5
+  position: 6
+  scheduled: true
+  
 MyOtherPerf1:
   id: 7
-  act_id: 4
+  act_id: 3
   name: MyOtherPerf1
-  position: 6
+  position: 1
+  scheduled: true
+  
 MyOtherPerf2:
   id: 8
-  act_id: 4
+  act_id: 3
   name: MyOtherPerf2
-  position: 5
+  position: 2
+  scheduled: true
+  
 MyOtherPerf3:
   id: 9
-  act_id: 4
+  act_id: 3
   name: MyOtherPerf3
-  position: 4
+  position: 3
+  scheduled: true
+  
 MyOtherPerf4:
   id: 10
-  act_id: 5
+  act_id: 4
   name: MyOtherPerf4
-  position: 3
+  position: 4
+  scheduled: true
+  
 MyOtherPerf5:
   id: 11
-  act_id: 5
+  act_id: 4
   name: MyOtherPerf5
-  position: 2
+  position: 5
+  scheduled: true
+  
 MyOtherPerf6:
   id: 12
-  act_id: 5
+  act_id: 4
   name: MyOtherPerf6
-  position: 1
-InsertPerformance1:
-  id: 13
-  act_id: 1
-  name: InsertPerformance1
-  position: 4
-  locked: false
-  scheduled: false
+  position: 6
+  scheduled: true
+  
 MyPerf7:
-  id: 14
+  id: 13
   act_id: 2
   name: MyPerf7
   position: 7
+  scheduled: true
+  
 MyPerf8:
-  id: 15
+  id: 14
   act_id: 2
   name: MyPerf8
   position: 8
+  scheduled: true

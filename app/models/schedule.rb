@@ -217,4 +217,11 @@ class Schedule < ActiveRecord::Base
     return csv
   end
   
+  def self.remove_acts(schedule_id)
+    schedule = Schedule.find(schedule_id.to_i)
+    schedule.acts.each do |act|
+      Act.delete_performances(act)
+    end
+  end
+
 end
