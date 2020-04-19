@@ -78,7 +78,7 @@ end
 
 When ("I lock dance {string}") do |string1|
   #puts page.to_s
-  find("#lock"+string1).click
+  find("#lock"+string1.gsub(" ", "_")).click
 end
 
 Then ("I should see that dance {string} changed to {string}") do |string1, string2|
@@ -256,27 +256,23 @@ Then /^(?:|I )should see "([^"]*)" in between "([^"]*)" and "([^"]*)"$/ do |thin
 end
 
 Then /^(?:|I )should see the following (?:|performances in a )table(?:| for act ([0-9]))(?:| (in order))$/ do |act_number, in_order, values|
+  list = values.raw.map {|e| e[0]}
   within("#act"+act_number) do
-    list = values.raw.map {|e| e[0]}
     list.each do |text|
-      if page.respond_to? :should
-        page.should have_content(text)
+      find("td", text: /^#{text}$/)
+    end
+  end
+  if in_order
+    regex_str = ""
+    list.each_with_index do |text, i|
+      if i < list.length - 1
+        regex_str += text + ".*"
       else
-        assert page.has_content?(text)
+        regex_str += text
       end
     end
-    if in_order
-      regex_str = ""
-      list.each_with_index do |text, i|
-        if i < list.length - 1
-          regex_str += text + ".*"
-        else
-          regex_str += text
-        end
-      end
-      regex = /#{regex_str}/m
-      page.body.should =~ regex
-    end
+    regex = /#{regex_str}/m
+    page.body.should =~ regex
   end
 end
 
@@ -284,6 +280,21 @@ Then /^(?:|I )should see no performances in the table for act ([0-9])$/ do |act_
   within("#act"+act_number) do
     page.body.should =~ /This act is empty. Dragging a performance here will move it into this act./m
   end
+end
+
+Then /^(?:|I )should see the following (?:|performances )in tables$/ do |values|
+  list = values.raw.map {|e| e[0]}
+  list.each do |perf|
+    # To get an exact match for the performance exactly once in the tables
+    act1_count = page.all('#act1 td div.floatLeft', text: /^#{perf}$/).count
+    act2_count = page.all('#act2 td div.floatLeft', text: /^#{perf}$/).count
+    
+    (act1_count + act2_count).should eq 1
+  end
+end
+
+Then /^(?:|I )should see ([0-9]+) performances in act ([0-9])$/ do |num_perfs, act_number|
+  page.all("#act"+act_number.to_s+" td div.floatLeft").count.should eq num_perfs.to_i
 end
 
 Then /^(?:|I )should see \/([^\/]*)\/$/ do |regexp|
