@@ -42,7 +42,7 @@ describe PerformancesController do
     
     subject { post :create, params: {act_id: @fake_act1.id, 
                                     new_performance_name: "InsertPerformance1", 
-                                    #position: 4, # position should not be a parameter- should be inserted last
+                                    position: @fake_act1.performances.length,
                                     schedule_id: @fake_schedule.id
     } }
     after:each do
@@ -53,7 +53,8 @@ describe PerformancesController do
     #Insert should only be available if a schedule has been loaded in, so we can assume a schedule has been loaded already
     it 'should create a new performance' do
       #It's not important what it is supposed to return. Only what it should be called with
-      expect(Performance).to receive(:create!)#.with(...)
+      expect(Performance).to receive(:create!).with(name: "InsertPerformance1", act_id: @fake_act1.id, scheduled: true,
+                                                    position: @fake_act1.performances.length, locked: false)
     end
 
   end
