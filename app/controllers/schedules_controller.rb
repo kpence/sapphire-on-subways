@@ -75,7 +75,6 @@ class SchedulesController < ApplicationController
   
   def form_schedule(gen_conflicts=false)
     @schedule.acts.each do |act|
-      Rails.logger.info act.performances.to_s
       @ordered_performances[act.number] = remove_unscheduled(act.performances).sort_by { |perf| perf.position }
       @unscheduled_performances[act.number] = (act.performances - @ordered_performances[act.number])
           .sort_by { |perf| perf.position }

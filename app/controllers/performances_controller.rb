@@ -1,8 +1,6 @@
 class PerformancesController < ApplicationController
   def sort
     schedule_id = nil
-    
-    puts params[:performance].to_s
 
     params[:performance].each_with_index do |id, index|
       Performance.where(id: id.to_i).update(position: index + 1)
@@ -12,7 +10,7 @@ class PerformancesController < ApplicationController
         schedule_id = act.schedule_id
       end
     end
-    #Performance.where(id: params[:move_perf].to_i).update(act_id: params[:act_id].to_i)
+    Performance.where(id: params[:move_perf].to_i).update(act_id: params[:act_id].to_i)
     
     # TODO:NOTICE -- I'm commenting this out TEMPORARILY for the sake of the demo because it's not working in an elegant way right now
     # redirect_to edit_schedule_path(id: schedule_id) + "#performance_"+params[:move_perf]
