@@ -214,6 +214,9 @@ describe SchedulesController do
     
     context "Conflicts do not need to be generated" do
       before :each do
+        # So that we have some unscheduled ones
+        @fake_schedule.acts[0].performances[0].scheduled = false
+        @fake_schedule.acts[1].performances[0].scheduled = false
         controller.form_schedule(false)
       end
       

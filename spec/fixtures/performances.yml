@@ -23,21 +23,21 @@ MyPerf4:
   id: 4
   act_id: 2
   name: MyPerf4
-  position: 4
+  position: 1
   scheduled: true
   
 MyPerf5:
   id: 5
   act_id: 2
   name: MyPerf5
-  position: 5
+  position: 2
   scheduled: true
   
 MyPerf6:
   id: 6
   act_id: 2
   name: MyPerf6
-  position: 6
+  position: 3
   scheduled: true
   
 MyOtherPerf1:
@@ -65,33 +65,33 @@ MyOtherPerf4:
   id: 10
   act_id: 4
   name: MyOtherPerf4
-  position: 4
+  position: 1
   scheduled: true
   
 MyOtherPerf5:
   id: 11
   act_id: 4
   name: MyOtherPerf5
-  position: 5
+  position: 2
   scheduled: true
   
 MyOtherPerf6:
   id: 12
   act_id: 4
   name: MyOtherPerf6
-  position: 6
+  position: 3
   scheduled: true
   
 MyPerf7:
   id: 13
   act_id: 2
   name: MyPerf7
-  position: 7
+  position: 4
   scheduled: true
   
 MyPerf8:
   id: 14
   act_id: 2
   name: MyPerf8
-  position: 8
+  position: 5
   scheduled: true

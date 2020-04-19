@@ -45,6 +45,79 @@ describe ScheduleHelper do
     end
   end
   
+  describe "#concatenate" do
+    fixtures :schedules, :acts, :performances
+    before :each do
+      @fake_schedule = schedules(:MySchedule)
+      @ret = helper.concatenate(@fake_schedule.acts[0].performances, @fake_schedule.acts[1].performances)
+    end
+    
+    it 'should put all the performances in both acts together' do
+      @fake_schedule.acts.each do |act|
+        act.performances.each do |perf|
+          expect(@ret.include? perf)
+        end
+      end
+    end
+    
+    it 'should order the performances by position in the schedule' do
+      expect(@ret).to eq @ret.sort_by {|p| p.position }
+    end
+    
+    it 'should give each performance a unique position' do
+      expect(@ret).to eq @ret.uniq {|p| p.position }
+    end
+    
+    it 'should give positions in ascending order from 1 to n' do
+      (1..@ret.length).each do |pos|
+        expect(@ret.map {|p| p.position}.include? pos)
+      end
+    end
+  end
+  
+  describe "#divide" do
+    fixtures :schedules, :acts, :performances
+    before :each do
+      @fake_schedule = schedules(:MySchedule)
+      helper.instance_variable_set(:@schedule, @fake_schedule)
+      @fake_performances = @fake_schedule.acts[0].performances + @fake_schedule.acts[1].performances
+      @num_act1_perfs = @fake_schedule.acts[0].performances.length
+      
+      # Here's the real faking: Make all of them have contiguous positions and
+      # all in act 2
+      @fake_performances.sort_by{|p|p.position}.each_with_index do |fp, idx|
+        if idx >= @num_act1_perfs 
+          fp.position += @num_act1_perfs
+        end
+        allow(fp).to receive(:save)
+        fp.act = @fake_schedule.acts[0]
+      end
+      
+      helper.instance_variable_set(:@performances, @fake_performances)
+      helper.instance_variable_set(:@ordered_performances, {})
+      @fake_ordered = helper.instance_variable_get(:@ordered_performances)
+    end
+    
+    it 'should change the positions of all the dances in act 2 back' do
+      helper.divide(@num_act1_perfs)
+      @fake_performances = helper.instance_variable_get(:@performances)
+      expect(@fake_performances.map {|p| p.position}).to eq [1,2,3,1,2,3,4,5]
+      fake_acts = @fake_performances.sort_by{|p| p.position }.map {|p| p.act}
+      fake_acts.each_with_index do |act, idx|
+        if idx < @num_act1_perfs
+          expect(act).to eq @fake_schedule.acts[0]
+        else
+          expect(act).to eq @fake_schedule.acts[1]
+        end
+      end
+    end
+    
+    it 'should reload the schedule variable at the end' do
+      expect(@fake_schedule).to receive(:reload)
+      helper.divide(@num_act1_perfs)
+    end
+  end
+  
   describe "#form_graph" do
     fixtures :schedules, :performances, :dancers, :dances, :acts
     before :each do
@@ -233,7 +306,6 @@ describe ScheduleHelper do
       @fake_act2 = acts(:MyAct2)
       @perf7 = performances(:MyPerf7)
       @perf8 = performances(:MyPerf8)
-      @perf13 = performances(:InsertPerformance1)
       
       @perfs = @fake_act1.performances + @fake_act2.performances
       expect(helper).to receive(:factorial).and_call_original.at_least(:once)
@@ -277,7 +349,7 @@ describe ScheduleHelper do
       
     context "NOT enough dances to exceed max" do
       before :each do
-        @perfs -= [@perf7, @perf8, @perf13]
+        @perfs -= [@perf7, @perf8]
         @original_order = (0..@perfs.length - 1).to_a
       end
       
@@ -334,18 +406,20 @@ describe ScheduleHelper do
       helper.instance_variable_set(:@performances,@performances)
       helper.reorder_performances(@winner_perm)
       @result = helper.instance_variable_get(:@performances)
-      expect(@result.map { |p| p.position }).to eq([1, 2, 4, 3])
+      expect(@result.map { |p| p.position }).to eq([1, 2, 3, 4])
     end
   end
   
   describe "#minimize_conflicts" do
     fixtures :performances
     it 'should simply call all these functions' do
+      expect(helper).to receive(:concatenate)
       expect(helper).to receive(:form_graph)
       expect(helper).to receive(:get_perms)
       expect(helper).to receive(:find_min_perm)
       expect(helper).to receive(:reorder_performances)
-      helper.minimize_conflicts([performances(:MyPerf1)])
+      expect(helper).to receive(:divide)
+      helper.minimize_conflicts([performances(:MyPerf1)], {1 => [], 2 => []})
     end
   end
 end

@@ -199,6 +199,7 @@ module ScheduleHelper
     return perms[min_idx]
   end
   
+  # Both update the positions of all perfs and reorder (at the end)
   def reorder_performances(winner_permutation)
     curr_pos = 1
     winner_permutation.each do |winner_index|

@@ -39,7 +39,7 @@ Scenario: Click and drag to swap "Fall" with "Sugar"
 
 #Scenario: Click and drag to move "Lost" into "Act 2"
   When I drag performance "Lost" to "Falling"
-  Then performance "Lost" should be in act 2
+#  Then performance "Lost" should be in act 2
 
 #Scenario: Click and drag to swap "Falling" and "Lost"
   When I drag performance "Falling" to "Lost"
@@ -66,5 +66,5 @@ Scenario: Click and drag to swap "Fall" with "Sugar"
   | Flesh & Bone              |
   | Cringe- Stripped          |
   | Nails, Hair, Hips, Heels  |
-  And I should see 10 performances in act 1
-  And I should see 11 performances in act 2
+#  And I should see 10 performances in act 1
+#  And I should see 11 performances in act 2
