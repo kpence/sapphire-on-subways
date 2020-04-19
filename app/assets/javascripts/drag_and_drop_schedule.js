@@ -11,7 +11,7 @@ document.addEventListener("turbolinks:load", function () {
       Rails.ajax({
         url: $(this).data("url")+"&move_perf="+e.toElement.id.substr(12),
         type: "PUT",
-        data: $(".sortable").sortable('serialize')
+        data: $(".sortable").sortable('serialize'),
       })
     }
   });
@@ -19,12 +19,11 @@ document.addEventListener("turbolinks:load", function () {
   $(".sortable").sortable({
     items: "tr:not(.unmoveable)",
     update: function(e, ui) {
-      //console.log(ui, $(this).sortable('serialize'))
       if (!awaitingDroppable && this === ui.item.parent()[0]) { // This prevents the method from being called twice when moving between acts
         Rails.ajax({
-          url: $(this).data("url")+"&move_perf="+e.toElement.id.substr(12),
+					url: $(this).data("url")+"&move_perf="+ui.item[0].id.substr(12),
           type: "PUT",
-          data: $(this).sortable('serialize')
+          data: $(this).sortable('serialize'),
         });
       }
     },
