@@ -98,6 +98,11 @@ describe PerformancesController do
       post :remove, params: {performance_id: @fake_performance.id, new_performance_name: "MyPerf1", position: 4, schedule_id: @fake_schedule_removed_from.id}
       expect @fake_performance.scheduled == false
     end
+    
+    it 'should change position attribute to -1' do
+      post :remove, params: {performance_id: @fake_performance.id, new_performance_name: "MyPerf1", position: 4, schedule_id: @fake_schedule_removed_from.id}
+      expect @fake_performance.position == -1
+    end
   end
 
   describe '#lock' do
@@ -122,7 +127,6 @@ describe PerformancesController do
     
     before :each do 
       @fake_performance = performances(:MyPerf1)
-      #@original_scheduled_value = @fake_performance.scheduled
       @fake_schedule_removed_from = schedules(:MySchedule)
     end
     

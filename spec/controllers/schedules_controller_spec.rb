@@ -321,4 +321,31 @@ describe SchedulesController do
       end
     end
   end
+  
+  describe '#reindex' do
+    fixtures :performances
+    
+    before :each do 
+      @fake_perf1 = performances(:MyPerf1)
+      @fake_perf2 = performances(:MyPerf2)
+      @fake_perf3 = performances(:MyPerf3)
+      @fake_perf1.position = 1
+      @fake_perf2.position = 2
+      @fake_perf3.position = 3
+    end
+    
+    it 'should shift positions attribute down 1 after remove' do
+      @fake_perf1.scheduled = false;
+      expect @fake_perf2.position == 1
+      expect @fake_perf3.position == 2
+    end
+    
+    after :each do
+      #updates when dance is rescheduled
+      @fake_perf1.scheduled = true;
+      expect @fake_perf1.position == 1
+      expect @fake_perf2.position == 2
+      expect @fake_perf3.position == 3
+    end
+  end
 end
