@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     collection {
       post :import
       post :export
+      post :delete
     }
   end
   
