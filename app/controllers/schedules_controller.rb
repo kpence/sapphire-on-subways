@@ -70,7 +70,14 @@ class SchedulesController < ApplicationController
         perfs.append(perf)
       end
     end
+    #reindex(perfs)
     return perfs
+  end
+  
+  def reindex(performances)
+    performances.each_with_index do |perf, i|
+      perf.update(position: i+1)
+    end
   end
   
   def edit
