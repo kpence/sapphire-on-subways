@@ -18,8 +18,11 @@ class PerformancesController < ApplicationController
   end
   
   def create
-    # Here: Find the number of (scheduled) performances and get the position of
-    # the last one. Then add 1 to get the new position. Then remove position from the view
+    if params[:new_performance_name] == ""
+      redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
+      return
+    end
+    
     @new_performance = Performance.create!(name: params[:new_performance_name], act_id: params[:act_id].to_i,
                         scheduled: true, position: params[:position].to_i,
                         locked: false)
