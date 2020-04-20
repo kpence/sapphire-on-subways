@@ -4,7 +4,7 @@
 
 %h3= "Use this page to edit your schedule!"
 
-= button_to "Export Schedule to CSV", export_schedules_path, :params => {"id" => @schedule.id, "conflicts" => @conflicts, "ordered_performances" => @ordered_performances, "conflicting_performances" => @conflicting_performances}, :id => "export", :method => :post
+= button_to "Export Schedule to CSV", export_schedules_path, :params => {"id" => @schedule.id }, :id => "export", :method => :post
 
 - @schedule.acts.each do |act|
   %div{:class => "#{@act_classes[act.number]}"}

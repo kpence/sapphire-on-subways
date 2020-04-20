@@ -171,28 +171,31 @@ class Schedule < ActiveRecord::Base
 
     rows = {}
 
-    ["1","2"].each do |act_number|
+    [1,2].each do |act_number|
+      unless conflicts_hash.has_key? act_number
+        conflicts_hash[act_number] = []
+      end
       unless performances.has_key? act_number
         performances[act_number] = []
       end
     end
 
-    ["1","2"].each do |act_number|
-      performances[act_number].each_with_index do |perf_id,index|
-
-        perf = Performance.find(perf_id.to_i)
+    [1,2].each do |act_number|
+      performances[act_number].each_with_index do |perf,index|
 
         if (rows[index] == nil)
-          rows[index] = (act_number == "1") ? [] : [nil,nil]
+          rows[index] = (act_number == 1) ? [] : [nil,nil]
         end
 
 
         rows[index].append(perf.name)
 
-        if conflicting_perf.include? perf_id
-          conflicts_hash[act_number].each do |conflict|
-            if conflict[:first_performance] == perf.name
-              rows[index].append((conflict[:dancers] == nil) ? nil : conflict[:dancers].join(", "))
+        if conflicting_perf.include? perf.id
+          found = false
+          conflicts_hash[act_number.to_s].each do |conflict|
+            if conflict["first_performance"] == perf.name
+              found = true
+              rows[index].append((conflict["dancers"] == nil) ? nil : conflict["dancers"].join(", "))
               break
             end
           end
@@ -200,7 +203,7 @@ class Schedule < ActiveRecord::Base
           rows[index].append(nil)
         end
 
-        if act_number == "1" && index >= performances["2"].length
+        if act_number == 1 && index >= performances[2].length
           rows[index].append(nil)
           rows[index].append(nil)
         end
