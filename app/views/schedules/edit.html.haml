@@ -79,4 +79,5 @@
                 = hidden_field_tag :performance_id, perf.id
                 = hidden_field_tag :schedule_id, act.schedule_id
                 = hidden_field_tag :scheduled, true
+                = hidden_field_tag :position, @ordered_performances[act.number].length + 1
                 = submit_tag("+")

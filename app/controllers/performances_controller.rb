@@ -57,7 +57,7 @@ class PerformancesController < ApplicationController
     #Schedules a performance
     performance_to_revive = Performance.where(id: params[:performance_id].to_i)
     performance_to_revive.update(scheduled: true)
-    performance_to_revive.update(position: params[:position].to_i+1)
+    performance_to_revive.update(position: params[:position].to_i)
     
     #Display to User Which Dance Was Removed
     flash[:notice] = "#{Performance.find(params[:performance_id]).name} Added Back"

@@ -70,7 +70,6 @@ class SchedulesController < ApplicationController
         perfs.append(perf)
       end
     end
-    #reindex(perfs)
     return perfs
   end
   
@@ -94,12 +93,13 @@ class SchedulesController < ApplicationController
     @schedule.acts.each do |act|
       @ordered_performances[act.number] = remove_unscheduled(act.performances)
           .sort_by { |perf| perf.position }
+      reindex(@ordered_performances[act.number])
       @unscheduled_performances[act.number] = (act.performances - @ordered_performances[act.number])
           .sort_by { |perf| perf.position }
       # Minimize them and regenerate the structure if necessary
       if flash[:minimize]
         helpers.minimize_conflicts(@ordered_performances[act.number])
-        @ordered_performances[act.number] = act.performances.sort_by do |perf|
+        @ordered_performances[act.number] = remove_unscheduled(act.performances).sort_by do |perf|
           perf.position
         end
       end
