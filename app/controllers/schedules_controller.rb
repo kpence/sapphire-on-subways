@@ -102,6 +102,7 @@ class SchedulesController < ApplicationController
         @ordered_performances[act.number] = remove_unscheduled(act.performances).sort_by do |perf|
           perf.position
         end
+        reindex(@ordered_performances[act.number])
       end
       @conflicts[act.number] = self.conflicts(act.number)
     end
