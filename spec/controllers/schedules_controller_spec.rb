@@ -259,17 +259,13 @@ describe SchedulesController do
     fixtures :schedules, :acts, :performances, :dances, :dancers
     
     context "schedule can't be found" do
-      before :each do
-        @schedule = schedules(:MySchedule)
-      end
-      
       it 'should redirect to the root page with the following notice' do
         allow(Schedule).to receive(:find).and_return(nil)
-        post :delete, params: {id: @schedule.id}
+        post :delete, params: {id: -1}
         
         expect(subject).to redirect_to(schedules_path)
         expect(controller).to set_flash[:notice]
-        expect(flash[:notice]).to eq "Schedule with id " + @schedule.id.to_s + " could not be found."
+        expect(flash[:notice]).to eq "Schedule with id -1 could not be found."
       end
     end
 
