@@ -72,3 +72,18 @@
 #export {
   margin-bottom: 8px;
 }
+
+.footer {
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   text-align: center;
+  margin-bottom: 8px;
+}
+.header {
+   left: 0;
+   top: 0;
+   width: 100%;
+   text-align: center;
+   margin-bottom: 8px;
+}
