@@ -88,6 +88,14 @@ Then ("I should see that dance {string} changed to {string}") do |string1, strin
   within("#lock"+string1){page.should have_selector("input[type=image][src='#{string2}']")}
 end
 
+Then ("I write in {string} for the schedule name") do |value|
+  fill_in("schedule_name", :with => value)
+end
+
+Then ("I click the link {string}") do |value|
+  click_link(value)
+end
+
 # Use this to fill in an entire form with data from a table. Example:
 #
 #   When I fill in the following:

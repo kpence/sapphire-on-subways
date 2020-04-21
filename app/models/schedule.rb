@@ -220,6 +220,7 @@ class Schedule < ActiveRecord::Base
     schedule = Schedule.find(schedule_id.to_i)
     schedule.acts.each do |act|
       Act.delete_performances(act)
+      Act.destroy(act.id.to_i)
     end
   end
 
