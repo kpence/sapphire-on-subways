@@ -6,6 +6,6 @@ class Act < ActiveRecord::Base
         act.performances.each do |performance|
             Performance.delete_performance(performance)
         end
-        Act.delete(act)
+        Act.destroy(act.id)
     end
 end

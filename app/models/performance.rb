@@ -3,11 +3,15 @@ class Performance < ActiveRecord::Base
   has_many :dances
   has_many :dancers, through: :dances
   
+  @dancers_data = []
+  @dances_data = []
   def self.delete_performance(performance) 
     performance.dances.each do |dance|
-      Dance.delete(dance)
-      Dancer.delete(dance.dancer)
+      if dance.dancer != nil
+        Dancer.destroy(dance.dancer)
+      end
+      Dance.destroy(dance)
     end
-    Performance.delete(performance)
+    Performance.destroy(performance)
   end
 end
