@@ -29,5 +29,19 @@ document.addEventListener("turbolinks:load", function () {
     },
     connectWith: $('.sortable')
   });
+
+  $(".sortableUnscheduled").sortable({
+    items: "tr:not(.unmoveable)",
+    update: function(e, ui) {
+      if (!awaitingDroppable && this === ui.item.parent()[0]) { // This prevents the method from being called twice when moving between acts
+        Rails.ajax({
+					url: $(this).data("url")+"&move_perf="+ui.item[0].id.substr(12),
+          type: "PUT",
+          data: $(this).sortable('serialize'),
+        });
+      }
+    },
+    connectWith: $('.sortable')
+  });
   
 });
