@@ -37,8 +37,11 @@
   text-align: center;
   color: white;
   font-size: large;
+}
+.actHeader > th {
   border: 1px solid black;
 }
+
 .actFormat {
   border: 1px solid black;
   padding: 5px;
