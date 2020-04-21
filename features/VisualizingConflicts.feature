@@ -71,8 +71,6 @@ Scenario: See Conflicts after Updating the Schedule
   | Sorrow                    |
   And I should see no performances in the table for act 2
   Then I should see "Andrea Onate" in between "I Don’t Think About You" and "Sugar"
-  
-Scenario: See Conflicts for a Small Schedule
   And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
  
 Scenario: Should see all the correct conflicts in a big schedule
