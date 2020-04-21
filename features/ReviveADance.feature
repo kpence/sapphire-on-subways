@@ -1,4 +1,4 @@
-Feature: User can remove a dance in an Act.
+Feature: User can revive a dance in an Act.
 
 Background: Start on the homepage
   Given I am on the DAS home page
@@ -18,7 +18,7 @@ Background: Start on the homepage
   And I should see no performances in the table for act 2
   And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
 
-Scenario: Remove "Sugar" in "Act 1"
+Scenario: Revive "Sugar" in "Act 1"
   When I remove dance "Sugar"
   Then I should see the following performances in a table for act 1 in order
   | I Don’t Think About You   |
@@ -30,8 +30,21 @@ Scenario: Remove "Sugar" in "Act 1"
   And I should see "Amber Krizan" in between "Life is Good" and "All I Ask"
   And I should see "Audrey Harris" in between "Life is Good" and "All I Ask"
   And I should not see dance "Sugar" for act 1
-  
-Scenario: Remove the first dance
+  When I revive dance "Sugar"
+  Then I should see the following performances in a table for act 1 in order
+  | I Don’t Think About You   |
+  | Life is Good              |
+  | All I Ask                 |
+  | Sorrow                    |
+  | Sugar                     |
+  And I should see no performances in the table for act 2
+  And I should see "Amber Krizan" in between "Life is Good" and "All I Ask"
+  And I should see "Audrey Harris" in between "Life is Good" and "All I Ask"
+  And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
+  And I should see "Amanda Hohlt" in between "Sorrow" and "Sugar"
+  And I should see "Andrea Onate" in between "Sorrow" and "Sugar"
+
+Scenario: Revive the first dance
   When I remove dance "I Don’t Think About You"
   Then I should see the following performances in a table for act 1 in order
   | Life is Good              |
@@ -40,9 +53,19 @@ Scenario: Remove the first dance
   | Sorrow                    |
   And I should see no performances in the table for act 2
   And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
-  And I should not see dance "I Don’t Think About You" for act 1
+  And I should not see dance "I Don't Think About You" for act 1
+  When I revive dance "I Don’t Think About You"
+  Then I should see the following performances in a table for act 1 in order
+  | Life is Good              |
+  | Sugar                     |
+  | All I Ask                 |
+  | Sorrow                    |
+  | I Don’t Think About You   |
+  And I should see no performances in the table for act 2
+  And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
+  And I should see "Andrea Onate" in between "Sorrow" and "I Don’t Think About You"
   
-Scenario: Remove the last dance
+Scenario: Revive the last dance
   When I remove dance "Sorrow"
   Then I should see the following performances in a table for act 1 in order
   | I Don’t Think About You   |
@@ -51,57 +74,12 @@ Scenario: Remove the last dance
   | All I Ask                 |
   And I should see no performances in the table for act 2
   And I should not see dance "Sorrow" for act 1
-  
-Scenario: Remove All the Dances in an Act
-  When I remove dance "Sugar"
+  When I revive dance "Sorrow"
   Then I should see the following performances in a table for act 1 in order
   | I Don’t Think About You   |
   | Life is Good              |
+  | Sugar                     |
   | All I Ask                 |
   | Sorrow                    |
   And I should see no performances in the table for act 2
   And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
-  And I should see "Amber Krizan" in between "Life is Good" and "All I Ask"
-  And I should see "Audrey Harris" in between "Life is Good" and "All I Ask"
-  And I should not see dance "Sugar" for act 1
-  
-  Then I remove dance "I Don’t Think About You"
-  Then I should see the following performances in a table for act 1 in order
-  | Life is Good              |
-  | All I Ask                 |
-  | Sorrow                    |
-  And I should see no performances in the table for act 2
-  And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
-  And I should see "Amber Krizan" in between "Life is Good" and "All I Ask"
-  And I should see "Audrey Harris" in between "Life is Good" and "All I Ask"
-  And I should not see dance "I Don’t Think About You" for act 1
-  And I should not see dance "Sugar" for act 1
-  
-  Then I remove dance "Life is Good"
-  Then I should see the following performances in a table for act 1 in order
-  | All I Ask                 |
-  | Sorrow                    |
-  And I should see no performances in the table for act 2
-  And I should see "Amber Krizan" in between "All I Ask" and "Sorrow"
-  And I should not see dance "Life is Good" for act 1
-  And I should not see dance "Sugar" for act 1
-  And I should not see dance "I Don’t Think About You" for act 1
-  
-  Then I remove dance "Sorrow"
-  Then I should see the following performances in a table for act 1 in order
-  | All I Ask                 |
-  And I should see no performances in the table for act 2
-  And I should not see dance "Sorrow" for act 1
-  And I should not see dance "Sugar" for act 1
-  And I should not see dance "I Don’t Think About You" for act 1
-  And I should not see dance "Life is Good" for act 1
-  
-  Then I remove dance "All I Ask"
-  And I should see no performances in the table for act 1
-  And I should see no performances in the table for act 2
-  And I should not see dance "All I Ask" for act 1
-  And I should not see dance "Sugar" for act 1
-  And I should not see dance "I Don’t Think About You" for act 1
-  And I should not see dance "Life is Good" for act 1
-  And I should not see dance "Sorrow" for act 1
-  

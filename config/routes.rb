@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :schedules do
     collection {
       post :import
+      post :export
       post :delete
     }
     member {
@@ -15,6 +16,7 @@ Rails.application.routes.draw do
       put :sort
       post :remove
       post :lock
+      post :revive
     }
   end
 

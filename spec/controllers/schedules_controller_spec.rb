@@ -319,6 +319,41 @@ describe SchedulesController do
       end
     end
   end
+
+  describe "#export" do
+    fixtures :acts, :schedules, :performances
+    before :each do
+      @fake_schedule = schedules(:MySchedule)
+      @fake_perf1 = performances(:MyPerf1)
+      @fake_perf2 = performances(:MyPerf2)
+      @fake_perf3 = performances(:MyPerf3)
+      @fake_perf4 = performances(:MyPerf4)
+      @fake_perf5 = performances(:MyPerf5)
+      @performances = { 1 => [@fake_perf1, @fake_perf2, @fake_perf3], 2 => [@fake_perf4, @fake_perf5] }
+      @conflicting_performances = [ @fake_perf1.id, @fake_perf2.id ]
+
+      @conflicts_hash = {
+        "1" => [
+          {"first_performance" => @fake_perf1.name, "second_performance" => @fake_perf2.name, "dancers" => ["Troy", "Jeevika"]},
+          {"first_performance" => @fake_perf2.name, "second_performance" => @fake_perf3.name, "dancers" => ["Divia"]},
+        ],
+        "2" => [
+          {"first_performance" => @fake_perf4.name, "second_performance" => @fake_perf5.name, "dancers" => []}
+        ]
+      }
+      @correct_csv = %{Act 1,Act 1 conflicts,Act 2,Act 2 conflicts\n#{@fake_perf1.name},"Troy, Jeevika",#{@fake_perf4.name}\n#{@fake_perf2.name},Divia,#{@fake_perf5.name}\n#{@fake_perf3.name}\n}
+    end
+
+    after :each do
+      controller.instance_variable_set(:@conflicts, @conflicts_hash)
+      post :export, :params => {"id" => @fake_schedule.id }, :flash => { "conflicts" => @conflicts_hash, "ordered_performances" => @performances, "conflicting_performances" => @conflicting_performances}
+    end
+
+    it 'should convert the performances and conflicts into CSV formatted string' do
+      expect(Schedule).to receive(:to_csv).and_return(@correct_csv)
+    end
+  end
+
   
   describe "#minimize" do
     it 'should redirect back to edit with the flash set' do
@@ -334,17 +369,13 @@ describe SchedulesController do
     fixtures :schedules, :acts, :performances, :dances, :dancers
     
     context "schedule can't be found" do
-      before :each do
-        @schedule = schedules(:MySchedule)
-      end
-      
       it 'should redirect to the root page with the following notice' do
         allow(Schedule).to receive(:find).and_return(nil)
-        post :delete, params: {id: @schedule.id}
+        post :delete, params: {id: -1}
         
         expect(subject).to redirect_to(schedules_path)
         expect(controller).to set_flash[:notice]
-        expect(flash[:notice]).to eq "Schedule with id " + @schedule.id.to_s + " could not be found."
+        expect(flash[:notice]).to eq "Schedule with id -1 could not be found."
       end
     end
 
@@ -357,43 +388,76 @@ describe SchedulesController do
                           :MyDance7,:MyDance8,:MyDance9,:MyDance10,:MyDance11,:MyDance12,
                           :MyDance13,:MyDance14,:MyDance15,:MyDance16,:MyDance17)
       end
-      
-
+    
       it 'should find the schedule by the schedule id' do
         expect(Schedule).to receive(:find).with(@schedule.id.to_s)  
+        post:delete, params: {id: @schedule.id.to_i}
       end
       
       it 'should delete all of the dancers' do
+        post:delete, params: {id: @schedule.id.to_i}
         @dances.each do |dance|
-          expect(Dancer).to receive(:delete).with(dance.dancer)
+          expect(dance.dancer).to be(nil)
+          #expect { Dancer.find(dance.dancer.id) }.to raise_exception(ActiveRecord::RecordNotFound)
+          #dance.dancer is nil so we cannot do this one like the others
         end
       end
       
       it 'should delete all of the dances' do
+        post:delete, params: {id: @schedule.id.to_i}
         @dances.each do |dance|
-          expect(Dance).to receive(:delete).with(dance)
+          #expect(Dance.find(dance.id)).to raise_exception(ActiveRecord::RecordNotFound)
+          expect { Dance.find(dance.id) }.to raise_exception(ActiveRecord::RecordNotFound)
         end
       end
       
       it 'should delete all of the performances' do
+        post:delete, params: {id: @schedule.id.to_i}
         @performances.each do |performance|
-          expect(Performance).to receive(:delete).with(performance)
+          expect { Performance.find(performance.id) }.to raise_exception(ActiveRecord::RecordNotFound)
         end
       end
       
       it 'should delete all of the acts' do
+        post:delete, params: {id: @schedule.id.to_i}
         @acts.each do |act|
-           expect(Act).to receive(:delete).with(act)
+          expect { Act.find(act.id) }.to raise_exception(ActiveRecord::RecordNotFound)
         end
       end
       
       it 'should delete the schedule' do
-        expect(Schedule).to receive(:delete).with(@schedule.id)
+          post:delete, params: {id: @schedule.id.to_i}
+          expect { Schedule.find(@schedule.id) }.to raise_exception(ActiveRecord::RecordNotFound)
       end
       
-      after :each do
-        post:delete, params: {id: @schedule.id.to_i}
-      end
+      
+    end
+  end
+  
+  describe '#reindex' do
+    fixtures :performances
+    
+    before :each do 
+      @fake_perf1 = performances(:MyPerf1)
+      @fake_perf2 = performances(:MyPerf2)
+      @fake_perf3 = performances(:MyPerf3)
+      @fake_perf1.position = 1
+      @fake_perf2.position = 2
+      @fake_perf3.position = 3
+    end
+    
+    it 'should shift positions attribute down 1 after remove' do
+      @fake_perf1.scheduled = false;
+      expect @fake_perf2.position == 1
+      expect @fake_perf3.position == 2
+    end
+    
+    after :each do
+      #updates when dance is rescheduled
+      @fake_perf1.scheduled = true;
+      expect @fake_perf1.position == 1
+      expect @fake_perf2.position == 2
+      expect @fake_perf3.position == 3
     end
   end
 end

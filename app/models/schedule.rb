@@ -169,11 +169,62 @@ class Schedule < ActiveRecord::Base
     generate_performances(schedule_params[:performance_names], act1_id, act2_id)
     generate_dances_and_dancers(schedule_params[:dancer_hashes], act1_id, act2_id)
   end
+
+  # Exports the performances into a CSV format string
+  def self.to_csv(performances, conflicts_hash, conflicting_perf)
+
+    # Check if any acts are empty for the data structures
+    [1,2].each do |act_number|
+      unless conflicts_hash.has_key? act_number
+        conflicts_hash[act_number] = []
+      end
+      unless performances.has_key? act_number
+        performances[act_number] = []
+      end
+    end
+
+    # This gets rows for the CSV
+    rows = {}
+    [1,2].each do |act_number|
+      performances[act_number].each_with_index do |perf,index|
+
+        # Create empty row
+        if (rows[index] == nil)
+          rows[index] = (act_number == 1) ? [] : [nil,nil,nil,nil]
+        end
+
+        # Add performance name
+        rows[index][(act_number-1)*2] = perf.name
+
+        # Add conflicted dancers
+        if conflicting_perf.include? perf.id
+          conflicts_hash[act_number.to_s].each do |conflict|
+            if conflict["first_performance"] == perf.name && conflict["dancers"] != nil
+              rows[index][(act_number-1)*2+1] = conflict["dancers"].join(", ")
+              break
+            end
+          end
+        end
+
+      end
+    end
+
+    # Puts the rows into the CSV string
+    csv = CSV.generate do |csv|
+      csv << ['Act 1', 'Act 1 conflicts', 'Act 2', 'Act 2 conflicts']
+      rows.each do |row|
+        csv << row[1]
+      end
+    end
+
+    return csv
+  end
   
   def self.remove_acts(schedule_id)
     schedule = Schedule.find(schedule_id.to_i)
     schedule.acts.each do |act|
       Act.delete_performances(act)
+      Act.destroy(act.id.to_i)
     end
   end
 

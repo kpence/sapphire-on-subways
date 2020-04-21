@@ -35,25 +35,52 @@ describe PerformancesController do
   describe '#create' do
     fixtures :schedules, :acts, :performances
     
-    before :each do
-      @fake_schedule = schedules(:MySchedule)
-      @fake_act1 = @fake_schedule.acts[0]
+    context "bad data (empty performance name)"  do
+      before :each do
+        @fake_schedule = schedules(:MySchedule)
+        @fake_act1 = @fake_schedule.acts[0]
+      end
+      
+      it 'should not create a new performance' do
+        expect(Performance).not_to receive(:create!)
+      end
+      
+      #Pass in real data expect for the name to simulate something that would really happen in our app
+      subject { post :create, params: {act_id: @fake_act1.id, 
+                                      new_performance_name: "", 
+                                      position: @fake_act1.performances.length,
+                                      schedule_id: @fake_schedule.id
+      } }
+      after:each do
+        expect(subject).to redirect_to(edit_schedule_path(id: @fake_schedule.id))
+        subject
+      end
+      
     end
     
-    subject { post :create, params: {act_id: @fake_act1.id, 
-                                    new_performance_name: "InsertPerformance1", 
-                                    #position: 4, # position should not be a parameter- should be inserted last
-                                    schedule_id: @fake_schedule.id
-    } }
-    after:each do
-      expect(subject).to redirect_to(edit_schedule_path(id: @fake_schedule.id))
-      subject
-    end
-
-    #Insert should only be available if a schedule has been loaded in, so we can assume a schedule has been loaded already
-    it 'should create a new performance' do
-      #It's not important what it is supposed to return. Only what it should be called with
-      expect(Performance).to receive(:create!)#.with(...)
+    context "good data" do
+      before :each do
+        @fake_schedule = schedules(:MySchedule)
+        @fake_act1 = @fake_schedule.acts[0]
+      end
+      
+      subject { post :create, params: {act_id: @fake_act1.id, 
+                                      new_performance_name: "InsertPerformance1", 
+                                      position: @fake_act1.performances.length,
+                                      schedule_id: @fake_schedule.id
+      } }
+      after:each do
+        expect(subject).to redirect_to(edit_schedule_path(id: @fake_schedule.id))
+        subject
+      end
+  
+      #Insert should only be available if a schedule has been loaded in, so we can assume a schedule has been loaded already
+      it 'should create a new performance' do
+        #It's not important what it is supposed to return. Only what it should be called with
+        expect(Performance).to receive(:create!).with(name: "InsertPerformance1", act_id: @fake_act1.id, scheduled: true,
+                                                      position: @fake_act1.performances.length, locked: false)
+      end
+    
     end
 
   end
@@ -71,6 +98,11 @@ describe PerformancesController do
       post :remove, params: {performance_id: @fake_performance.id, new_performance_name: "MyPerf1", position: 4, schedule_id: @fake_schedule_removed_from.id}
       expect @fake_performance.scheduled == false
     end
+    
+    it 'should change position attribute to -1' do
+      post :remove, params: {performance_id: @fake_performance.id, new_performance_name: "MyPerf1", position: 4, schedule_id: @fake_schedule_removed_from.id}
+      expect @fake_performance.position == -1
+    end
   end
 
   describe '#lock' do
@@ -87,6 +119,20 @@ describe PerformancesController do
       expect(@fake_performance).to receive(:update!).with(locked: !@fake_performance.locked).and_call_original
       post :lock, {params: {:performance_id => @fake_performance.id}}
       expect(@fake_performance.locked).not_to be(@original_locked_value)
+    end
+  end
+  
+  describe '#revive' do 
+    fixtures :schedules, :acts, :performances
+    
+    before :each do 
+      @fake_performance = performances(:MyPerf1)
+      @fake_schedule_removed_from = schedules(:MySchedule)
+    end
+    
+    it 'should change scheduled attribute to true' do
+      post :revive, params: {performance_id: @fake_performance.id, new_performance_name: "InsertPerformance1", position: 4, schedule_id: @fake_schedule_removed_from.id}
+      expect @fake_performance.scheduled == true
     end
   end
 

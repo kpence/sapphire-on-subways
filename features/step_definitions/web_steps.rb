@@ -57,6 +57,10 @@ When ("I remove dance {string}") do |string1|
   find("#remove"+string1.gsub(" ", "_")).click
 end
 
+When ("I revive dance {string}") do |string1|
+  find("#revive"+string1.gsub(" ", "_")).click
+end
+
 When /^(?:|I )follow "([^"]*)"$/ do |link|
   click_link(link)
 end
@@ -83,6 +87,14 @@ end
 
 Then ("I should see that dance {string} changed to {string}") do |string1, string2|
   within("#lock"+string1){page.should have_selector("input[type=image][src='#{string2}']")}
+end
+
+Then ("I write in {string} for the schedule name") do |value|
+  fill_in("schedule_name", :with => value)
+end
+
+Then ("I click the link {string}") do |value|
+  click_link(value)
 end
 
 # Use this to fill in an entire form with data from a table. Example:
@@ -315,12 +327,9 @@ Then /^(?:|I )should not see "([^"]*)"$/ do |text|
   end
 end
 
-Then /^(?:|I )should not see dance "([^"]*)"$/ do |text|
-  if page.respond_to? :should
-    # Should be in the notice at the top of the page
-    page.should have_content(text, count: 1)
-  else
-    assert page.has_content?(text, count: 1)
+Then /^(?:|I )should not see dance "([^"]*)" for act ([0-9])$/ do |text, act_number|
+  within("#act"+act_number) do
+    page.should have_no_content(text)
   end
 end
 

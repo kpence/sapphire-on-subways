@@ -18,8 +18,11 @@ class PerformancesController < ApplicationController
   end
   
   def create
-    # Here: Find the number of (scheduled) performances and get the position of
-    # the last one. Then add 1 to get the new position. Then remove position from the view
+    if params[:new_performance_name] == ""
+      redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
+      return
+    end
+    
     @new_performance = Performance.create!(name: params[:new_performance_name], act_id: params[:act_id].to_i,
                         scheduled: true, position: params[:position].to_i,
                         locked: false)
@@ -31,7 +34,9 @@ class PerformancesController < ApplicationController
   def remove
     
     #Unschedules a performance
-    Performance.where(id: params[:performance_id].to_i).update(scheduled: false)
+    performance_to_remove = Performance.where(id: params[:performance_id].to_i)
+    performance_to_remove.update(scheduled: false)
+    performance_to_remove.update(position: -1)
     
     #Display to User Which Dance Was Removed
     flash[:notice] = "#{Performance.find(params[:performance_id]).name} Removed"
@@ -45,5 +50,18 @@ class PerformancesController < ApplicationController
     
     redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
     
+  end
+  
+  def revive
+    
+    #Schedules a performance
+    performance_to_revive = Performance.where(id: params[:performance_id].to_i)
+    performance_to_revive.update(scheduled: true)
+    performance_to_revive.update(position: params[:position].to_i)
+    
+    #Display to User Which Dance Was Removed
+    flash[:notice] = "#{Performance.find(params[:performance_id]).name} Added Back"
+    
+    redirect_to edit_schedule_path(id: params[:schedule_id].to_i)
   end
 end

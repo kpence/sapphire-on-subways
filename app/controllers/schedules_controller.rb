@@ -81,6 +81,7 @@ class SchedulesController < ApplicationController
       if gen_conflicts
         @conflicts[act.number] = self.conflicts(act.number)
       end
+      reindex(@ordered_performances[act.number])
     end
   end
   
@@ -96,6 +97,12 @@ class SchedulesController < ApplicationController
   def minimize_schedule
     helpers.minimize_conflicts(@schedule, @ordered_performances)
     form_schedule(true)
+  end
+  
+  def reindex(performances)
+    performances.each_with_index do |perf, i|
+      perf.update(position: i+1)
+    end
   end
   
   def edit
@@ -115,6 +122,24 @@ class SchedulesController < ApplicationController
     @act_classes = {}
     @act_classes[1] = "floatLeftA"
     @act_classes[2] = "floatRightA"
+
+    flash[:conflicts] = @conflicts
+    #flash[:ordered_performances] = @ordered_performances
+    flash[:conflicting_performances] = @conflicting_performances
+  end
+
+
+  def export
+    @schedule = Schedule.find(params[:id])
+
+    @ordered_performances = {}
+    @schedule.acts.each do |act|
+      @ordered_performances[act.number] = act.performances.sort_by do |perf|
+        perf.position
+      end
+    end
+    
+    send_data Schedule.to_csv(@ordered_performances, flash[:conflicts], flash[:conflicting_performances]), filename: "#{@schedule.name}_exported_schedule.csv"
   end
 
   def minimize
@@ -132,8 +157,9 @@ class SchedulesController < ApplicationController
     
     # Each act is responsible for deleting data under it
     Schedule.remove_acts(schedule_id)
-    Schedule.delete(schedule_id.to_i)
+    Schedule.destroy(schedule_id.to_i)
     
     redirect_to root_path, flash: {success: "Successfully deleted schedule "+schedule_id.to_s}
   end
+  
 end
