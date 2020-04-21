@@ -169,8 +169,7 @@ class Schedule < ActiveRecord::Base
   # Exports the performances into a CSV format string
   def self.to_csv(performances, conflicts_hash, conflicting_perf)
 
-    rows = {}
-
+    # Check if any acts are empty for the data structures
     [1,2].each do |act_number|
       unless conflicts_hash.has_key? act_number
         conflicts_hash[act_number] = []
@@ -180,36 +179,33 @@ class Schedule < ActiveRecord::Base
       end
     end
 
+    # This gets rows for the CSV
+    rows = {}
     [1,2].each do |act_number|
       performances[act_number].each_with_index do |perf,index|
 
+        # Create empty row
         if (rows[index] == nil)
-          rows[index] = (act_number == 1) ? [] : [nil,nil]
+          rows[index] = (act_number == 1) ? [] : [nil,nil,nil,nil]
         end
 
+        # Add performance name
+        rows[index][(act_number-1)*2] = perf.name
 
-        rows[index].append(perf.name)
-
+        # Add conflicted dancers
         if conflicting_perf.include? perf.id
-          found = false
           conflicts_hash[act_number.to_s].each do |conflict|
-            if conflict["first_performance"] == perf.name
-              found = true
-              rows[index].append((conflict["dancers"] == nil) ? nil : conflict["dancers"].join(", "))
+            if conflict["first_performance"] == perf.name && conflict["dancers"] != nil
+              rows[index][(act_number-1)*2+1] = conflict["dancers"].join(", ")
               break
             end
           end
-        else
-          rows[index].append(nil)
         end
 
-        if act_number == 1 && index >= performances[2].length
-          rows[index].append(nil)
-          rows[index].append(nil)
-        end
       end
     end
 
+    # Puts the rows into the CSV string
     csv = CSV.generate do |csv|
       csv << ['Act 1', 'Act 1 conflicts', 'Act 2', 'Act 2 conflicts']
       rows.each do |row|

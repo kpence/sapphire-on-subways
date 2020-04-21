@@ -340,8 +340,8 @@ describe Schedule do
         ]
       }
 
-      @correct_csv = %{Act 1,Act 1 conflicts,Act 2,Act 2 conflicts\n#{@fake_perf1.name},"Troy, Jeevika",#{@fake_perf4.name},\n#{@fake_perf2.name},Divia,#{@fake_perf5.name},\n#{@fake_perf3.name},,,\n}
-      @correct_csv_one_act = %{Act 1,Act 1 conflicts,Act 2,Act 2 conflicts\n#{@fake_perf1.name},"Troy, Jeevika",,\n#{@fake_perf2.name},Divia,,\n#{@fake_perf3.name},,,\n}
+      @correct_csv = %{Act 1,Act 1 conflicts,Act 2,Act 2 conflicts\n#{@fake_perf1.name},"Troy, Jeevika",#{@fake_perf4.name}\n#{@fake_perf2.name},Divia,#{@fake_perf5.name}\n#{@fake_perf3.name}\n}
+      @correct_csv_one_act = %{Act 1,Act 1 conflicts,Act 2,Act 2 conflicts\n#{@fake_perf1.name},"Troy, Jeevika"\n#{@fake_perf2.name},Divia\n#{@fake_perf3.name}\n}
     end
 
     it 'should put the performances list with the conflict list in the correct CSV format' do
