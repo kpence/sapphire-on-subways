@@ -7,6 +7,8 @@
   = hidden_field_tag :id, @schedule.id
   = "Delete Schedule"
 
+= button_to "Export Schedule to CSV", export_schedules_path, :params => {"id" => @schedule.id }, :id => "export", :method => :post
+
 - @schedule.acts.each do |act|
   %div{:class => "#{@act_classes[act.number]}"}
     %table{:id => "act"+act.number.to_s}

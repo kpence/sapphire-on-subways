@@ -69,3 +69,6 @@
 .floatRightA {
   width: 50%; float: right; 
 }
+#export {
+  margin-bottom: 8px;
+}

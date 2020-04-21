@@ -254,6 +254,41 @@ describe SchedulesController do
       end
     end
   end
+
+  describe "#export" do
+    fixtures :acts, :schedules, :performances
+    before :each do
+      @fake_schedule = schedules(:MySchedule)
+      @fake_perf1 = performances(:MyPerf1)
+      @fake_perf2 = performances(:MyPerf2)
+      @fake_perf3 = performances(:MyPerf3)
+      @fake_perf4 = performances(:MyPerf4)
+      @fake_perf5 = performances(:MyPerf5)
+      @performances = { 1 => [@fake_perf1, @fake_perf2, @fake_perf3], 2 => [@fake_perf4, @fake_perf5] }
+      @conflicting_performances = [ @fake_perf1.id, @fake_perf2.id ]
+
+      @conflicts_hash = {
+        "1" => [
+          {"first_performance" => @fake_perf1.name, "second_performance" => @fake_perf2.name, "dancers" => ["Troy", "Jeevika"]},
+          {"first_performance" => @fake_perf2.name, "second_performance" => @fake_perf3.name, "dancers" => ["Divia"]},
+        ],
+        "2" => [
+          {"first_performance" => @fake_perf4.name, "second_performance" => @fake_perf5.name, "dancers" => []}
+        ]
+      }
+      @correct_csv = %{Act 1,Act 1 conflicts,Act 2,Act 2 conflicts\n#{@fake_perf1.name},"Troy, Jeevika",#{@fake_perf4.name}\n#{@fake_perf2.name},Divia,#{@fake_perf5.name}\n#{@fake_perf3.name}\n}
+    end
+
+    after :each do
+      controller.instance_variable_set(:@conflicts, @conflicts_hash)
+      post :export, :params => {"id" => @fake_schedule.id }, :flash => { "conflicts" => @conflicts_hash, "ordered_performances" => @performances, "conflicting_performances" => @conflicting_performances}
+    end
+
+    it 'should convert the performances and conflicts into CSV formatted string' do
+      expect(Schedule).to receive(:to_csv).and_return(@correct_csv)
+    end
+  end
+
   
   describe "#delete" do
     fixtures :schedules, :acts, :performances, :dances, :dancers
