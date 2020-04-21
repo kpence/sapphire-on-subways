@@ -66,5 +66,5 @@ Scenario: Click and drag to swap "Fall" with "Sugar"
   | Flesh & Bone              |
   | Cringe- Stripped          |
   | Nails, Hair, Hips, Heels  |
-#  And I should see 10 performances in act 1
-#  And I should see 11 performances in act 2
+  And I should see 10 performances in act 1
+  And I should see 11 performances in act 2
