@@ -83,6 +83,9 @@ class SchedulesController < ApplicationController
       end
       reindex(@ordered_performances[act.number])
     end
+    flash[:conflicts] = @conflicts
+    flash[:conflicting_performances] = @conflicting_performances
+    puts @conflicting_performances.to_s
   end
   
   def init_schedule
@@ -124,7 +127,6 @@ class SchedulesController < ApplicationController
     @act_classes[2] = "floatRightA"
 
     flash[:conflicts] = @conflicts
-    #flash[:ordered_performances] = @ordered_performances
     flash[:conflicting_performances] = @conflicting_performances
   end
 
@@ -136,6 +138,9 @@ class SchedulesController < ApplicationController
     @schedule.acts.each do |act|
       @ordered_performances[act.number] = act.performances.sort_by do |perf|
         perf.position
+      end
+      @ordered_performances[act.number] = @ordered_performances[act.number].filter do |perf|
+        perf.scheduled == true
       end
     end
     
