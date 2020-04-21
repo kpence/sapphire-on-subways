@@ -6,10 +6,10 @@ document.addEventListener("turbolinks:load", function () {
     accept: ".sortable tr",
     hoverClass: "droppable-hover",
     drop: function(e, ui) {
-      //console.log("DROPPABLE", $(".sortable").sortable('serialize'))
+      console.log("DROPPABLE", $(".sortable").sortable('serialize'), ui)
       awaitingDroppable = true;
       Rails.ajax({
-        url: $(this).data("url")+"&move_perf="+e.toElement.id.substr(12),
+			url: $(this).data("url")+"&move_perf="+ui.draggable[0].id.substr(12),
         type: "PUT",
         data: $(".sortable").sortable('serialize'),
       })
