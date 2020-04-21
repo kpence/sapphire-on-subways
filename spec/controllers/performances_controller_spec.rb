@@ -98,6 +98,11 @@ describe PerformancesController do
       post :remove, params: {performance_id: @fake_performance.id, new_performance_name: "MyPerf1", position: 4, schedule_id: @fake_schedule_removed_from.id}
       expect @fake_performance.scheduled == false
     end
+    
+    it 'should change position attribute to -1' do
+      post :remove, params: {performance_id: @fake_performance.id, new_performance_name: "MyPerf1", position: 4, schedule_id: @fake_schedule_removed_from.id}
+      expect @fake_performance.position == -1
+    end
   end
 
   describe '#lock' do
@@ -114,6 +119,20 @@ describe PerformancesController do
       expect(@fake_performance).to receive(:update!).with(locked: !@fake_performance.locked).and_call_original
       post :lock, {params: {:performance_id => @fake_performance.id}}
       expect(@fake_performance.locked).not_to be(@original_locked_value)
+    end
+  end
+  
+  describe '#revive' do 
+    fixtures :schedules, :acts, :performances
+    
+    before :each do 
+      @fake_performance = performances(:MyPerf1)
+      @fake_schedule_removed_from = schedules(:MySchedule)
+    end
+    
+    it 'should change scheduled attribute to true' do
+      post :revive, params: {performance_id: @fake_performance.id, new_performance_name: "InsertPerformance1", position: 4, schedule_id: @fake_schedule_removed_from.id}
+      expect @fake_performance.scheduled == true
     end
   end
 

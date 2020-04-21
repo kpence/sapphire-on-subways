@@ -48,7 +48,6 @@
                         = hidden_field_tag :schedule_id, act.schedule_id
                         = hidden_field_tag :scheduled, true
                         = image_submit_tag("x.png", alt: "Remove")
-
               - if @conflicting_performances.include? perf.id
                 %tr{:class => "unmoveable"}
                   %td{:class => "unmoveable"}
@@ -57,7 +56,6 @@
                       %td{:class => "alert alert-danger unmoveable"}
                         - conflict[:dancers].each do |dancer_name|
                           %div= dancer_name
-                           
       - else
         %tbody{:class => "droppable", "data-url" => sort_performances_path(:act_id => act.id)}
           %td.actFormat{:class => "unmoveable"}
@@ -70,4 +68,21 @@
         = hidden_field_tag :schedule, false
         = hidden_field_tag :locked, false
         = hidden_field_tag :schedule_id, act.schedule_id
-        = submit_tag "Insert Dance into Act#{act.number}"         
+        = submit_tag "Insert Dance into Act#{act.number}"        
+    %div.left{:class => "sortable", "data-url" => sort_performances_path(:act_id => act.id)}
+      %table
+        %tbody
+        - @unscheduled_performances[act.number].each do |perf|
+          - unless perf.scheduled == true
+            %tr{:id => dom_id(perf)}
+              %td.actFormat{:id => dom_id(perf)}
+                %div.floatLeft
+                  = perf.name
+                %div.floatRight
+                  %div.floatRightButton
+                  = button_to revive_performances_path, :id => "revive" + perf.name.to_s.gsub(" ", "_"), :class => "revive" + perf.name.to_s.gsub(" ", "_") do
+                    = hidden_field_tag :performance_id, perf.id
+                    = hidden_field_tag :schedule_id, act.schedule_id
+                    = hidden_field_tag :scheduled, true
+                    = hidden_field_tag :position, @ordered_performances[act.number].length + 1
+                    = submit_tag("+")

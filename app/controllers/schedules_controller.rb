@@ -73,6 +73,12 @@ class SchedulesController < ApplicationController
     return perfs
   end
   
+  def reindex(performances)
+    performances.each_with_index do |perf, i|
+      perf.update(position: i+1)
+    end
+  end
+  
   def edit
     @schedule = Schedule.find(params[:id])
     if @schedule == nil
@@ -80,18 +86,24 @@ class SchedulesController < ApplicationController
       return
     end
     
-    if flash[:minimize]
-      @schedule.acts.each do |act|
-        helpers.minimize_conflicts(remove_unscheduled(act.performances))
-      end
-    end
-    
     @ordered_performances = {}
     @conflicts = {}
     @conflicting_performances = []
+    @unscheduled_performances = []
     @schedule.acts.each do |act|
       @ordered_performances[act.number] = remove_unscheduled(act.performances)
           .sort_by { |perf| perf.position }
+      reindex(@ordered_performances[act.number])
+      @unscheduled_performances[act.number] = (act.performances - @ordered_performances[act.number])
+          .sort_by { |perf| perf.position }
+      # Minimize them and regenerate the structure if necessary
+      if flash[:minimize]
+        helpers.minimize_conflicts(@ordered_performances[act.number])
+        @ordered_performances[act.number] = remove_unscheduled(act.performances).sort_by do |perf|
+          perf.position
+        end
+        reindex(@ordered_performances[act.number])
+      end
       @conflicts[act.number] = self.conflicts(act.number)
     end
     @act_classes = {}
