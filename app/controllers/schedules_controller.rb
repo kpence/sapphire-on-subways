@@ -109,7 +109,7 @@ class SchedulesController < ApplicationController
     
     # Each act is responsible for deleting data under it
     Schedule.remove_acts(schedule_id)
-    Schedule.destroy(schedule_id)
+    Schedule.destroy(schedule_id.to_i)
     
     redirect_to root_path, flash: {success: "Successfully deleted schedule "+schedule_id.to_s}
   end

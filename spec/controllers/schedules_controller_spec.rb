@@ -282,43 +282,49 @@ describe SchedulesController do
                           :MyDance7,:MyDance8,:MyDance9,:MyDance10,:MyDance11,:MyDance12,
                           :MyDance13,:MyDance14,:MyDance15,:MyDance16,:MyDance17)
       end
-      
-
+    
       it 'should find the schedule by the schedule id' do
         expect(Schedule).to receive(:find).with(@schedule.id.to_s)  
+        post:delete, params: {id: @schedule.id.to_i}
       end
       
       it 'should delete all of the dancers' do
+        post:delete, params: {id: @schedule.id.to_i}
         @dances.each do |dance|
-          expect(Dancer).to receive(:delete).with(dance.dancer)
+          expect(dance.dancer).to be(nil)
+          #expect { Dancer.find(dance.dancer.id) }.to raise_exception(ActiveRecord::RecordNotFound)
+          #dance.dancer is nil so we cannot do this one like the others
         end
       end
       
       it 'should delete all of the dances' do
+        post:delete, params: {id: @schedule.id.to_i}
         @dances.each do |dance|
-          expect(Dance).to receive(:delete).with(dance)
+          #expect(Dance.find(dance.id)).to raise_exception(ActiveRecord::RecordNotFound)
+          expect { Dance.find(dance.id) }.to raise_exception(ActiveRecord::RecordNotFound)
         end
       end
       
       it 'should delete all of the performances' do
+        post:delete, params: {id: @schedule.id.to_i}
         @performances.each do |performance|
-          expect(Performance).to receive(:delete).with(performance)
+          expect { Performance.find(performance.id) }.to raise_exception(ActiveRecord::RecordNotFound)
         end
       end
       
       it 'should delete all of the acts' do
+        post:delete, params: {id: @schedule.id.to_i}
         @acts.each do |act|
-           expect(Act).to receive(:delete).with(act)
+          expect { Act.find(act.id) }.to raise_exception(ActiveRecord::RecordNotFound)
         end
       end
       
       it 'should delete the schedule' do
-        expect(Schedule).to receive(:delete).with(@schedule.id)
+          post:delete, params: {id: @schedule.id.to_i}
+          expect { Schedule.find(@schedule.id) }.to raise_exception(ActiveRecord::RecordNotFound)
       end
       
-      after :each do
-        post:delete, params: {id: @schedule.id.to_i}
-      end
+      
     end
   end
 end

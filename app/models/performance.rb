@@ -8,10 +8,10 @@ class Performance < ActiveRecord::Base
   def self.delete_performance(performance) 
     performance.dances.each do |dance|
       if dance.dancer != nil
-        Dancer.destroy(dance.dancer)
+        Dancer.destroy(dance.dancer.id)
       end
-      Dance.destroy(dance)
+      Dance.destroy(dance.id)
     end
-    Performance.destroy(performance)
+    Performance.destroy(performance.id)
   end
 end
