@@ -10,7 +10,7 @@ Scenario: Click and drag to swap "Fall" with "Sugar"
   Then I should be on the Edit Schedule page
   And I should see "Successfully Imported Data!!!"
   Given I am on the Edit Schedule page
-  Then I should see the following performances in a table for act 1
+  Then I should see the following performances in tables
   | I Don’t Think About You   |
   | Sugar                     |
   | Sorrow                    |
@@ -21,7 +21,6 @@ Scenario: Click and drag to swap "Fall" with "Sugar"
   | Shallow                   |
   | Let me think about it     |
   | Lost                      |
-  And I should see the following table for act 2
   | This Gift                 |
   | I Will Wait               |
   | Falling                   |
@@ -33,30 +32,32 @@ Scenario: Click and drag to swap "Fall" with "Sugar"
   | Flesh & Bone              |
   | Cringe- Stripped          |
   | Nails, Hair, Hips, Heels  |
+  And I should see 10 performances in act 1
+  And I should see 11 performances in act 2
   When I drag performance "Fall" to "Sugar"
   Then performance "Fall" should be right before "Sugar"
 
 #Scenario: Click and drag to move "Lost" into "Act 2"
   When I drag performance "Lost" to "Falling"
-  Then performance "Lost" should be in act 2
+#  Then performance "Lost" should be in act 2
 
 #Scenario: Click and drag to swap "Falling" and "Lost"
   When I drag performance "Falling" to "Lost"
   Then performance "Falling" should be right before "Lost"
-  Then I should see the following performances in a table for act 1
+  Then I should see the following performances in tables
   | I Don’t Think About You   |
   | Sugar                     |
+  | Sorrow                    |
   | All I Ask                 |
   | Life is Good              |
   | Fall                      |
   | Rivers & Roads            |
   | Shallow                   |
   | Let me think about it     |
-  And I should see the following table for act 2
+  | Lost                      |
   | This Gift                 |
   | I Will Wait               |
   | Falling                   |
-  | Lost                      |
   | Show Me How You Burlesque |
   | Lost Without You          |
   | Move Your Feet            |
@@ -65,3 +66,5 @@ Scenario: Click and drag to swap "Fall" with "Sugar"
   | Flesh & Bone              |
   | Cringe- Stripped          |
   | Nails, Hair, Hips, Heels  |
+  And I should see 10 performances in act 1
+  And I should see 11 performances in act 2

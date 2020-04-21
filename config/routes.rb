@@ -6,6 +6,9 @@ Rails.application.routes.draw do
       post :export
       post :delete
     }
+    member {
+      get :minimize
+    }
   end
   
   resources :performances do

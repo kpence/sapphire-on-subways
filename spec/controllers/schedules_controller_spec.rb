@@ -97,19 +97,6 @@ describe SchedulesController do
       get :index
     end
   end
-  
-  describe "#remove_unscheduled" do
-    fixtures :performances
-    it 'should return a filtered list if there are unscheduled performances' do
-      @fake_perf1 = performances(:MyPerf1)
-      @fake_perf2 = performances(:MyPerf2)
-      @fake_perf3 = performances(:MyPerf3)
-      @fake_perf2.scheduled = false;
-      
-      ret = controller.remove_unscheduled([@fake_perf1, @fake_perf2, @fake_perf3])
-      expect(ret).to eq ([@fake_perf1, @fake_perf3])
-    end
-  end
     
   describe '#import' do
     # Using "good" data here, although these things should happen regardless
@@ -199,6 +186,99 @@ describe SchedulesController do
     end
   end
   
+  describe "#remove_unscheduled" do
+    fixtures :performances
+    it 'should return a filtered list if there are unscheduled performances' do
+      @fake_perf1 = performances(:MyPerf1)
+      @fake_perf2 = performances(:MyPerf2)
+      @fake_perf3 = performances(:MyPerf3)
+      @fake_perf2.scheduled = false;
+      
+      ret = controller.remove_unscheduled([@fake_perf1, @fake_perf2, @fake_perf3])
+      expect(ret).to eq ([@fake_perf1, @fake_perf3])
+    end
+  end
+  
+  describe "#form_schedule" do
+    fixtures :schedules, :acts, :performances
+    before :each do
+      @ordered_before = {}
+      controller.instance_variable_set(:@ordered_performances, @ordered_before)
+      @unscheduled_before = {}
+      controller.instance_variable_set(:@unscheduled_performances, @unscheduled_before)
+      @conflicts_before = {}
+      controller.instance_variable_set(:@conflicts, @conflicts_before)
+      @fake_schedule = schedules(:MySchedule)
+      controller.instance_variable_set(:@schedule, @fake_schedule)
+    end
+    
+    context "Conflicts do not need to be generated" do
+      before :each do
+        # So that we have some unscheduled ones
+        @fake_schedule.acts[0].performances[0].scheduled = false
+        @fake_schedule.acts[1].performances[0].scheduled = false
+        controller.form_schedule(false)
+      end
+      
+      it 'should order the performances in a special variable' do
+        @ordered_after = controller.instance_variable_get(:@ordered_performances)
+        expect(@ordered_after.keys).to eq [1, 2]
+        [1,2].each do |idx|
+          @ordered_after[idx].each do |perf|
+            expect(perf.scheduled)
+          end
+        end
+        expect(@ordered_after[1]).to eq @ordered_after[1].sort_by {|p| p.position}
+        expect(@ordered_after[2]).to eq @ordered_after[2].sort_by {|p| p.position}
+      end
+      
+      it 'should collect the unscheduled performances as well' do
+        @unscheduled_after = controller.instance_variable_get(:@unscheduled_performances)
+        expect(@unscheduled_after.keys).to eq [1, 2]
+        [1,2].each do |idx|
+          @unscheduled_after[idx].each do |perf|
+            expect(!perf.scheduled)
+          end
+        end
+        expect(@unscheduled_after[1]).to eq @unscheduled_after[1].sort_by {|p| p.position}
+        expect(@unscheduled_after[2]).to eq @unscheduled_after[2].sort_by {|p| p.position}
+      end
+    end
+    
+    context "If conflicts need to be generated" do
+      before :each do
+        allow(controller).to receive(:conflicts).and_return(["Me", "You"])
+        controller.form_schedule(true)
+      end
+      
+      it 'should generate those conflicts' do
+        controller.form_schedule(true)
+        @conflicts_after = controller.instance_variable_get(:@conflicts)
+        expect(@conflicts_after.keys).to eq [1,2]
+        expect(@conflicts_after[1].length).to eq 2
+        expect(@conflicts_after[2].length).to eq 2
+      end
+    end
+  end
+  
+  describe "#init_schedule" do
+    it 'should set all the variables used to empty' do
+      controller.init_schedule
+      expect(controller.instance_variable_get(:@ordered_performances).length).to eq 0
+      expect(controller.instance_variable_get(:@conflicts).length).to eq 0
+      expect(controller.instance_variable_get(:@conflicting_performances).length).to eq 0
+      expect(controller.instance_variable_get(:@unscheduled_performances).length).to eq 0
+    end
+  end
+  
+  describe "#minimize_schedule" do
+    it 'should both minimize the schedule and reform the ordered performances for the view' do
+      expect(controller.helpers).to receive(:minimize_conflicts)
+      expect(controller).to receive(:form_schedule).with(true)
+      controller.minimize_schedule
+    end
+  end
+  
   describe "#edit" do
     fixtures :schedules, :acts, :performances
     before :each do
@@ -220,36 +300,21 @@ describe SchedulesController do
     end
     
     context "It has my schedule" do
-      before :each do
+      it 'should simply initialize and order the performances' do
         allow(Schedule).to receive(:find).and_return(@fake_schedule)
+        expect(controller).to receive(:init_schedule)
+        expect(controller).to receive(:form_schedule).with(true)
+        expect(controller).not_to receive(:minimize_schedule)
         get :edit, params: {id: @fake_schedule.id}
-        @ordered_performances = controller.instance_variable_get(:@ordered_performances)
-      end
-      
-      it "should assign a dictionary that holds all the acts' performances" do
-        expect(@ordered_performances).not_to eq(nil)
-        
-        # Good enough if it has the same number of acts and performances
-        expect(@ordered_performances.length()).to eq(@fake_schedule.acts.length())
-        @fake_acts = @fake_schedule.acts
-        @ordered_performances.each do |act_number, perf_list|
-          @fake_performances = @fake_acts.find_by_number(act_number).performances
-          expect(perf_list.length()).to eq(@fake_performances.length())
-        end
-      end
-      it 'should order the performances in each act by their schedule_index field' do
-        @ordered_performances.each do |act_number, perf_list|
-          correct_order = perf_list.sort_by {|d| d.position }
-          given_order = perf_list
-          expect(given_order).to eq(correct_order)
-        end
       end
     end
     
     context "We came from the a page that wants us to minimize" do
       it 'should generate a random schedule using the helper' do
         allow(Schedule).to receive(:find).and_return(@fake_schedule)
-        expect(controller.helpers).to receive(:minimize_conflicts).exactly(2).times
+        expect(controller).to receive(:init_schedule)
+        expect(controller).to receive(:form_schedule).with(false)
+        expect(controller).to receive(:minimize_schedule).exactly(:once)
         get :edit, params: {id: @fake_schedule.id}, flash: {minimize: true}
       end
     end
@@ -289,6 +354,16 @@ describe SchedulesController do
     end
   end
 
+  
+  describe "#minimize" do
+    it 'should redirect back to edit with the flash set' do
+      get :minimize, params: {:id => 100}
+      expect(controller).to set_flash[:minimize]
+      expect(subject).to redirect_to(:controller => "schedules", 
+                                     :action => "edit", 
+                                     :id => 100)
+    end
+  end
   
   describe "#delete" do
     fixtures :schedules, :acts, :performances, :dances, :dancers

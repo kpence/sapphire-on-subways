@@ -11,7 +11,7 @@ Scenario: See a Schedule after uploading first data
   Then I should be on the Edit Schedule page
   And I should see "Successfully Imported Data!!!"
   Given I am on the Edit Schedule page
-  Then I should see the following performances in a table for act 1
+  Then I should see the following performances in tables
   | I Don’t Think About You   |
   | Sugar                     |
   | Sorrow                    |
@@ -22,7 +22,6 @@ Scenario: See a Schedule after uploading first data
   | Shallow                   |
   | Let me think about it     |
   | Lost                      |
-  And I should see the following table for act 2
   | This Gift                 |
   | I Will Wait               |
   | Falling                   |
@@ -34,6 +33,8 @@ Scenario: See a Schedule after uploading first data
   | Flesh & Bone              |
   | Cringe- Stripped          |
   | Nails, Hair, Hips, Heels  |
+  And I should see 10 performances in act 1
+  And I should see 11 performances in act 2
 
 Scenario: See a Schedule after uploading first data
   When I attach the file "test_files/small_good_data_test.csv" to "file"
@@ -49,3 +50,6 @@ Scenario: See a Schedule after uploading first data
   | All I Ask                 |
   | Sorrow                    |
   And I should see no performances in the table for act 2
+
+# Should add scenarios here to see the if schedules show up when you go back
+# to the home schedules page and if you can still upload when you go back, etc...

@@ -129,6 +129,10 @@ class Schedule < ActiveRecord::Base
     performance_names.each_with_index do |name, index|
       if should_split
         act_id = (index + 1) <= (total_performances / 2) ? act1_id : act2_id
+        # So that act 2 performances start over at 1:
+        if (index + 1) > (total_performances / 2)
+          index -= total_performances / 2
+        end
       else
         act_id = act1_id
       end

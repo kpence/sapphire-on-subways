@@ -81,7 +81,8 @@ When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
 end
 
 When ("I lock dance {string}") do |string1|
-  find("#lock"+string1).click
+  #puts page.to_s
+  find("#lock"+string1.gsub(" ", "_")).click
 end
 
 Then ("I should see that dance {string} changed to {string}") do |string1, string2|
@@ -182,29 +183,77 @@ When /^I drop performance "([^"]*)" into the empty act$/ do |item_name|
 end
 
 Then /^performance "([^"]*)" should not be next to "([^"]*)"$/ do |item_name1,item_name2|
-  item1 = Performance.all.filter { |e| e.name == item_name1 }[0]
-  item2 = Performance.all.filter { |e| e.name == item_name2 }[0]
-  diff = (item1.position.to_i - item2.position.to_i).abs
-  diff.should !=1
+  perfs = page.all('#act1 td div.floatLeft').map do |match|
+    match.text
+  end
+  perfs += [""] # Buffer between acts
+  perfs += page.all('#act2 td div.floatLeft').map do |match|
+    match.text
+  end
+  
+  name1_index = perfs.index(item_name1)
+  name2_index = perfs.index(item_name2)
+  expect(abs(name1_index - name2_index)).not_to eq 1
 end
 
 Then /^performance "([^"]*)" should be next to "([^"]*)"$/ do |item_name1,item_name2|
-  item1 = Performance.all.filter { |e| e.name == item_name1 }[0]
-  item2 = Performance.all.filter { |e| e.name == item_name2 }[0]
-  diff = (item1.position.to_i - item2.position.to_i).abs
-  diff.should ==1
+  perfs = page.all('#act1 td div.floatLeft').map do |match|
+    match.text
+  end
+  perfs += [""] # Buffer between acts
+  perfs += page.all('#act2 td div.floatLeft').map do |match|
+    match.text
+  end
+  
+  name1_index = perfs.index(item_name1)
+  name2_index = perfs.index(item_name2)
+  expect(abs(name1_index - name2_index)).to eq 1
 end
 
 Then /^performance "([^"]*)" should be after "([^"]*)"$/ do |item_name1,item_name2|
-  item1 = Performance.all.filter { |e| e.name == item_name1 }[0]
-  item2 = Performance.all.filter { |e| e.name == item_name2 }[0]
-  item1.position.to_i.should > item2.position.to_i
+  perfs = page.all('#act1 td div.floatLeft').map do |match|
+    match.text
+  end
+  perfs += [""] # Buffer between acts
+  perfs += page.all('#act2 td div.floatLeft').map do |match|
+    match.text
+  end
+  
+  name1_index = perfs.index(item_name1)
+  name2_index = perfs.index(item_name2)
+  expect(name1_index - name2_index).to >= 1
 end
 
 Then /^performance "([^"]*)" should be right (before|after) "([^"]*)"$/ do |item_name1,order,item_name2|
-  item1 = Performance.all.filter { |e| e.name == item_name1 }[0]
-  item2 = Performance.all.filter { |e| e.name == item_name2 }[0]
-  item1.position.to_i.should == (item2.position.to_i+((order=="after")?0:-1))
+  item1_position = nil
+  item2_position = nil
+  item1_found = false
+  item2_found = false
+  ["1", "2"].each do |act|
+    page.all('#act' + act + ' td div.floatLeft').each_with_index do |match, i|
+      if match.text == item_name1
+        item1_position = i
+        item1_found = true
+        if item2_found
+          if order == "before"
+            expect(item2_position - item1_position).to eq 1
+          else
+            expect(item1_position - item2_position).to eq 1
+          end
+        end
+      elsif match.text == item_name2
+        item2_position = i
+        item2_found = true
+        if item1_found
+          if order == "before"
+            expect(item2_position - item1_position).to eq 1
+          else
+            expect(item1_position - item2_position).to eq 1
+          end
+        end
+      end
+    end
+  end
 end
 
 Then /^performance "([^"]*)" should be in act ([0-9])$/ do |item_name,act_number|
@@ -267,27 +316,23 @@ Then /^(?:|I )should see "([^"]*)" in between "([^"]*)" and "([^"]*)"$/ do |thin
 end
 
 Then /^(?:|I )should see the following (?:|performances in a )table(?:| for act ([0-9]))(?:| (in order))$/ do |act_number, in_order, values|
+  list = values.raw.map {|e| e[0]}
   within("#act"+act_number) do
-    list = values.raw.map {|e| e[0]}
     list.each do |text|
-      if page.respond_to? :should
-        page.should have_content(text)
+      find("td", text: /^#{text}$/)
+    end
+  end
+  if in_order
+    regex_str = ""
+    list.each_with_index do |text, i|
+      if i < list.length - 1
+        regex_str += text + ".*"
       else
-        assert page.has_content?(text)
+        regex_str += text
       end
     end
-    if in_order
-      regex_str = ""
-      list.each_with_index do |text, i|
-        if i < list.length - 1
-          regex_str += text + ".*"
-        else
-          regex_str += text
-        end
-      end
-      regex = /#{regex_str}/m
-      page.body.should =~ regex
-    end
+    regex = /#{regex_str}/m
+    page.body.should =~ regex
   end
 end
 
@@ -295,6 +340,24 @@ Then /^(?:|I )should see no performances in the table for act ([0-9])$/ do |act_
   within("#act"+act_number) do
     page.body.should =~ /This act is empty. Dragging a performance here will move it into this act./m
   end
+end
+
+Then /^(?:|I )should see the following (?:|performances )in tables$/ do |values|
+  list = values.raw.map {|e| e[0]}
+  act1_perfs = page.all('#act1 td div.floatLeft').map do |match|
+    match.text
+  end
+  act2_perfs = page.all('#act2 td div.floatLeft').map do |match|
+    match.text
+  end
+  expect(list.length).to eq act1_perfs.length + act2_perfs.length
+  list.each do |perf|
+    expect((act1_perfs.include? perf) != (act2_perfs.include? perf))
+  end
+end
+
+Then /^(?:|I )should see ([0-9]+) performances in act ([0-9])$/ do |num_perfs, act_number|
+  page.all("#act"+act_number.to_s+" td div.floatLeft").count.should eq num_perfs.to_i
 end
 
 Then /^(?:|I )should see \/([^\/]*)\/$/ do |regexp|

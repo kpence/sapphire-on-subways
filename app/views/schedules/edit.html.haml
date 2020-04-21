@@ -3,11 +3,9 @@
 -#= javascript_include_tag 'application', 'data-turbolinks-track' => true
 
 %h3= "Use this page to edit your schedule!"
-= button_to delete_schedules_path do
-  = hidden_field_tag :id, @schedule.id
-  = "Delete Schedule"
 
-= button_to "Export Schedule to CSV", export_schedules_path, :params => {"id" => @schedule.id }, :id => "export", :method => :post
+%div.text-center
+  %div= button_to "Regenerate", minimize_schedule_path(@schedule.id), method: "get", class: "header btn btn-success"
 
 - @schedule.acts.each do |act|
   %div{:class => "#{@act_classes[act.number]}"}
@@ -86,3 +84,12 @@
                     = hidden_field_tag :scheduled, true
                     = hidden_field_tag :position, @ordered_performances[act.number].length + 1
                     = submit_tag("+")
+
+
+%div
+  %div.floatLeft
+    = button_to delete_schedules_path, class: "btn btn-danger" do
+      = hidden_field_tag :id, @schedule.id
+      = "Delete Schedule"
+  %div.floatRight
+    = button_to "Export Schedule to CSV", export_schedules_path, :params => {"id" => @schedule.id }, :id => "export", :method => :post, class: "footer btn btn-primary"

@@ -73,6 +73,32 @@ class SchedulesController < ApplicationController
     return perfs
   end
   
+  def form_schedule(gen_conflicts=false)
+    @schedule.acts.each do |act|
+      @ordered_performances[act.number] = remove_unscheduled(act.performances).sort_by { |perf| perf.position }
+      @unscheduled_performances[act.number] = (act.performances - @ordered_performances[act.number])
+          .sort_by { |perf| perf.position }
+      if gen_conflicts
+        @conflicts[act.number] = self.conflicts(act.number)
+      end
+      reindex(@ordered_performances[act.number])
+    end
+  end
+  
+  def init_schedule
+    @ordered_performances = {}
+    @conflicts = {}
+    @conflicting_performances = []
+    @unscheduled_performances = []
+  end
+  
+  # Do the work of adjusting all the relative positions before and after
+  # using the helper to minimize the conflicts
+  def minimize_schedule
+    helpers.minimize_conflicts(@schedule, @ordered_performances)
+    form_schedule(true)
+  end
+  
   def reindex(performances)
     performances.each_with_index do |perf, i|
       perf.update(position: i+1)
@@ -86,26 +112,13 @@ class SchedulesController < ApplicationController
       return
     end
     
-    @ordered_performances = {}
-    @conflicts = {}
-    @conflicting_performances = []
-    @unscheduled_performances = []
-    @schedule.acts.each do |act|
-      @ordered_performances[act.number] = remove_unscheduled(act.performances)
-          .sort_by { |perf| perf.position }
-      reindex(@ordered_performances[act.number])
-      @unscheduled_performances[act.number] = (act.performances - @ordered_performances[act.number])
-          .sort_by { |perf| perf.position }
-      # Minimize them and regenerate the structure if necessary
-      if flash[:minimize]
-        helpers.minimize_conflicts(@ordered_performances[act.number])
-        @ordered_performances[act.number] = remove_unscheduled(act.performances).sort_by do |perf|
-          perf.position
-        end
-        reindex(@ordered_performances[act.number])
-      end
-      @conflicts[act.number] = self.conflicts(act.number)
+    init_schedule()
+    form_schedule(flash[:minimize] == nil)
+    
+    if flash[:minimize]
+      minimize_schedule()
     end
+    
     @act_classes = {}
     @act_classes[1] = "floatLeftA"
     @act_classes[2] = "floatRightA"
@@ -113,7 +126,6 @@ class SchedulesController < ApplicationController
     flash[:conflicts] = @conflicts
     #flash[:ordered_performances] = @ordered_performances
     flash[:conflicting_performances] = @conflicting_performances
-
   end
 
 
@@ -129,7 +141,12 @@ class SchedulesController < ApplicationController
     
     send_data Schedule.to_csv(@ordered_performances, flash[:conflicts], flash[:conflicting_performances]), filename: "#{@schedule.name}_exported_schedule.csv"
   end
-  
+
+  def minimize
+    flash[:minimize] = true
+    redirect_to edit_schedule_path(id: params[:id]), flash: {success: "New minimal schedule generated!"}
+  end
+
   def delete
     schedule_id = params[:id]
     @schedule = Schedule.find(params[:id])

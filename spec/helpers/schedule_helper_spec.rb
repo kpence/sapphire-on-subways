@@ -45,29 +45,76 @@ describe ScheduleHelper do
     end
   end
   
-  describe "#count_conflicts" do
-    fixtures :dances, :dancers
+  describe "#concatenate" do
+    fixtures :schedules, :acts, :performances
     before :each do
-      @double1 = double('dance1')
-      @double2 = double('dance2')
-      @dance_1 = dances(:MyDance1)
-      @dance_2 = dances(:MyDance2)
-      @dance_3 = dances(:MyDance3)
-      @dance_4 = dances(:MyDance4)
-      @dance_5 = dances(:MyDance5)
+      @fake_schedule = schedules(:MySchedule)
+      @ret = helper.concatenate(@fake_schedule.acts[0].performances, @fake_schedule.acts[1].performances)
     end
-    it 'calls the intersect by dancer id method with two arguments' do
-      expect(helper).to receive(:intersect_by_dancer_id).with(@double1, @double2).and_return(@double1)
-      expect(@double1).to receive(:length)
-      helper.count_conflicts(@double1, @double2)
+    
+    it 'should put all the performances in both acts together' do
+      @fake_schedule.acts.each do |act|
+        act.performances.each do |perf|
+          expect(@ret.include? perf)
+        end
+      end
     end
-    it 'should count the nubmer of dancers in the intersection' do
-      expect(helper).to receive(:intersect_by_dancer_id).with([@dance_1,@dance_2,@dance_3,@dance_4], [@dance_5]).and_return([])
-      expect(helper).to receive(:intersect_by_dancer_id).with([@dance_1,@dance_2], [@dance_3,@dance_4]).and_return([@dance_1.id])
-      expect(helper).to receive(:intersect_by_dancer_id).with([@dance_1,@dance_2], [@dance_3,@dance_4,@dance_5]).and_return([@dance_1.id, @dance_5.id])
-      expect(helper.count_conflicts([@dance_1,@dance_2,@dance_3,@dance_4], [@dance_5])).to eq(0)
-      expect(helper.count_conflicts([@dance_1,@dance_2], [@dance_3,@dance_4])).to eq(1)
-      expect(helper.count_conflicts([@dance_1,@dance_2], [@dance_3,@dance_4,@dance_5])).to eq(2)
+    
+    it 'should order the performances by position in the schedule' do
+      expect(@ret).to eq @ret.sort_by {|p| p.position }
+    end
+    
+    it 'should give each performance a unique position' do
+      expect(@ret).to eq @ret.uniq {|p| p.position }
+    end
+    
+    it 'should give positions in ascending order from 1 to n' do
+      (1..@ret.length).each do |pos|
+        expect(@ret.map {|p| p.position}.include? pos)
+      end
+    end
+  end
+  
+  describe "#divide" do
+    fixtures :schedules, :acts, :performances
+    before :each do
+      @fake_schedule = schedules(:MySchedule)
+      helper.instance_variable_set(:@schedule, @fake_schedule)
+      @fake_performances = @fake_schedule.acts[0].performances + @fake_schedule.acts[1].performances
+      @num_act1_perfs = @fake_schedule.acts[0].performances.length
+      
+      # Here's the real faking: Make all of them have contiguous positions and
+      # all in act 2
+      @fake_performances.sort_by{|p|p.position}.each_with_index do |fp, idx|
+        if idx >= @num_act1_perfs 
+          fp.position += @num_act1_perfs
+        end
+        allow(fp).to receive(:save)
+        fp.act = @fake_schedule.acts[0]
+      end
+      
+      helper.instance_variable_set(:@performances, @fake_performances)
+      helper.instance_variable_set(:@ordered_performances, {})
+      @fake_ordered = helper.instance_variable_get(:@ordered_performances)
+    end
+    
+    it 'should change the positions of all the dances in act 2 back' do
+      helper.divide(@num_act1_perfs)
+      @fake_performances = helper.instance_variable_get(:@performances)
+      expect(@fake_performances.map {|p| p.position}).to eq [1,2,3,1,2,3,4,5]
+      fake_acts = @fake_performances.sort_by{|p| p.position }.map {|p| p.act}
+      fake_acts.each_with_index do |act, idx|
+        if idx < @num_act1_perfs
+          expect(act).to eq @fake_schedule.acts[0]
+        else
+          expect(act).to eq @fake_schedule.acts[1]
+        end
+      end
+    end
+    
+    it 'should reload the schedule variable at the end' do
+      expect(@fake_schedule).to receive(:reload)
+      helper.divide(@num_act1_perfs)
     end
   end
   
@@ -112,10 +159,6 @@ describe ScheduleHelper do
           @fake_perfs[5].id => values[14]
         }
       }
-      
-      values.each do |val|
-        allow(helper).to receive(:count_conflicts).and_return(val)
-      end
       
       helper.instance_variable_set(:@performances, @fake_perfs)
       helper.form_graph
@@ -198,50 +241,143 @@ describe ScheduleHelper do
   end
   
   describe "#permute" do
-    context "When the number of permutations is small enough" do
-      it 'should return all permutations of that order' do
-        original_order = [1, 2, 3]
-        correct_perms = original_order.permutation.to_a
-        res = helper.permute(original_order, correct_perms.length())
-        expect(res).to eq(correct_perms)
+    context "When there is nothing to exclude from locks" do
+      context "When the number of permutations is small enough" do
+        it 'should return all permutations of that order' do
+          original_order = [0, 1, 2]
+          correct_perms = original_order.permutation.to_a
+          res = helper.permute(original_order, correct_perms.length(), [])
+          expect(res).to eq(correct_perms)
+        end
+      end
+      context "When the number of permutations is too large" do
+        it 'should only yield 10000 random ones (including the given order)' do
+          original_order = (1..100).to_a
+          max_perms = ScheduleHelper.class_variable_get(:@@MAX_PERMS)
+          res = helper.permute(original_order, max_perms, [])
+          expect(res.length()).to eq(max_perms)
+          expect(res.include? original_order)
+        end
       end
     end
-    context "When the number of permutations is too large" do
-      it 'should only yield 10000 random ones (including the given order)' do
-        original_order = (1..100).to_a
-        max_perms = ScheduleHelper.class_variable_get(:@@MAX_PERMS)
-        res = helper.permute(original_order, max_perms)
-        expect(res.length()).to eq(max_perms)
-        expect(res.include? original_order)
+    
+    context "When locks exclude certain dances" do
+      context "When the number of permutations is small enough" do
+        before :each do
+          @original_order = [0, 1, 3, 5]
+          @excluded = [2, 4]
+          @correct_perms = @original_order.permutation.to_a
+          @correct_perms.each do |perm|
+            @excluded.each do |excluded_index|
+              perm.insert(excluded_index, excluded_index)
+            end
+          end
+        end
+        it 'should return all permutations of that order' do
+          res = helper.permute(@original_order, @correct_perms.length(), @excluded)
+          expect(res).to eq(@correct_perms)
+        end
+      end
+      context "When the number of permutations is too large" do
+        before :each do
+          @original_order = (0..100).to_a
+          @excluded = [1, 3, 4, 5, 23, 88, 99]
+          @original_order -= @excluded
+        end
+        it 'should return all permutations of that order' do
+          max_perms = ScheduleHelper.class_variable_get(:@@MAX_PERMS)
+          res = helper.permute(@original_order, max_perms * 2, @excluded)
+          # both included and excluded should be in there
+          (@original_order + @excluded).each do |index|
+            res.each do |ordering|
+              expect(ordering).to include(index)
+            end
+          end
+          expect(res.length).to eq max_perms
+        end
       end
     end
   end
   
   describe "#get_perms" do
-    fixtures :performances
+    fixtures :performances, :acts
     before :each do
-      @perf1 = performances(:MyPerf1)
-      @perf2 = performances(:MyPerf2)
-      @perf3 = performances(:MyPerf3)
-      @perf4 = performances(:MyPerf4)
-      @perf5 = performances(:MyPerf5)
-      @perf6 = performances(:MyPerf6)
-      @perf7 = performances(:MyOtherPerf1)
-      @perf8 = performances(:MyOtherPerf2)
-      @perf_under_10k = [@perf1, @perf2, @perf3, @perf4]
-      @perf_exceed_10k = [@perf1, @perf2, @perf3, @perf4, @perf5, @perf6, @perf7, @perf8]
+      @fake_act1 = acts(:MyAct1)
+      @fake_act2 = acts(:MyAct2)
+      @perf7 = performances(:MyPerf7)
+      @perf8 = performances(:MyPerf8)
+      
+      @perfs = @fake_act1.performances + @fake_act2.performances
+      expect(helper).to receive(:factorial).and_call_original.at_least(:once)
     end
-    it 'should should not exceed 10k permutations' do
-      original_order = (0..7).to_a
-      expect(helper).to receive(:factorial).with(8).and_return(40320)
-      expect(helper).to receive(:permute).with(original_order, 999)
-      helper.get_perms(@perf_exceed_10k)
+    after :each do
+      helper.get_perms(@perfs)
     end
-    it 'should should return the correct factorial number' do
-      original_order = (0..3).to_a
-      expect(helper).to receive(:factorial).with(4).and_return(24)
-      expect(helper).to receive(:permute).with(original_order, 24)
-      helper.get_perms(@perf_under_10k)
+    
+    context "Enough dances to exceed max" do
+      before :each do
+        @original_order = (0..@perfs.length - 1).to_a
+        @max_perms = ScheduleHelper.class_variable_get(:@@MAX_PERMS)
+      end
+      
+      context "WITH exclusions" do
+        before :each do
+          @locked_indices = [0,2]
+          @locked_indices.each do |index|
+            @perfs[index].locked = true
+          end
+          # The rest are false
+        end
+      
+        it 'should separate these indices out when permuting' do
+          expect(helper).to receive(:permute)
+              .with(@original_order - @locked_indices, 
+                    @max_perms - 1,
+                    @locked_indices)
+        end
+      end
+      
+      context "WITHOUT exclusions" do
+        it 'should separate these indices out when permuting' do
+          expect(helper).to receive(:permute)
+              .with(@original_order, 
+                    @max_perms - 1,
+                    [])
+        end
+      end
+    end
+      
+    context "NOT enough dances to exceed max" do
+      before :each do
+        @perfs -= [@perf7, @perf8]
+        @original_order = (0..@perfs.length - 1).to_a
+      end
+      
+      context "WITH exclusions" do
+        before :each do
+          @locked_indices = [0,2]
+          @locked_indices.each do |index|
+            @perfs[index].locked = true
+          end
+          # The rest are false
+        end
+      
+        it 'should separate these indices out when permuting' do
+          expect(helper).to receive(:permute)
+              .with(@original_order - @locked_indices, 
+                    helper.factorial(@original_order.length),
+                    @locked_indices)
+        end
+      end
+      
+      context "WITHOUT exclusions" do
+        it 'should separate these indices out when permuting' do
+          expect(helper).to receive(:permute)
+              .with(@original_order, 
+                    helper.factorial(@original_order.length),
+                    [])
+        end
+      end
     end
   end
   
@@ -270,18 +406,20 @@ describe ScheduleHelper do
       helper.instance_variable_set(:@performances,@performances)
       helper.reorder_performances(@winner_perm)
       @result = helper.instance_variable_get(:@performances)
-      expect(@result.map { |p| p.position }).to eq([1, 2, 4, 3])
+      expect(@result.map { |p| p.position }).to eq([1, 2, 3, 4])
     end
   end
   
   describe "#minimize_conflicts" do
     fixtures :performances
     it 'should simply call all these functions' do
+      expect(helper).to receive(:concatenate)
       expect(helper).to receive(:form_graph)
       expect(helper).to receive(:get_perms)
       expect(helper).to receive(:find_min_perm)
       expect(helper).to receive(:reorder_performances)
-      helper.minimize_conflicts([performances(:MyPerf1)])
+      expect(helper).to receive(:divide)
+      helper.minimize_conflicts([performances(:MyPerf1)], {1 => [], 2 => []})
     end
   end
 end
