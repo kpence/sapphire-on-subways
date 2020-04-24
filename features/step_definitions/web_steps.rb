@@ -111,6 +111,7 @@ end
 
 # Click Drag stuff
 When /^I drag performance "([^"]*)" to "([^"]*)"$/ do |item_dragged_name, item_dropped_name|
+  
   item_dragged = Performance.all.filter { |e| e.name == item_dragged_name }[0]
   item_dropped = Performance.all.filter { |e| e.name == item_dropped_name }[0]
 
@@ -170,6 +171,18 @@ When /^I drag performance "([^"]*)" to "([^"]*)"$/ do |item_dragged_name, item_d
     sleep(2)
   rescue Exception => ex
     puts "Error: #{ex.class} #{ex.message}"
+    
+    browser = Capybara.current_session.driver.browser
+    if browser.respond_to?(:clear_cookies)
+      # Rack::MockSession
+      browser.clear_cookies
+    elsif browser.respond_to?(:manage) and browser.manage.respond_to?(:delete_all_cookies)
+      # Selenium::WebDriver
+      browser.manage.delete_all_cookies
+    else
+      raise "Don't know how to clear cookies. Weird driver?"
+    end
+    page.driver.browser.navigate.refresh
   end
 end
 
@@ -256,6 +269,21 @@ Then /^performance "([^"]*)" should be right (before|after) "([^"]*)"$/ do |item
   end
 end
 
+Then /^I put the schedule in the following order for act ([0-9])$/ do |act_number, values|
+  list = values.raw.map {|v| v[0]}
+  actn_id = Act.all.filter { |e| e.number == act_number.to_i }[0].id
+  list.each_with_index do |perf_name, index|
+    perf = Performance.all.filter { |e| e.name == perf_name }[0]
+    perf.update(position: index + 1, act_id: actn_id)
+  end
+  # Note that this test always passes (can't check that they are in the right
+  # place without writing another step to check after this)
+  sleep(2)
+	current_path = URI.parse(current_url).path
+	visit current_path
+  sleep(2)
+end
+
 Then /^performance "([^"]*)" should be in act ([0-9])$/ do |item_name,act_number|
   item = Performance.all.filter { |e| e.name == item_name }[0]
   act = Act.all.filter { |e| e.id == item.act_id }[0]
@@ -311,6 +339,9 @@ Then /^(?:|I )should see "([^"]*)" in between "([^"]*)" and "([^"]*)"$/ do |thin
   else
     assert page.has_content?(text)
   end
+  before_thing = before_thing.gsub("&", "&amp;")
+  thing = thing.gsub("&", "&amp;")
+  after_thing = after_thing.gsub("&", "&amp;")
   page.body.should =~ /#{before_thing}.*#{thing}/m
   page.body.should =~ /#{thing}.*#{after_thing}/m
 end
@@ -331,6 +362,7 @@ Then /^(?:|I )should see the following (?:|performances in a )table(?:| for act 
         regex_str += text
       end
     end
+    regex_str = regex_str.gsub("&", "&amp;")
     regex = /#{regex_str}/m
     page.body.should =~ regex
   end
