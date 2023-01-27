@@ -26,7 +26,7 @@ gem 'activerecord-import'
 
 # for click-and-drag functionality
 gem 'rails-ujs', '~> 5.1.0.beta1'
-gem 'jquery-ui-rails', '~> 5.0', '>= 5.0.5'
+gem 'jquery-ui-rails', '~> 6.0'
 gem 'acts_as_list'
 
 # Use jquery as the JavaScript library
